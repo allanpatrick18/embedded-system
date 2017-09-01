@@ -1,0 +1,23 @@
+gantt
+    title A Gantt Diagram
+    dateFormat x
+ Led3 : crit, 0, 2160
+ Led1 : 4, 3600
+ Led3 : crit, 2160, 4320
+ Led3 : crit, 4320, 6480
+ Led1 : 3600, 7200
+ Led3 : crit, 6480, 8640
+ Led3 : crit, 8640, 10800
+ Led1 : 7200, 10804
+ Led3 : crit, 10800, 12960
+ Led1 : 10805, 14400
+ Led2 : done, 8, 14404
+ Led3 : crit, 12960, 15120
+ Led3 : crit, 15120, 17280
+ Led1 : 14400, 18000
+ Led3 : crit, 17280, 19440
+ Led3 : crit, 19440, 21600
+ Led1 : 18000, 21604
+ Led3 : crit, 21600, 23760
+ Led1 : 21605, 25200
+ Led3 : crit, 23

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+    
+    
+  <CurrentConfigs><Project>Examples/Debug</Project><Project>Lib_EaBaseBoard/Debug</Project><Project>RTX_Lib_CM/CM3_LE</Project><Project>Lib_MCU/Debug</Project></CurrentConfigs><CurrentProj>Examples</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>980</ColumnWidth1><ColumnWidth2>261</ColumnWidth2><ColumnWidth3>65</ColumnWidth3></Build>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>344</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <TerminalIO/>
+    <Debug-Log><ColumnWidth0>21</ColumnWidth0><ColumnWidth1>1029</ColumnWidth1></Debug-Log></Static>
+    <Windows>
+      
+      
+    <Wnd1>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-7086-22538</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/Blinky_wo_library</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/oled_periph</ExpandedNode><ExpandedNode>Lib_MCU</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd1><Wnd3>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-17835-22541</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+        <Tab><Identity>TabID-2599-30442</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane/><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-026A0570><key>iaridepm.enu1</key></Toolbar-026A0570></Sizes></Row0></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>480</Bottom><Right>418</Right><x>-2</x><y>-2</y><xscreen>262</xscreen><yscreen>204</yscreen><sizeHorzCX>197587</sizeHorzCX><sizeHorzCY>280605</sizeHorzCY><sizeVertCX>316742</sizeVertCX><sizeVertCY>662999</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>202</Bottom><Right>1328</Right><x>-2</x><y>-2</y><xscreen>1330</xscreen><yscreen>204</yscreen><sizeHorzCX>1003017</sizeHorzCX><sizeHorzCY>280605</sizeHorzCY><sizeVertCX>197587</sizeVertCX><sizeVertCY>280605</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+
