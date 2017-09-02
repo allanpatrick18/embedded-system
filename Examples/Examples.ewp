@@ -1942,6 +1942,9 @@
     </group>
     <group>
       <name>example_C_ASM</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
       <file>
         <name>$PROJ_DIR$\src\example_asm_function.s</name>
       </file>
@@ -2028,6 +2031,12 @@
       </excluded>
       <file>
         <name>$PROJ_DIR$\src\example_8_memory_pool.c</name>
+      </file>
+    </group>
+    <group>
+      <name>lab_1</name>
+      <file>
+        <name>$PROJ_DIR$\src\lab_1_main.c</name>
       </file>
     </group>
     <file>

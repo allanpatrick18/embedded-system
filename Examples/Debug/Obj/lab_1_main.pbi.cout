@@ -1,4 +1,4 @@
-"C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\src\RTX_Conf_CM.c"
+"C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\src\lab_1_main.c"
 -std=c99
 -ferror-limit=100
 -I
