@@ -22,7 +22,8 @@ unsigned const char hashed_msg[MSG_SIZE] = {
   0x67, 0x52, 0x89, 0x4a, 0x8b, 0x4e, 0x8a, 0x09, 
   0x86, 0x4f, 0x37, 0x3c, 0x80, 0x55, 0x80, 0x4c,
   0x86, 0x57, 0x37, 0x3f, 0x78, 0x55, 0x83, 0x4e,
-  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04
+  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04 //0x8b, 0xd6   
+  //Quando penultimo e ultimo bytes são 0x8b e 0xd6 funciona
 };
 
 typedef uint8_t bool;
@@ -213,7 +214,7 @@ void thread_verify_first_test_digit(void const *args){
       }
       //---
       uint8_t testByte = current_elem.deciphered_msg[TEST_1_INDEX];
-      uint8_t halfKey = current_elem.key>>2;
+      uint8_t halfKey = current_elem.key>>1;
       current_elem.firstTestResult = halfKey == testByte;
       //---
       current_elem.hasFirstTest = true;
@@ -267,7 +268,7 @@ void thread_verify_second_test_digit(void const *args){
       }
       //---
       uint8_t testByte = current_elem.deciphered_msg[TEST_2_INDEX];
-      uint8_t squaredKey = current_elem.key;
+      uint16_t squaredKey = current_elem.key;
       squaredKey *= squaredKey;
       uint8_t prevPrime = current_elem.prev_prime;
       current_elem.secondTestResult = squaredKey/prevPrime == testByte;
@@ -329,8 +330,11 @@ void thread_print_key(void const *args){
     printf("Test 1: "); printf(current_elem.firstTestResult  ? "passed\n" : "failed\n");
     printf("Test 2: "); printf(current_elem.secondTestResult ? "passed\n" : "failed\n");
     printf("\n");
+    //---
+    //Enquanto não existe validação
     hasVerifiedTest1 = false;
     hasVerifiedTest2 = false;
+    //---
     yield;
   }
   osThreadTerminate(id_thread_print_key);
