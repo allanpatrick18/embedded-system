@@ -6,15 +6,6 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\uart2.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\font5x7.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\flash.pbi</file>
-      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\system_LPC13xx.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\light.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\joystick.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
       <file>$PROJ_DIR$\Debug\Obj\acc.o</file>
       <file>$PROJ_DIR$\Debug\Obj\led7seg.__cstat.et</file>
       <file>$PROJ_DIR$\Debug\Obj\led7seg.pbi</file>
@@ -55,19 +46,6 @@
       <file>$PROJ_DIR$\Debug\Obj\oled.o</file>
       <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
       <file>$PROJ_DIR$\..\Lib_MCU\inc\gpio.h</file>
-      <file>$PROJ_DIR$\src\font5x7.c</file>
-      <file>$PROJ_DIR$\src\flash.c</file>
-      <file>$PROJ_DIR$\src\eeprom.c</file>
-      <file>$PROJ_DIR$\src\acc.c</file>
-      <file>$PROJ_DIR$\src\joystick.c</file>
-      <file>$PROJ_DIR$\src\led7seg.c</file>
-      <file>$PROJ_DIR$\src\light.c</file>
-      <file>$PROJ_DIR$\src\oled.c</file>
-      <file>$PROJ_DIR$\src\pca9532.c</file>
-      <file>$PROJ_DIR$\src\rgb.c</file>
-      <file>$PROJ_DIR$\src\rotary.c</file>
-      <file>$PROJ_DIR$\src\temp.c</file>
-      <file>$PROJ_DIR$\src\uart2.c</file>
       <file>$PROJ_DIR$\inc\uart2.h</file>
       <file>$PROJ_DIR$\Debug\Obj\rotary.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\rgb.o</file>
@@ -88,6 +66,28 @@
       <file>$PROJ_DIR$\Debug\Obj\uart2.pbi</file>
       <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
       <file>$PROJ_DIR$\Debug\Obj\pca9532.pbi</file>
+      <file>$PROJ_DIR$\src\font5x7.c</file>
+      <file>$PROJ_DIR$\src\flash.c</file>
+      <file>$PROJ_DIR$\src\eeprom.c</file>
+      <file>$PROJ_DIR$\src\acc.c</file>
+      <file>$PROJ_DIR$\src\joystick.c</file>
+      <file>$PROJ_DIR$\src\led7seg.c</file>
+      <file>$PROJ_DIR$\src\light.c</file>
+      <file>$PROJ_DIR$\src\oled.c</file>
+      <file>$PROJ_DIR$\src\pca9532.c</file>
+      <file>$PROJ_DIR$\src\rgb.c</file>
+      <file>$PROJ_DIR$\src\rotary.c</file>
+      <file>$PROJ_DIR$\src\temp.c</file>
+      <file>$PROJ_DIR$\src\uart2.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart2.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\font5x7.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\light.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\joystick.__cstat.et</file>
+      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\system_LPC13xx.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\flash.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
       <file>$PROJ_DIR$\Debug\Obj\flash.o</file>
       <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\Debug\Obj\temp.pbi</file>
@@ -105,7 +105,7 @@
       <outputs>
         <tool>
           <name>IARCHIVE</name>
-          <file> 21</file>
+          <file> 12</file>
         </tool>
       </outputs>
     </file>
@@ -114,15 +114,15 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 27</file>
+          <file> 18</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 2</file>
+          <file> 75</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 72</file>
+          <file> 50</file>
         </tool>
       </outputs>
       <inputs>
@@ -141,17 +141,17 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 4</file>
+          <file> 80</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 22</file>
+          <file> 13</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 71 70</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 49 48</file>
         </tool>
       </inputs>
     </file>
@@ -160,21 +160,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 13</file>
+          <file> 4</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 37</file>
+          <file> 28</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 26</file>
+          <file> 17</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 87 3 80 15 47 65 31</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 87 81 58 6 38 43 22</file>
         </tool>
       </inputs>
     </file>
@@ -183,21 +183,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9</file>
+          <file> 0</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 20</file>
+          <file> 11</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 28</file>
+          <file> 19</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 87 74</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 87 52</file>
         </tool>
       </inputs>
     </file>
@@ -206,21 +206,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 43</file>
+          <file> 34</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 24</file>
+          <file> 15</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 7</file>
+          <file> 78</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 92</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 92</file>
         </tool>
       </inputs>
     </file>
@@ -229,21 +229,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 77</file>
+          <file> 55</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 11</file>
+          <file> 2</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 10</file>
+          <file> 1</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 71 30</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 49 21</file>
         </tool>
       </inputs>
     </file>
@@ -252,21 +252,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 75</file>
+          <file> 53</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 6</file>
+          <file> 76</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 12</file>
+          <file> 3</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 87 19</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 87 10</file>
         </tool>
       </inputs>
     </file>
@@ -275,11 +275,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 46</file>
+          <file> 37</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 41</file>
+          <file> 32</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -289,7 +289,7 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 3 80 15 48 87 71 85 17</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 81 58 6 39 87 49 85 8</file>
         </tool>
       </inputs>
     </file>
@@ -302,7 +302,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 81</file>
+          <file> 59</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -312,7 +312,7 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 87 32</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 87 23</file>
         </tool>
       </inputs>
     </file>
@@ -321,11 +321,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64</file>
+          <file> 42</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 34</file>
+          <file> 25</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -335,7 +335,7 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 14</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 5</file>
         </tool>
       </inputs>
     </file>
@@ -344,21 +344,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 39</file>
+          <file> 30</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 63</file>
+          <file> 41</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 44</file>
+          <file> 35</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 69</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 47</file>
         </tool>
       </inputs>
     </file>
@@ -367,7 +367,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 45</file>
+          <file> 36</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -375,13 +375,13 @@
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 38</file>
+          <file> 29</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 48 73</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 39 51</file>
         </tool>
       </inputs>
     </file>
@@ -390,21 +390,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 0</file>
+          <file> 74</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 79</file>
+          <file> 57</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 16</file>
+          <file> 7</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29 66 36 76 42 18 1 35 33 83 67 23 8 25 68 5 78 87 48 40 62</file>
+          <file> 20 44 27 54 33 9 73 26 24 83 45 14 77 16 46 79 56 87 39 31 40</file>
         </tool>
       </inputs>
     </file>
@@ -412,24 +412,15 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
       <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
       <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
       <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$PROJ_DIR$\Release\Obj\led7seg.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\rotary.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\acc.pbi</file>
-      <file>$PROJ_DIR$\Release\Exe\Lib_EaBaseBoard.out</file>
-      <file>$PROJ_DIR$\Release\Obj\flash.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\temp.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\uart2.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\eeprom.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\acc.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\rgb.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
       <file>$PROJ_DIR$\src\font5x7.c</file>
       <file>$PROJ_DIR$\src\flash.c</file>
       <file>$PROJ_DIR$\src\eeprom.c</file>
@@ -443,6 +434,19 @@
       <file>$PROJ_DIR$\src\rotary.c</file>
       <file>$PROJ_DIR$\src\temp.c</file>
       <file>$PROJ_DIR$\src\uart2.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\Release\Obj\rotary.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\led7seg.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\acc.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\Lib_EaBaseBoard.out</file>
+      <file>$PROJ_DIR$\Release\Obj\flash.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\temp.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\uart2.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\eeprom.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\acc.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\rgb.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\oled.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\pca9532.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\uart2.pbi</file>
@@ -460,17 +464,13 @@
       <file>$PROJ_DIR$\Release\Obj\temp.__cstat.et</file>
       <file>$PROJ_DIR$\Release\Obj\light.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\joystick.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 11</file>
+          <file> 28</file>
         </tool>
       </outputs>
     </file>
@@ -479,11 +479,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 38</file>
+          <file> 42</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 44</file>
+          <file> 48</file>
         </tool>
       </outputs>
     </file>
@@ -492,11 +492,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 39</file>
+          <file> 43</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 12</file>
+          <file> 29</file>
         </tool>
       </outputs>
     </file>
@@ -505,17 +505,17 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 15</file>
+          <file> 32</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 42</file>
+          <file> 46</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 6 50 51 7 2 0 49 3 1 5 4 48</file>
+          <file> 4 8 24 5 0 22 7 1 23 3 2 6</file>
         </tool>
       </inputs>
     </file>
@@ -524,11 +524,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 10</file>
+          <file> 27</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 16</file>
+          <file> 33</file>
         </tool>
       </outputs>
     </file>
@@ -537,11 +537,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 47</file>
+          <file> 51</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 40</file>
+          <file> 44</file>
         </tool>
       </outputs>
     </file>
@@ -550,11 +550,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 8</file>
+          <file> 26</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 35</file>
+          <file> 39</file>
         </tool>
       </outputs>
     </file>
@@ -563,11 +563,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 46</file>
+          <file> 50</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 34</file>
+          <file> 38</file>
         </tool>
       </outputs>
     </file>
@@ -576,17 +576,17 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 31</file>
+          <file> 35</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 43</file>
+          <file> 47</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 49 50 3 6 1 2 0 51 5 4</file>
+          <file> 7 8 1 4 23 0 22 24 3 2</file>
         </tool>
       </inputs>
     </file>
@@ -595,46 +595,7 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 32</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 41</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\rgb.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 37</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\rotary.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 9</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
           <file> 36</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\temp.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 13</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -643,15 +604,54 @@
       </outputs>
     </file>
     <file>
+      <name>$PROJ_DIR$\src\rgb.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 34</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 41</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\rotary.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 40</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\temp.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 30</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 49</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
       <name>$PROJ_DIR$\src\uart2.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 33</file>
+          <file> 37</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 14</file>
+          <file> 31</file>
         </tool>
       </outputs>
     </file>

@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-1954406669
+Checksum=1141504481
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -98,13 +98,7 @@ ShowTimeSum=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.160.3" 0 0 1 "" 0 ""
-Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.153.3" 0 0 1 "" 0 ""
-Bp2=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.146.3" 0 0 1 "" 0 ""
-Bp3=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.139.3" 0 0 1 "" 0 ""
-Bp4=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.132.3" 0 0 1 "" 0 ""
-Bp5=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.169.3" 0 0 1 "" 0 ""
-Count=6
+Count=0
 [Interrupts]
 Enabled=1
 [MemConfig]
@@ -135,12 +129,13 @@ LoggingEnabled=_ 0
 LogFile=_ ""
 [Aliases]
 A0=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\IAR\HAL_CM3.s" ""
-A1=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
-A2=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
-A3=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
-A4=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
-A5=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7_lpc1343\projeto_alunos\CMSIS_RTOS_IAR_750\Examples\src\example_board_demo.c" "C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_board_demo.c"
-Count=6
+A1=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\rt_CMSIS.c" ""
+A2=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
+A3=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
+A4=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
+A5=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
+A6=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7_lpc1343\projeto_alunos\CMSIS_RTOS_IAR_750\Examples\src\example_board_demo.c" "C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_board_demo.c"
+Count=7
 SuppressDialog=1
 [Simulator]
 Freq=10000000
