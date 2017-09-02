@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-537740811
+Checksum=20267330
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -98,7 +98,14 @@ ShowTimeSum=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.50.3" 0 0 1 "" 0 ""
+Bp1=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.58.3" 0 0 1 "" 0 ""
+Bp2=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.44.3" 0 0 1 "" 0 ""
+Bp3=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.38.3" 0 0 1 "" 0 ""
+Bp4=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.32.3" 0 0 1 "" 0 ""
+Bp5=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.26.3" 0 0 1 "" 0 ""
+Bp6=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.20.3" 0 0 1 "" 0 ""
+Count=7
 [Interrupts]
 Enabled=1
 [MemConfig]
