@@ -57,6 +57,7 @@ bool hasValidKey = false;
 bool test1Loaded = false;
 bool test2Loaded = false;
 
+//Entre 0 e 255 existem 54 primos, sendo o ultimo 251
 #define PRIME_LIST_SIZE 54
 #define EMPTY 0x00
 #define FAILURE 0xFF
@@ -81,7 +82,7 @@ osThreadId id_thread_generate_key;
 osThreadId id_thread_decipher_key;
 osThreadId id_thread_verify_first_test_digit;
 osThreadId id_thread_verify_second_test_digit;
-osThreadId id_thread_write_key;
+osThreadId id_thread_print_key;
 osThreadId id_thread_validate_key;
 
 //************************
@@ -183,7 +184,7 @@ void thread_decipher_key(void const *args){
         yield;
         continue;
       }
-      memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &current_elem, MSG_SIZE);
+      memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &current_elem, sizeof(msg_pipe_elem_t));
       hasDecipheredMsg = true;
       processedMessage = false;
     }
@@ -304,7 +305,7 @@ void thread_verify_second_test_digit(void const *args){
 osThreadDef(thread_verify_second_test_digit, osPriorityNormal, 1, 0);
 
 //Thread para escrever na saida chave gerada
-void thread_write_key(void const *args){
+void thread_print_key(void const *args){
   msg_pipe_elem_t current_elem;
   while(!hasValidKey){
     if(!(hasVerifiedTest1 && hasVerifiedTest2)){
@@ -321,8 +322,8 @@ void thread_write_key(void const *args){
     printf("\n");
     printf("Message Bytes: \n");
     for(int i = 0; i < MSG_SIZE; i++){
-      if(i % 8 == 0) printf("    ");
-      printf("0x%02x ", current_elem.deciphered_msg[i]);
+      if(i % 8 == 0) printf("    0x ");
+      printf("%02x ", current_elem.deciphered_msg[i]);
       if(i % 8 == 7) printf("\n");
     }
     printf("Test 1: "); printf(current_elem.firstTestResult  ? "passed\n" : "failed\n");
@@ -332,9 +333,9 @@ void thread_write_key(void const *args){
     hasVerifiedTest2 = false;
     yield;
   }
-  osThreadTerminate(id_thread_write_key);
+  osThreadTerminate(id_thread_print_key);
 }
-osThreadDef(thread_write_key, osPriorityNormal, 1, 0);
+osThreadDef(thread_print_key, osPriorityNormal, 1, 0);
 
 //Thread para testar ultimo digito verificador
 void thread_validate_key(void const *args){
@@ -361,7 +362,7 @@ int main(int n_args, char** args){
   id_thread_decipher_key =             osThreadCreate(osThread(thread_decipher_key),             NULL);
   id_thread_verify_first_test_digit =  osThreadCreate(osThread(thread_verify_first_test_digit),  NULL);
   id_thread_verify_second_test_digit = osThreadCreate(osThread(thread_verify_second_test_digit), NULL);
-  id_thread_write_key =                osThreadCreate(osThread(thread_write_key),                NULL);
+  id_thread_print_key =                osThreadCreate(osThread(thread_print_key),                NULL);
   id_thread_validate_key =             osThreadCreate(osThread(thread_validate_key),             NULL);
   
   //************************
