@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-107084454
+Checksum=-1148640622
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -98,7 +98,8 @@ ShowTimeSum=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.447.3" 0 0 1 "" 0 ""
+Count=1
 [Interrupts]
 Enabled=1
 [MemConfig]

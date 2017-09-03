@@ -53,10 +53,17 @@ bool hasGeneratedKey = false;
 bool hasDecipheredMsg = false;
 bool hasVerifiedTest1 = false;
 bool hasVerifiedTest2 = false;
-bool hasValidKey = false;
+bool hasPrinted = false;
+bool hasValidated = false;
+
+bool foundValidKey = false;
+bool threadFailed = false;
 
 bool test1Loaded = false;
 bool test2Loaded = false;
+
+bool printLoaded = false;
+bool validationLoaded = false;
 
 //Entre 0 e 255 existem 54 primos, sendo o ultimo 251
 #define PRIME_LIST_SIZE 54
@@ -74,6 +81,7 @@ uint8_t prime_list[PRIME_LIST_SIZE] = {0};
 //DEFINICOES DO SISTEMA * *
 //*********************** *
 //*************************
+#define RUNNING !(foundValidKey || threadFailed)
 #define yield osThreadYield()
 
 //************************
@@ -138,16 +146,25 @@ uint8_t getPrime(size_t index){
 //Thread para geração de chaves
 void thread_generate_key(void const *args){
   size_t p_index = 0;
-  while(!hasValidKey){
+  while(RUNNING){
     if(hasGeneratedKey){
       yield;
       continue;
     }
     msg_pipe_elem_t *msg_st_ptr = &(msgInStage(PIPE_STG_GENERATED));
+
     uint8_t prev_prime = getPrime(p_index++);
-    if(prev_prime == FAILURE) break;
+    if(prev_prime == FAILURE) {
+      threadFailed = true;
+      break;
+    }
+
     uint8_t key = getPrime(p_index);
-    if(key == FAILURE) break;
+    if(key == FAILURE) {
+      threadFailed = true;
+      break;
+    }
+
     msg_st_ptr->prev_prime = prev_prime;
     msg_st_ptr->key = key;
     msg_st_ptr->hasKey = true;
@@ -161,23 +178,22 @@ osThreadDef(thread_generate_key, osPriorityNormal, 1, 0);
 //Thread para decifrar chaves
 void thread_decipher_key(void const *args){
   bool processedMessage = false;
-  msg_pipe_elem_t current_elem;
-  while(!hasValidKey){
+  msg_pipe_elem_t currentElem;
+  while(RUNNING){
     if(!processedMessage){
       if(!hasGeneratedKey){
         yield;
         continue;
       }
-      memcpy(&current_elem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(msg_pipe_elem_t));
+      memcpy(&currentElem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(msg_pipe_elem_t));
       hasGeneratedKey = false;
       //---
-      uint8_t key =  current_elem.key;
+      uint8_t key =  currentElem.key;
       for(int i = 0; i < MSG_SIZE; i++){
-        current_elem.deciphered_msg[i] = isOdd(i) ? hashed_msg[i] - key : hashed_msg[i] + key;
-        if(i%8 == 7) yield;
+        currentElem.deciphered_msg[i] = isOdd(i) ? hashed_msg[i] - key : hashed_msg[i] + key;
       }
       //---
-      current_elem.hasMsg = true;
+      currentElem.hasMsg = true;
       processedMessage = true;
     } 
     if(processedMessage){
@@ -185,7 +201,7 @@ void thread_decipher_key(void const *args){
         yield;
         continue;
       }
-      memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &current_elem, sizeof(msg_pipe_elem_t));
+      memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(msg_pipe_elem_t));
       hasDecipheredMsg = true;
       processedMessage = false;
     }
@@ -198,14 +214,14 @@ osThreadDef(thread_decipher_key, osPriorityNormal, 1, 0);
 //Thread para testar penultimo digito verificador
 void thread_verify_first_test_digit(void const *args){
   bool verifiedByte = false;
-  msg_pipe_elem_t current_elem;
-  while(!hasValidKey){
+  msg_pipe_elem_t currentElem;
+  while(RUNNING){
     if(!verifiedByte){ 
       if(!hasDecipheredMsg){
         yield;
         continue;
       }
-      memcpy(&current_elem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
+      memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
       test1Loaded = true;
       if(test2Loaded){
         hasDecipheredMsg = false;
@@ -213,11 +229,11 @@ void thread_verify_first_test_digit(void const *args){
         test2Loaded = false;
       }
       //---
-      uint8_t testByte = current_elem.deciphered_msg[TEST_1_INDEX];
-      uint8_t halfKey = current_elem.key>>1;
-      current_elem.firstTestResult = halfKey == testByte;
+      uint8_t testByte = currentElem.deciphered_msg[TEST_1_INDEX];
+      uint8_t halfKey = currentElem.key>>1;
+      currentElem.firstTestResult = halfKey == testByte;
       //---
-      current_elem.hasFirstTest = true;
+      currentElem.hasFirstTest = true;
       verifiedByte = true;
     } 
     if(verifiedByte){ 
@@ -226,19 +242,19 @@ void thread_verify_first_test_digit(void const *args){
         continue;
       }
       /** Perigo de concorrencia
-      current_elem.secondTestResult = msgInStage(PIPE_STG_VERIFIED).secondTestResult;
-      current_elem.hasSecondTest = msgInStage(PIPE_STG_VERIFIED).hasSecondTest;
+      currentElem.secondTestResult = msgInStage(PIPE_STG_VERIFIED).secondTestResult;
+      currentElem.hasSecondTest = msgInStage(PIPE_STG_VERIFIED).hasSecondTest;
 
-      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &current_elem, MSG_SIZE);
+      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
       **/
       msg_pipe_elem_t* msg_st_ptr = &(msgInStage(PIPE_STG_VERIFIED));
-      msg_st_ptr->key = current_elem.key;
-      msg_st_ptr->prev_prime = current_elem.prev_prime;
-      msg_st_ptr->hasKey = current_elem.hasKey;
-      memcpy(msg_st_ptr->deciphered_msg, current_elem.deciphered_msg, MSG_SIZE);
-      msg_st_ptr->hasMsg = current_elem.hasMsg;
-      msg_st_ptr->firstTestResult = current_elem.firstTestResult;
-      msg_st_ptr->hasFirstTest = current_elem.hasFirstTest;
+      msg_st_ptr->key = currentElem.key;
+      msg_st_ptr->prev_prime = currentElem.prev_prime;
+      msg_st_ptr->hasKey = currentElem.hasKey;
+      memcpy(msg_st_ptr->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
+      msg_st_ptr->hasMsg = currentElem.hasMsg;
+      msg_st_ptr->firstTestResult = currentElem.firstTestResult;
+      msg_st_ptr->hasFirstTest = currentElem.hasFirstTest;
       
       hasVerifiedTest1 = true;
       verifiedByte = false;
@@ -252,14 +268,14 @@ osThreadDef(thread_verify_first_test_digit, osPriorityNormal, 1, 0);
 //Thread para testar ultimo digito verificador
 void thread_verify_second_test_digit(void const *args){
   bool verifiedByte = false;
-  msg_pipe_elem_t current_elem;
-  while(!hasValidKey){
+  msg_pipe_elem_t currentElem;
+  while(RUNNING){
     if(!verifiedByte){ 
       if(!hasDecipheredMsg){
         yield;
         continue;
       }
-      memcpy(&current_elem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
+      memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
       test2Loaded = true;
       if(test1Loaded){
         hasDecipheredMsg = false;
@@ -267,13 +283,13 @@ void thread_verify_second_test_digit(void const *args){
         test2Loaded = false;
       }
       //---
-      uint8_t testByte = current_elem.deciphered_msg[TEST_2_INDEX];
-      uint16_t squaredKey = current_elem.key;
+      uint8_t testByte = currentElem.deciphered_msg[TEST_2_INDEX];
+      uint16_t squaredKey = currentElem.key;
       squaredKey *= squaredKey;
-      uint8_t prevPrime = current_elem.prev_prime;
-      current_elem.secondTestResult = squaredKey/prevPrime == testByte;
+      uint8_t prevPrime = currentElem.prev_prime;
+      currentElem.secondTestResult = squaredKey/prevPrime == testByte;
       //---
-      current_elem.hasSecondTest = true;
+      currentElem.hasSecondTest = true;
       verifiedByte = true;
     } 
     if(verifiedByte){ 
@@ -282,19 +298,19 @@ void thread_verify_second_test_digit(void const *args){
         continue;
       }
       /** Perigo de concorrencia
-      current_elem.firstTestResult = msgInStage(PIPE_STG_VERIFIED).firstTestResult;
-      current_elem.hasFirstTest = msgInStage(PIPE_STG_VERIFIED).hasFirstTest;
+      currentElem.firstTestResult = msgInStage(PIPE_STG_VERIFIED).firstTestResult;
+      currentElem.hasFirstTest = msgInStage(PIPE_STG_VERIFIED).hasFirstTest;
 
-      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &current_elem, MSG_SIZE);
+      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
       **/
       msg_pipe_elem_t* msg_st_ptr = &(msgInStage(PIPE_STG_VERIFIED));
-      msg_st_ptr->key = current_elem.key;
-      msg_st_ptr->prev_prime = current_elem.prev_prime;
-      msg_st_ptr->hasKey = current_elem.hasKey;
-      memcpy(msg_st_ptr->deciphered_msg, current_elem.deciphered_msg, MSG_SIZE);
-      msg_st_ptr->hasMsg = current_elem.hasMsg;
-      msg_st_ptr->secondTestResult = current_elem.secondTestResult;
-      msg_st_ptr->hasSecondTest = current_elem.hasSecondTest;
+      msg_st_ptr->key = currentElem.key;
+      msg_st_ptr->prev_prime = currentElem.prev_prime;
+      msg_st_ptr->hasKey = currentElem.hasKey;
+      memcpy(msg_st_ptr->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
+      msg_st_ptr->hasMsg = currentElem.hasMsg;
+      msg_st_ptr->secondTestResult = currentElem.secondTestResult;
+      msg_st_ptr->hasSecondTest = currentElem.hasSecondTest;
       
       hasVerifiedTest2 = true;
       verifiedByte = false;
@@ -307,34 +323,50 @@ osThreadDef(thread_verify_second_test_digit, osPriorityNormal, 1, 0);
 
 //Thread para escrever na saida chave gerada
 void thread_print_key(void const *args){
-  msg_pipe_elem_t current_elem;
-  while(!hasValidKey){
-    if(!(hasVerifiedTest1 && hasVerifiedTest2)){
-      yield;
-      continue;
+  bool waitingValidation = false;
+  msg_pipe_elem_t currentElem;
+  while(RUNNING){
+    if(!waitingValidation){
+      if(!(hasVerifiedTest1 && hasVerifiedTest2)){
+        yield;
+        continue;
+      }
+      memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(msg_pipe_elem_t));
+      
+      printLoaded = true;
+      if(validationLoaded){
+          hasVerifiedTest1 = false;
+          hasVerifiedTest2 = false;
+          printLoaded = false;
+          validationLoaded = false;
+      }
+      
+      //---
+      printf("--------------------\n");
+      printf("Key: 0x%02X\n", currentElem.key);
+      printf("Printable chars: ");
+      for(int i = 0; i < MSG_SIZE-2; i++)
+        if(isprint(currentElem.deciphered_msg[i])) printf("%c", currentElem.deciphered_msg[i]);
+      printf("\n");
+      printf("Message Bytes: \n");
+      for(int i = 0; i < MSG_SIZE; i++){
+        if(i % 8 == 0) printf("    0x ");
+        printf("%02X ", currentElem.deciphered_msg[i]);
+        if(i % 8 == 7) printf("\n");
+      }
+      printf("Test 1: "); printf(currentElem.firstTestResult  ? "passed\n" : "failed\n");
+      printf("Test 2: "); printf(currentElem.secondTestResult ? "passed\n" : "failed\n");
+      printf("\n");
+      
+      hasPrinted = true;
+      waitingValidation = true;
     }
-    memcpy(&current_elem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(msg_pipe_elem_t));
-    
-    printf("--------------------\n");
-    printf("Key: 0x%02x\n", current_elem.key);
-    printf("Printable chars: ");
-    for(int i = 0; i < MSG_SIZE-2; i++)
-      if(isprint(current_elem.deciphered_msg[i])) printf("%c", current_elem.deciphered_msg[i]);
-    printf("\n");
-    printf("Message Bytes: \n");
-    for(int i = 0; i < MSG_SIZE; i++){
-      if(i % 8 == 0) printf("    0x ");
-      printf("%02x ", current_elem.deciphered_msg[i]);
-      if(i % 8 == 7) printf("\n");
+    if(waitingValidation){
+      if(hasValidated){
+        waitingValidation = false;
+        hasValidated = false;
+      }
     }
-    printf("Test 1: "); printf(current_elem.firstTestResult  ? "passed\n" : "failed\n");
-    printf("Test 2: "); printf(current_elem.secondTestResult ? "passed\n" : "failed\n");
-    printf("\n");
-    //---
-    //Enquanto não existe validação
-    hasVerifiedTest1 = false;
-    hasVerifiedTest2 = false;
-    //---
     yield;
   }
   osThreadTerminate(id_thread_print_key);
@@ -343,7 +375,39 @@ osThreadDef(thread_print_key, osPriorityNormal, 1, 0);
 
 //Thread para testar ultimo digito verificador
 void thread_validate_key(void const *args){
-  osThreadYield();
+  bool waitingPrinting = false;
+  bool isValid = false;
+  msg_pipe_elem_t currentElem;
+  while(RUNNING){
+    if(!waitingPrinting){
+      if(!(hasVerifiedTest1 && hasVerifiedTest2)){
+        yield;
+        continue;
+      }
+      memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(msg_pipe_elem_t));
+      
+      validationLoaded = true;
+      if(printLoaded){
+          hasVerifiedTest1 = false;
+          hasVerifiedTest2 = false;
+          printLoaded = false;
+          validationLoaded = false;
+      }
+      
+      isValid = currentElem.firstTestResult && currentElem.secondTestResult;
+      
+      waitingPrinting = true;
+      hasValidated = true;
+    }
+    if(waitingPrinting){
+      if(hasPrinted){
+        foundValidKey = isValid;
+        waitingPrinting = false;
+        hasPrinted = false;
+      }
+    }
+    yield;
+  }
   osThreadTerminate(id_thread_validate_key);
 }
 osThreadDef(thread_validate_key, osPriorityNormal, 1, 0);
@@ -352,7 +416,8 @@ osThreadDef(thread_validate_key, osPriorityNormal, 1, 0);
 //Código da thread Main
 //************************
 void thread_main(){
-  while(!hasValidKey) yield;
+  while(RUNNING) yield;
+  printf("finished");
 }
 
 int main(int n_args, char** args){
@@ -378,5 +443,6 @@ int main(int n_args, char** args){
   
   //Main thread
   thread_main();
+  osDelay(osWaitForever);
   return 0;
 }
