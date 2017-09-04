@@ -49,7 +49,7 @@ typedef uint8_t bool;
 #define false 0
 #define true 1
 FILE *file;
-int ticks_factor = 10000;
+int ticks_factor = 1;
 //struct para guardar estados da decodificação da mensagem por cada chave gerada
 typedef struct decodingState{
   unsigned char key;                            //chave da decodificação
@@ -256,7 +256,7 @@ void thread_generate(void const *args){
       msgTestState->key = key;
       msgTestState->hasKey = true;
       
-      fprintf(file," Thread Generate : [Key 0x%02x] %i, %i\n", msgTestState->key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Generate : [Key 0x%02x], %i, %i\n", msgTestState->key, (int)time, (int)osKernelSysTick()/ticks_factor);
       hasGeneratedKey = true;
     }
     yield;
@@ -285,7 +285,7 @@ void thread_decipher(void const *args){
     if(processedMessage && !hasDecipheredMsg){
       memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(decodingState_t));
       
-      fprintf(file," Thread Decipher : [Key 0x%02x] %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Decipher : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
       hasDecipheredMsg = true;
       processedMessage = false;
     }
@@ -333,7 +333,7 @@ void thread_test_1(void const *args){
       msgTestState->firstTestResult = currentElem.firstTestResult;
       msgTestState->hasFirstTest = currentElem.hasFirstTest;
       
-      fprintf(file," Thread Test 1   : [Key 0x%02x] %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Test 1   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
       hasVerifiedTest1 = true;
       verifiedByte = false;
     }
@@ -380,7 +380,7 @@ void thread_test_2(void const *args){
       msgTestState->secondTestResult = currentElem.secondTestResult;
       msgTestState->hasSecondTest = currentElem.hasSecondTest;
       
-      fprintf(file," Thread Test 2   : [Key 0x%02x] %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Test 2   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
       hasVerifiedTest2 = true;
       verifiedByte = false;
     }
@@ -439,7 +439,7 @@ void thread_print(void const *args){
     //Se estiver esperando a Thread Validate, e ela terminar, reseta flags de 
     //espera
     if(waitingValidation && hasValidated){
-      fprintf(file," Thread Print    : [Key 0x%02x] %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Print    : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
       waitingValidation = false;
       hasValidated = false;
     }
@@ -477,7 +477,7 @@ void thread_validate(void const *args){
     
     }
     if(waitingPrinting && hasPrinted){
-      fprintf(file," Thread Validate : [Key 0x%02x] %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      fprintf(file," Thread Validate : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
       foundValidKey = isValid;
       waitingPrinting = false;
       hasPrinted = false;
@@ -498,7 +498,11 @@ void thread_main(){
 
 int main(int n_args, char** args){
   //Inicialização de Kernel vai aqui
-  osKernelInitialize();
+  int status = osKernelInitialize();
+  if(status != osOK){
+    printf("Kernel failed to initialise. Status: %d", status);
+    return -1;
+  }
   
   //************************
   //Inicializacao de Threads aqui
@@ -520,11 +524,20 @@ int main(int n_args, char** args){
   fprintf(file,"    dateFormat x\n");
   
   //Início do SO
-  osKernelStart();
-
+  if(osKernelRunning()){
+    printf("Kernel already started");
+    return -1;
+  }
+  
+  status = osKernelStart();
+  if(status != osOK){
+    printf("Kernel failed to start. Status: %d", status);
+  }
+  
   //Main thread
   thread_main();
 
+  fclose(file);
   //************************
   //Finalização de Threads aqui
   //************************
