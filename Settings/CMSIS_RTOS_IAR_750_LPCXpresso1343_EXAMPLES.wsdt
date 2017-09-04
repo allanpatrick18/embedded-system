@@ -5,7 +5,7 @@
     
     
     
-  <CurrentConfigs><Project>Examples/Debug</Project><Project>Lib_EaBaseBoard/Release</Project><Project>Lib_MCU/Debug</Project><Project>RTX_Lib_CM/CM3_LE</Project></CurrentConfigs><CurrentProj>Examples</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <CurrentConfigs><Project>Examples/Debug</Project><Project>Lib_EaBaseBoard/Release</Project><Project>RTX_Lib_CM/CM3_LE</Project><Project>Lib_MCU/Debug</Project></CurrentConfigs><CurrentProj>Examples</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
   <Desktop>
     <Static>
       <Build>
@@ -23,11 +23,11 @@
         <Column0>259</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <TerminalIO/>
-    <Debug-Log><ColumnWidth0>21</ColumnWidth0><ColumnWidth1>1029</ColumnWidth1></Debug-Log></Static>
+    <Debug-Log><ColumnWidth0>21</ColumnWidth0><ColumnWidth1>1029</ColumnWidth1></Debug-Log><Breakpoints><PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints></Static>
     <Windows>
       
       
-    <Wnd1>
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-7086-22538</Identity>
@@ -35,11 +35,11 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/Blinky_wo_library</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_1_thread</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_2_timer</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_3_signal</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_board_demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/lab_1</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/oled_periph</ExpandedNode><ExpandedNode>Examples</ExpandedNode><ExpandedNode>Lib_EaBaseBoard</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/Blinky_wo_library</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_C_ASM</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_Gantt_diagram</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_1_thread</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_2_timer</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_RTOS_3_signal</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_board_demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/lab_1</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/oled_periph</ExpandedNode><ExpandedNode>Examples</ExpandedNode><ExpandedNode>Lib_EaBaseBoard</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1><Wnd3>
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd2>
         <Tabs>
           <Tab>
             <Identity>TabID-17835-22541</Identity>
@@ -49,20 +49,20 @@
           </Tab>
         <Tab><Identity>TabID-2599-30442</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+      <SelectedTab>0</SelectedTab></Wnd2></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_gantt.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>12</YPos2><SelStart2>1499</SelStart2><SelEnd2>1499</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_1_thread.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>8</YPos2><SelStart2>763</SelStart2><SelEnd2>763</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\lab_1_main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>13</YPos2><SelStart2>539</SelStart2><SelEnd2>539</SelEnd2></Tab><ActiveTab>2</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\libdemo.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>313</SelStart2><SelEnd2>313</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_2_timer.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>14</YPos2><SelStart2>820</SelStart2><SelEnd2>820</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_3_signal.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>8</YPos2><SelStart2>851</SelStart2><SelEnd2>851</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\libdemo.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>121</YPos2><SelStart2>330</SelStart2><SelEnd2>330</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_3_signal.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>8</YPos2><SelStart2>851</SelStart2><SelEnd2>851</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_mainC.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_asm_function.s</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc\c\DLib_Product_string.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>48</YPos2><SelStart2>1511</SelStart2><SelEnd2>1511</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\RTX_Conf_CM.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>218</YPos2><SelStart2>8333</SelStart2><SelEnd2>8333</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_gantt.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>22</YPos2><SelStart2>1875</SelStart2><SelEnd2>1875</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\lab_1_main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>115</YPos2><SelStart2>7042</SelStart2><SelEnd2>7042</SelEnd2></Tab><ActiveTab>7</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_1_thread.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>8</YPos2><SelStart2>763</SelStart2><SelEnd2>763</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_2_timer.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>14</YPos2><SelStart2>1291</SelStart2><SelEnd2>1291</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-01253908><key>iaridepm.enu1</key></Toolbar-01253908></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>479</Bottom><Right>350</Right><x>-2</x><y>-2</y><xscreen>233</xscreen><yscreen>164</yscreen><sizeHorzCX>170571</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>257687</sizeVertCX><sizeVertCY>701166</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>162</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>164</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>170571</sizeVertCX><sizeVertCY>239067</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-02823908><key>iaridepm.enu1</key></Toolbar-02823908></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>479</Bottom><Right>350</Right><x>-2</x><y>-2</y><xscreen>233</xscreen><yscreen>164</yscreen><sizeHorzCX>170571</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>257687</sizeVertCX><sizeVertCY>701166</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>162</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>164</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>170571</sizeVertCX><sizeVertCY>239067</sizeVertCY></Rect></Wnd2></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 
