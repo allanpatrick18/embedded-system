@@ -64,6 +64,8 @@ bool test2Loaded = false;
 #define FAILURE 0xFF
 #define isEmpty(n) n > EMPTY
 uint8_t prime_list[PRIME_LIST_SIZE] = {0};
+FILE *file;
+int ticks_factor = 100;
 
 //Utilidades diversas
 //*************************
@@ -143,6 +145,8 @@ void thread_generate_key(void const *args){
       yield;
       continue;
     }
+     
+    uint32_t time = osKernelSysTick()/ticks_factor;
     msg_pipe_elem_t *msg_st_ptr = &(msgInStage(PIPE_STG_GENERATED));
     uint8_t prev_prime = getPrime(p_index++);
     if(prev_prime == FAILURE) break;
@@ -152,6 +156,7 @@ void thread_generate_key(void const *args){
     msg_st_ptr->key = key;
     msg_st_ptr->hasKey = true;
     hasGeneratedKey = true;
+    fprintf(file," thread_generate_key : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osThreadTerminate(id_thread_generate_key);
@@ -162,12 +167,14 @@ osThreadDef(thread_generate_key, osPriorityNormal, 1, 0);
 void thread_decipher_key(void const *args){
   bool processedMessage = false;
   msg_pipe_elem_t current_elem;
+ 
   while(!hasValidKey){
     if(!processedMessage){
       if(!hasGeneratedKey){
         yield;
         continue;
       }
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&current_elem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(msg_pipe_elem_t));
       hasGeneratedKey = false;
       //---
@@ -179,6 +186,7 @@ void thread_decipher_key(void const *args){
       //---
       current_elem.hasMsg = true;
       processedMessage = true;
+      fprintf(file," thread_decipher_key : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(processedMessage){
       if(hasDecipheredMsg){
@@ -189,6 +197,7 @@ void thread_decipher_key(void const *args){
       hasDecipheredMsg = true;
       processedMessage = false;
     }
+     
     yield;
   }
   osThreadTerminate(id_thread_decipher_key);
@@ -205,6 +214,7 @@ void thread_verify_first_test_digit(void const *args){
         yield;
         continue;
       }
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&current_elem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
       test1Loaded = true;
       if(test2Loaded){
@@ -219,6 +229,7 @@ void thread_verify_first_test_digit(void const *args){
       //---
       current_elem.hasFirstTest = true;
       verifiedByte = true;
+       fprintf(file," thread_verify_first_test_digit : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(verifiedByte){ 
       if(hasVerifiedTest1){
@@ -243,6 +254,7 @@ void thread_verify_first_test_digit(void const *args){
       hasVerifiedTest1 = true;
       verifiedByte = false;
     }
+     
     yield;
   }
   osThreadTerminate(id_thread_verify_first_test_digit);
@@ -259,6 +271,7 @@ void thread_verify_second_test_digit(void const *args){
         yield;
         continue;
       }
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&current_elem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(msg_pipe_elem_t));
       test2Loaded = true;
       if(test1Loaded){
@@ -275,6 +288,7 @@ void thread_verify_second_test_digit(void const *args){
       //---
       current_elem.hasSecondTest = true;
       verifiedByte = true;
+      fprintf(file," thread_verify_second_test_digit : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(verifiedByte){ 
       if(hasVerifiedTest2){
@@ -299,6 +313,7 @@ void thread_verify_second_test_digit(void const *args){
       hasVerifiedTest2 = true;
       verifiedByte = false;
     }
+ 
     yield;
   }
   osThreadTerminate(id_thread_verify_second_test_digit);
@@ -313,6 +328,7 @@ void thread_print_key(void const *args){
       yield;
       continue;
     }
+     uint32_t time = osKernelSysTick()/ticks_factor;
     memcpy(&current_elem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(msg_pipe_elem_t));
     
     printf("--------------------\n");
@@ -335,6 +351,7 @@ void thread_print_key(void const *args){
     hasVerifiedTest1 = false;
     hasVerifiedTest2 = false;
     //---
+      fprintf(file," thread_print_key : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osThreadTerminate(id_thread_print_key);
@@ -343,6 +360,8 @@ osThreadDef(thread_print_key, osPriorityNormal, 1, 0);
 
 //Thread para testar ultimo digito verificador
 void thread_validate_key(void const *args){
+  uint32_t time = osKernelSysTick()/ticks_factor;
+  fprintf(file," Led1 : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
   osThreadYield();
   osThreadTerminate(id_thread_validate_key);
 }
@@ -372,6 +391,19 @@ int main(int n_args, char** args){
   //************************
   //Fim de inicializações de Threads
   //************************
+  
+  //************************
+  // inicializações  diagram Gantt
+  //************************  
+  
+  
+    file = fopen("gantt.txt","w");
+   
+    fprintf(file,"gantt\n");
+    fprintf(file,"    title A Gantt Diagram\n");
+    fprintf(file,"    dateFormat x\n");
+  
+      
   
   //Início do SO
   osKernelStart();
