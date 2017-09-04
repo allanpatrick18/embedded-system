@@ -48,7 +48,8 @@ unsigned const char hashed_msg[MSG_SIZE] = {
 typedef uint8_t bool;
 #define false 0
 #define true 1
-
+FILE *file;
+int ticks_factor = 10;
 //struct para guardar estados da decodificação da mensagem por cada chave gerada
 typedef struct decodingState{
   unsigned char key;                            //chave da decodificação
@@ -232,6 +233,8 @@ bool validateKey(decodingState_t* msgState){
 //Thread para geração de chaves
 void thread_generate(void const *args){
   size_t p_index = 0;
+  
+  uint32_t time = osKernelSysTick()/ticks_factor;
   while(RUNNING){
     if(!hasGeneratedKey){
       decodingState_t *msgTestState = &(msgInStage(PIPE_STG_GENERATED));
@@ -265,6 +268,7 @@ void thread_decipher(void const *args){
   decodingState_t currentElem;
   while(RUNNING){
     if(!processedMessage && hasGeneratedKey){
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(decodingState_t));
       hasGeneratedKey = false;
       //---
@@ -272,6 +276,7 @@ void thread_decipher(void const *args){
       //---
       currentElem.hasMsg = true;
       processedMessage = true;
+     fprintf(file," thread_decipher  : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(processedMessage && !hasDecipheredMsg){
       memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(decodingState_t));
@@ -290,6 +295,7 @@ void thread_test_1(void const *args){
   decodingState_t currentElem;
   while(RUNNING){
     if(!verifiedByte && hasDecipheredMsg){
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
       test1Loaded = true;
       if(test2Loaded){
@@ -302,6 +308,7 @@ void thread_test_1(void const *args){
       //---
       currentElem.hasFirstTest = true;
       verifiedByte = true;
+      fprintf(file," thread_test_1 : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(verifiedByte && !hasVerifiedTest1){
       /** Perigo de concorrencia
@@ -334,6 +341,7 @@ void thread_test_2(void const *args){
   decodingState_t currentElem;
   while(RUNNING){
     if(!verifiedByte && hasDecipheredMsg){
+       uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
       test2Loaded = true;
       if(test1Loaded){
@@ -346,6 +354,7 @@ void thread_test_2(void const *args){
       //---
       currentElem.hasSecondTest = true;
       verifiedByte = true;
+      fprintf(file," thread_test_2  : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     } 
     if(verifiedByte && !hasVerifiedTest2){
       /** Perigo de concorrencia
@@ -383,6 +392,7 @@ void thread_print(void const *args){
   //execute...
   while(RUNNING){
     if(!waitingValidation){
+       uint32_t time = osKernelSysTick()/ticks_factor;
       //As Threads Test 1 e Test 2 devem ter terminado de processar uma
       //instancia de decodificacao para poder imprimir resultado
       if(!(hasVerifiedTest1 && hasVerifiedTest2)){
@@ -414,6 +424,7 @@ void thread_print(void const *args){
       //termine)
       hasPrinted = true;
       waitingValidation = true;
+      fprintf(file," thread_print : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     }
     //Se estiver esperando a Thread Validate, e ela terminar, reseta flags de 
     //espera
@@ -437,6 +448,7 @@ void thread_validate(void const *args){
   bool isValid = false;
   decodingState_t currentElem;
   while(RUNNING){
+     uint32_t time = osKernelSysTick()/ticks_factor;
     if(!waitingPrinting && hasVerifiedTest1 && hasVerifiedTest2){
       memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(decodingState_t));
       
@@ -452,6 +464,7 @@ void thread_validate(void const *args){
       
       waitingPrinting = true;
       hasValidated = true;
+      fprintf(file,"thread_validate : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     }
     if(waitingPrinting && hasPrinted){
       foundValidKey = isValid;
@@ -488,13 +501,21 @@ int main(int n_args, char** args){
   
   //************************
   //Fim de inicializações de Threads
-  //************************
-  
+  //***********************  
   //Início do SO
   osKernelStart();
   
+    file = fopen("gantt.txt","w");
+   
+    fprintf(file,"gantt\n");
+    fprintf(file,"    title A Gantt Diagram\n");
+    fprintf(file,"    dateFormat x\n");
+  
   //Main thread
   thread_main();
+  
+  
+  
 
   //************************
   //Finalização de Threads aqui

@@ -6,179 +6,133 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\src\font5x7.c</file>
-      <file>$PROJ_DIR$\src\flash.c</file>
-      <file>$PROJ_DIR$\src\eeprom.c</file>
-      <file>$PROJ_DIR$\src\acc.c</file>
-      <file>$PROJ_DIR$\src\joystick.c</file>
-      <file>$PROJ_DIR$\src\led7seg.c</file>
-      <file>$PROJ_DIR$\src\light.c</file>
-      <file>$PROJ_DIR$\src\oled.c</file>
-      <file>$PROJ_DIR$\src\pca9532.c</file>
-      <file>$PROJ_DIR$\src\rgb.c</file>
-      <file>$PROJ_DIR$\src\rotary.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\pca9532.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\uart2.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\font5x7.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\light.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\font5x7.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\acc.__cstat.et</file>
+      <file>$PROJ_DIR$\Debug\Obj\eeprom.__cstat.et</file>
       <file>$PROJ_DIR$\Debug\Obj\joystick.__cstat.et</file>
+      <file>$PROJ_DIR$\src\light.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\light.pbi</file>
+      <file>$PROJ_DIR$\src\led7seg.c</file>
+      <file>$PROJ_DIR$\src\rgb.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
       <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\system_LPC13xx.h</file>
       <file>$PROJ_DIR$\Debug\Obj\flash.pbi</file>
       <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\flash.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\joystick.pbi</file>
+      <file>$PROJ_DIR$\src\eeprom.c</file>
+      <file>$PROJ_DIR$\src\flash.c</file>
+      <file>$PROJ_DIR$\src\pca9532.c</file>
+      <file>$PROJ_DIR$\src\acc.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\font5x7.pbi</file>
+      <file>$PROJ_DIR$\src\uart2.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\pca9532.pbi</file>
+      <file>$PROJ_DIR$\src\font5x7.c</file>
+      <file>$PROJ_DIR$\src\joystick.c</file>
+      <file>$PROJ_DIR$\src\oled.c</file>
+      <file>$PROJ_DIR$\src\rotary.c</file>
+      <file>$PROJ_DIR$\src\temp.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart2.o</file>
       <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\pca9532.__cstat.et</file>
+      <file>$PROJ_DIR$\Debug\Obj\light.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\led7seg.pbi</file>
+      <file>$PROJ_DIR$\inc\font_macro.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\flash.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart2.__cstat.et</file>
       <file>$PROJ_DIR$\Debug\Obj\temp.pbi</file>
+      <file>$PROJ_DIR$\inc\rgb.h</file>
+      <file>$PROJ_DIR$\inc\light.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\Lib_EaBaseBoard.a</file>
+      <file>$PROJ_DIR$\Debug\Obj\rgb.__cstat.et</file>
+      <file>$PROJ_DIR$\Debug\Obj\acc.o</file>
       <file>$PROJ_DIR$\inc\oled.h</file>
       <file>$PROJ_DIR$\Debug\Obj\pca9532.o</file>
-      <file>$PROJ_DIR$\..\Lib_MCU\inc\i2c.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\rgb.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\font_macro.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\oled.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\pca9532.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\joystick.h</file>
-      <file>$PROJ_DIR$\src\temp.c</file>
-      <file>$PROJ_DIR$\src\uart2.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\led7seg.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\acc.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\led7seg.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\uart2.__cstat.et</file>
       <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$PROJ_DIR$\inc\font5x7.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$PROJ_DIR$\inc\rgb.h</file>
       <file>$PROJ_DIR$\Debug\Obj\eeprom.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\light.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\light.h</file>
       <file>$PROJ_DIR$\Debug\Obj\acc.pbi</file>
-      <file>$PROJ_DIR$\Debug\Exe\Lib_EaBaseBoard.a</file>
+      <file>$PROJ_DIR$\..\Lib_MCU\inc\i2c.h</file>
       <file>$PROJ_DIR$\Debug\Obj\flash.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\joystick.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\oled.__cstat.et</file>
       <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\eeprom.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\font5x7.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\acc.__cstat.et</file>
-      <file>$PROJ_DIR$\..\Lib_MCU\inc\mcu_regs.h</file>
-      <file>$PROJ_DIR$\inc\led7seg.h</file>
-      <file>$PROJ_DIR$\inc\eeprom.h</file>
-      <file>$PROJ_DIR$\inc\pca9532.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\rgb.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\eeprom.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\temp.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\rotary.o</file>
-      <file>$PROJ_DIR$\..\Lib_MCU\inc\uart.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\oled.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\inc\joystick.h</file>
+      <file>$PROJ_DIR$\inc\font5x7.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\led7seg.__cstat.et</file>
       <file>$PROJ_DIR$\Debug\Obj\joystick.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\rotary.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\temp.o</file>
       <file>$PROJ_DIR$\Debug\Obj\oled.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$PROJ_DIR$\..\Lib_MCU\inc\gpio.h</file>
-      <file>$PROJ_DIR$\inc\uart2.h</file>
       <file>$PROJ_DIR$\Debug\Obj\rotary.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\rgb.o</file>
       <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
       <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\LPC13xx.h</file>
+      <file>$PROJ_DIR$\inc\pca9532.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\rgb.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\rgb.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\inc\led7seg.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
       <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
       <file>$PROJ_DIR$\inc\rotary.h</file>
-      <file>$PROJ_DIR$\inc\flash.h</file>
       <file>$PROJ_DIR$\..\Lib_MCU\inc\ssp.h</file>
+      <file>$PROJ_DIR$\inc\eeprom.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\rotary.o</file>
       <file>$PROJ_DIR$\Debug\Obj\font5x7.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\temp.h</file>
-      <file>$PROJ_DIR$\inc\acc.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\light.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\led7seg.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\rotary.__cstat.et</file>
+      <file>$PROJ_DIR$\Debug\Obj\eeprom.pbi</file>
+      <file>$PROJ_DIR$\..\Lib_MCU\inc\gpio.h</file>
+      <file>$PROJ_DIR$\..\Lib_MCU\inc\uart.h</file>
+      <file>$PROJ_DIR$\inc\flash.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$PROJ_DIR$\inc\uart2.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\oled.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\temp.o</file>
+      <file>$PROJ_DIR$\..\Lib_MCU\inc\mcu_regs.h</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\temp.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
       <file>$PROJ_DIR$\..\Lib_MCU\inc\type.h</file>
       <file>$PROJ_DIR$\Debug\Obj\uart2.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\led7seg.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\light.o</file>
+      <file>$PROJ_DIR$\inc\acc.h</file>
+      <file>$PROJ_DIR$\inc\temp.h</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\src\font5x7.c</name>
+      <name>$PROJ_DIR$\src\light.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 53</file>
+          <name>BICOMP</name>
+          <file> 5</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 15</file>
+          <name>ICCARM</name>
+          <file> 90</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 85</file>
+          <file> 30</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29</file>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 48 39</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\src\flash.c</name>
+      <name>$PROJ_DIR$\src\led7seg.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 22</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 20</file>
+          <file> 33</file>
         </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 48</file>
-        </tool>
-      </outputs>
-      <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 84 83</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\eeprom.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 43</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 63</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 52</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 27 21 11 41 73 78 57</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\acc.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 36</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 46</file>
+          <file> 88</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -188,122 +142,7 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 27 87</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\joystick.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 69</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 50</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 18</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 32</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\led7seg.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 90</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 37</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 35</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 84 56</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\light.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 88</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 16</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 44</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 27 45</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\oled.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 72</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 67</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 30</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 21 11 41 74 27 84 25 40</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\pca9532.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 26</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 12</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 31</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 27 58</file>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 68 64</file>
         </tool>
       </inputs>
     </file>
@@ -311,202 +150,91 @@
       <name>$PROJ_DIR$\src\rgb.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 77</file>
+          <name>BICOMP</name>
+          <file> 61</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 60</file>
+          <name>ICCARM</name>
+          <file> 62</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 28</file>
+          <file> 41</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 42</file>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 38</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\rotary.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 65</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 76</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 70</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 82</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>IARCHIVE</name>
-          <file> 47</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\temp.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 71</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 24</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 64</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 74 86</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\uart2.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 14</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 92</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 38</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 79 62 89 68 39 13 61 59 23 80 49 17 51 81 19 91 27 74 66 75</file>
-        </tool>
-      </inputs>
-    </file>
-  </configuration>
-  <configuration>
-    <name>Release</name>
-    <outputs>
-      <file>$PROJ_DIR$\src\font5x7.c</file>
-      <file>$PROJ_DIR$\src\flash.c</file>
-      <file>$PROJ_DIR$\src\eeprom.c</file>
-      <file>$PROJ_DIR$\src\acc.c</file>
-      <file>$PROJ_DIR$\src\joystick.c</file>
-      <file>$PROJ_DIR$\src\led7seg.c</file>
-      <file>$PROJ_DIR$\src\light.c</file>
-      <file>$PROJ_DIR$\src\oled.c</file>
-      <file>$PROJ_DIR$\src\pca9532.c</file>
-      <file>$PROJ_DIR$\src\rgb.c</file>
-      <file>$PROJ_DIR$\src\rotary.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\Release\Obj\led7seg.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\rotary.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\acc.pbi</file>
-      <file>$PROJ_DIR$\Release\Exe\Lib_EaBaseBoard.out</file>
-      <file>$PROJ_DIR$\Release\Obj\flash.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\temp.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\uart2.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\eeprom.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\acc.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\rgb.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\oled.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\pca9532.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\uart2.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\light.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\led7seg.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\rotary.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\rgb.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\font5x7.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\flash.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\joystick.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\pca9532.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\eeprom.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\oled.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\font5x7.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\temp.__cstat.et</file>
-      <file>$PROJ_DIR$\Release\Obj\light.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\joystick.pbi</file>
-      <file>$PROJ_DIR$\src\temp.c</file>
-      <file>$PROJ_DIR$\src\uart2.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-    </outputs>
-    <file>
-      <name>$PROJ_DIR$\src\font5x7.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 32</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 38</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\flash.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 33</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 19</file>
-        </tool>
-      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\src\eeprom.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 22</file>
+          <file> 73</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 46</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 36</file>
+          <file> 2</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 48 11 17 32 78 58 69</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\flash.c</name>
+      <outputs>
+        <tool>
           <name>BICOMP</name>
-          <file> 48 11 14 49 45 12 51 44 13 47 46 50</file>
+          <file> 10</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 35</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 49</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 68 76</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\pca9532.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 48 60</file>
         </tool>
       </inputs>
     </file>
@@ -515,24 +243,238 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 17</file>
+          <file> 47</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 42</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 23</file>
+          <file> 1</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 48 91</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\uart2.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 87</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 27</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 36</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 48 74 75 79</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\font5x7.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 19</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 71</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 34</file>
+        </tool>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\src\joystick.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 41</file>
+          <file> 12</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 55</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 34</file>
+          <file> 3</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 52</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\oled.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 80</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 56</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 50</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 11 17 32 74 48 68 43 53</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\rotary.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 70</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 72</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 67</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\temp.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 37</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 81</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 84</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 59 83 89 85 45 18 63 77 28 65 31 8 51 66 9 86 74 92</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>IARCHIVE</name>
+          <file> 40</file>
+        </tool>
+      </outputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\src\light.c</file>
+      <file>$PROJ_DIR$\src\led7seg.c</file>
+      <file>$PROJ_DIR$\src\rgb.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$PROJ_DIR$\src\eeprom.c</file>
+      <file>$PROJ_DIR$\src\flash.c</file>
+      <file>$PROJ_DIR$\src\pca9532.c</file>
+      <file>$PROJ_DIR$\src\acc.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\src\uart2.c</file>
+      <file>$PROJ_DIR$\src\font5x7.c</file>
+      <file>$PROJ_DIR$\src\joystick.c</file>
+      <file>$PROJ_DIR$\src\oled.c</file>
+      <file>$PROJ_DIR$\src\rotary.c</file>
+      <file>$PROJ_DIR$\src\temp.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\Release\Obj\joystick.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\Release\Obj\light.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\rotary.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\Lib_EaBaseBoard.out</file>
+      <file>$PROJ_DIR$\Release\Obj\flash.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\temp.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\uart2.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\acc.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\oled.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\pca9532.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\uart2.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\led7seg.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\led7seg.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\rotary.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\rgb.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\pca9532.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\rgb.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\font5x7.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\acc.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\flash.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\eeprom.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\font5x7.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\oled.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\temp.__cstat.et</file>
+      <file>$PROJ_DIR$\Release\Obj\joystick.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\light.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\eeprom.__cstat.et</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\src\light.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 50</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 26</file>
         </tool>
       </outputs>
     </file>
@@ -541,56 +483,11 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 15</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 29</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\light.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 40</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 28</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\oled.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 25</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
           <file> 37</file>
         </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 51 11 44 48 13 45 12 14 47 46</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\pca9532.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 26</file>
-        </tool>
         <tool>
           <name>__cstat</name>
-          <file> 35</file>
+          <file> 36</file>
         </tool>
       </outputs>
     </file>
@@ -599,42 +496,7 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 24</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 31</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\rotary.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 16</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 30</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 18</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\temp.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 20</file>
+          <file> 41</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -643,7 +505,123 @@
       </outputs>
     </file>
     <file>
+      <name>$PROJ_DIR$\src\eeprom.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 51</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25 8 16 24 17 9 21 18 3 20 23 19</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\flash.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 44</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\pca9532.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 34</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 40</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\acc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 32</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
       <name>$PROJ_DIR$\src\uart2.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 31</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\font5x7.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 42</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\joystick.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 49</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 22</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\oled.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 47</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 21 8 18 25 3 17 9 16 20 23</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\rotary.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
@@ -651,7 +629,29 @@
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 21</file>
+          <file> 38</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\temp.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 30</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 28</file>
         </tool>
       </outputs>
     </file>
