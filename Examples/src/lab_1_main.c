@@ -107,74 +107,100 @@ uint8_t primeList[PRIME_LIST_SIZE] = {0};
 //*************************
 //Utilidades diversas
 #define RUNNING !(foundValidKey || threadFailed)
-#define isOdd(n) (n%2)
+#define isEven(n) (n%2)
 
 //************************
 //Funções Auxiliares
-
+//retorna um n-esimo numero primeiro por index
 uint8_t getPrime(size_t index){
+  //retorna FAILURE se indice for maior que a lista de primos
   if(index > PRIME_LIST_SIZE)
     return FAILURE;
   
+  //recupera numero no indice e verifica se ja foi calculado - 
+  //caso tenha sido, retorne-o
   uint8_t prime = primeList[index];
   if(isEmpty(prime))
     return prime;
   
+  //se for o primeiro, inicialize-o com 2, o primeiro primo, e retorne
   if(index == 0){
     primeList[index] = 2;
     return 2;
   }
   
-  bool notPrime; 
-  uint8_t last_prime = primeList[index-1];
-  uint8_t next_prime;
+  //inicializacoes
+  bool notPrime;                               //flag indica que o numero possui divisor
+  uint8_t last_prime = getPrime(index-1);      //recupera da tabela primo anterior
+  uint8_t next_prime;                          //variavel para calcular primo
+  //laco externo incrementa variavel de possivel primo a cada iteração mal sucedida
   for(next_prime = last_prime+1; 
       next_prime > last_prime;
       next_prime++){
+      //reinicialização de flag após inicio ou falha (encontrou numero divisivel por outro primo)
       notPrime = false;
+      //laco interno verifica se possivel primo eh divisivel pelos primos anteriores
       for(uint8_t prevPrime_index = 0; 
           prevPrime_index < index;
           prevPrime_index++){
           uint8_t divisor = getPrime(prevPrime_index);
+          //verifica se eh divisivel por outro primo
           if(next_prime%divisor == 0){
+            //caso seja divisivel, nao eh primo, entao deve-se terminar laco 
+            //interno e testar outro numero pelo laco externo
             notPrime = true;
             break;
           }
-          yield;
       }
+      //caso nao tenho encontrado nenhum divisor pelos outros primos, 
+      //eh primo, e finaliza laco externo
       if(!notPrime) break;
   }
   
+  //Se não encontrar primo, houve falha -
+  //indique na tabela e retorne a falha
   if(notPrime){
     primeList[index] = FAILURE;
     return FAILURE;
   }
   
+  //Se encontrar primo, atualiza a tabela e retorna valor encontrado
   primeList[index] = next_prime;
   return next_prime;
 }
 
+//decifra mensagem com chave
 void decipherMsg(decodingState_t* msgState){
+  //decifra apenas se possuir chave
+  if(!msgState->hasKey)
+    return;
   unsigned char* msg = msgState->deciphered_msg;
   uint8_t key = msgState->key;
+  //soma chave quando indice do byte eh par, e subtrai quando impar
+  //(Obs.: Indices a partir de 1, não de 0)
   for(int i = 0; i < MSG_SIZE; i++){
-    msg[i] = isOdd(i) ? hashed_msg[i] - key : hashed_msg[i] + key;
+    msg[i] = isEven(i) ? hashed_msg[i] + key : hashed_msg[i] - key;
   }
 }
 
+//realiza teste no penultimo byte da mensagem decifrada
 bool verifyFirstTest(decodingState_t* msgState){
-    uint8_t testByte = msgState->deciphered_msg[TEST_1_INDEX];
-    uint8_t key = msgState->key;
-    uint8_t halfKey = key>>1;
-    return (halfKey == testByte);
+  //byte de teste eh penultimo byte da mensagem decifrada
+  uint8_t testByte = msgState->deciphered_msg[TEST_1_INDEX];
+  uint8_t key = msgState->key;
+  uint8_t halfKey = key>>1;
+  //retorna comparacao entre metade da chave e byte de teste
+  return (halfKey == testByte);
 }
 
+//realiza teste no ultimo byte da mensagem decifrada
 bool verifySecondTest(decodingState_t* msgState){
-  uint8_t key = msgState->key; 
-  uint8_t prevPrime = msgState->prevPrime;
+  //byte de teste eh ultimo byte da mensagem decifrada
   uint8_t testByte = msgState->deciphered_msg[TEST_2_INDEX];
-  uint16_t squaredKey = key;
-  squaredKey *= squaredKey;
+  uint8_t prevPrime = msgState->prevPrime;
+  uint8_t key = msgState->key; 
+  uint16_t squaredKey = key*key;
+  //compara o quadrado da chave dividos pelo primo anterior com o byte de teste
   return ((squaredKey/prevPrime) == testByte);
 }
 
