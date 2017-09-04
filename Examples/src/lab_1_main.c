@@ -256,6 +256,7 @@ void thread_generate(void const *args){
       msgTestState->hasKey = true;
       hasGeneratedKey = true;
     }
+    fprintf(file," thread_generate  :  %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osDelay(osWaitForever);
@@ -266,9 +267,10 @@ osThreadDef(thread_generate, osPriorityNormal, 1, 0);
 void thread_decipher(void const *args){
   bool processedMessage = false;
   decodingState_t currentElem;
+   uint32_t time;
   while(RUNNING){
     if(!processedMessage && hasGeneratedKey){
-      uint32_t time = osKernelSysTick()/ticks_factor;
+      time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(decodingState_t));
       hasGeneratedKey = false;
       //---
@@ -276,13 +278,14 @@ void thread_decipher(void const *args){
       //---
       currentElem.hasMsg = true;
       processedMessage = true;
-     fprintf(file," thread_decipher  : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+     
     } 
     if(processedMessage && !hasDecipheredMsg){
       memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(decodingState_t));
       hasDecipheredMsg = true;
       processedMessage = false;
     }
+    fprintf(file," thread_decipher  :  %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }  
   osDelay(osWaitForever);
@@ -293,9 +296,10 @@ osThreadDef(thread_decipher, osPriorityNormal, 1, 0);
 void thread_test_1(void const *args){
   bool verifiedByte = false;
   decodingState_t currentElem;
+  uint32_t time;
   while(RUNNING){
     if(!verifiedByte && hasDecipheredMsg){
-      uint32_t time = osKernelSysTick()/ticks_factor;
+       time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
       test1Loaded = true;
       if(test2Loaded){
@@ -308,7 +312,7 @@ void thread_test_1(void const *args){
       //---
       currentElem.hasFirstTest = true;
       verifiedByte = true;
-      fprintf(file," thread_test_1 : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+  
     } 
     if(verifiedByte && !hasVerifiedTest1){
       /** Perigo de concorrencia
@@ -329,6 +333,7 @@ void thread_test_1(void const *args){
       hasVerifiedTest1 = true;
       verifiedByte = false;
     }
+    fprintf(file," thread_test_1 :  crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osDelay(osWaitForever);
@@ -339,9 +344,10 @@ osThreadDef(thread_test_1, osPriorityNormal, 1, 0);
 void thread_test_2(void const *args){
   bool verifiedByte = false;
   decodingState_t currentElem;
+  uint32_t time;
   while(RUNNING){
     if(!verifiedByte && hasDecipheredMsg){
-       uint32_t time = osKernelSysTick()/ticks_factor;
+      uint32_t time = osKernelSysTick()/ticks_factor;
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
       test2Loaded = true;
       if(test1Loaded){
@@ -354,7 +360,7 @@ void thread_test_2(void const *args){
       //---
       currentElem.hasSecondTest = true;
       verifiedByte = true;
-      fprintf(file," thread_test_2  : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+ 
     } 
     if(verifiedByte && !hasVerifiedTest2){
       /** Perigo de concorrencia
@@ -375,6 +381,7 @@ void thread_test_2(void const *args){
       hasVerifiedTest2 = true;
       verifiedByte = false;
     }
+    fprintf(file," thread_test_2  : crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osDelay(osWaitForever);
@@ -390,6 +397,7 @@ void thread_print(void const *args){
   decodingState_t currentElem;
   //Enquanto não houver uma falha critica e uma chave valida não for encontrada,
   //execute...
+   uint32_t time;
   while(RUNNING){
     if(!waitingValidation){
        uint32_t time = osKernelSysTick()/ticks_factor;
@@ -424,7 +432,7 @@ void thread_print(void const *args){
       //termine)
       hasPrinted = true;
       waitingValidation = true;
-      fprintf(file," thread_print : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    
     }
     //Se estiver esperando a Thread Validate, e ela terminar, reseta flags de 
     //espera
@@ -435,6 +443,7 @@ void thread_print(void const *args){
       }
     }
     //Após processamento, libera processador
+     fprintf(file," thread_print : crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   //Finaliza thread ao identificar fim de execução
@@ -447,8 +456,9 @@ void thread_validate(void const *args){
   bool waitingPrinting = false;
   bool isValid = false;
   decodingState_t currentElem;
+  uint32_t time;
   while(RUNNING){
-     uint32_t time = osKernelSysTick()/ticks_factor;
+    time = osKernelSysTick()/ticks_factor;
     if(!waitingPrinting && hasVerifiedTest1 && hasVerifiedTest2){
       memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(decodingState_t));
       
@@ -464,13 +474,15 @@ void thread_validate(void const *args){
       
       waitingPrinting = true;
       hasValidated = true;
-      fprintf(file,"thread_validate : %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    
     }
     if(waitingPrinting && hasPrinted){
       foundValidKey = isValid;
       waitingPrinting = false;
       hasPrinted = false;
     }
+     time = osKernelSysTick()/ticks_factor;
+     fprintf(file," thread_validate : crit, %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   osDelay(osWaitForever);
@@ -502,8 +514,13 @@ int main(int n_args, char** args){
   //************************
   //Fim de inicializações de Threads
   //***********************  
+  
   //Início do SO
   osKernelStart();
+  
+  //************************
+  //Init Diagram of Gantt
+  //*********************** 
   
     file = fopen("gantt.txt","w");
    
