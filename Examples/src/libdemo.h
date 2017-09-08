@@ -22,7 +22,6 @@
     static uint8_t buf[10];
     static uint32_t msTicks = 0;
     
-    
 static uint32_t getTicks(void)
 {
     return msTicks;

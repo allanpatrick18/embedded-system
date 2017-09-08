@@ -1,18 +1,18 @@
-"C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_1_thread.c"
+"D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_1_thread.c"
 -std=c99
 -ferror-limit=100
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..\Device\NXP\LPC13xx\Include
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..\Device\NXP\LPC13xx\Include
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..\Drivers\include
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..\Drivers\include
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..\Lib_EaBaseBoard\inc
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..\Lib_EaBaseBoard\inc
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..\Lib_MCU\inc
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..\Lib_MCU\inc
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\..\RTOS\RTX\INC
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\..\RTOS\RTX\INC
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -I
@@ -20,17 +20,17 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc\c
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Device\NXP\LPC13xx\Include
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Device\NXP\LPC13xx\Include
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Drivers\include
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Drivers\include
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_EaBaseBoard\inc
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_EaBaseBoard\inc
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_MCU\inc
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_MCU\inc
 -I
-C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\INC
+D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\RTOS\RTX\INC
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -D__CHAR_BITS__=8

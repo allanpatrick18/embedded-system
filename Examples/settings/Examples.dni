@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=1946385638
+Checksum=662310854
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -37,12 +37,26 @@ PcSampCYCTAP=1
 PcSampPOSTCNT=15
 PcSampIndex=0
 DataLogMode=0
-ITMportsEnable=0
-ITMportsTermIO=0
+ITMportsEnable=1
+ITMportsTermIO=1
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
 [InterruptStripe]
 Sort=1
+[Interrupts]
+Enabled=1
+[MemConfig]
+Base=1
+Manual=0
+Ddf=1
+TypeViol=0
+Stop=1
+[Simulator]
+Freq=10000000
+MultiCoreRunAll=1
+[Trace1]
+Enabled=0
+ShowSource=1
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -55,14 +69,12 @@ EventEXC=0
 EventFOLD=0
 EventLSU=0
 EventSLEEP=0
-[PowerLog]
-Title_0=I0
-Symbol_0=0 4 0
+[DataLog]
 LogEnabled=0
 GraphEnabled=0
 ShowTimeLog=1
-LiveEnabled=0
-LiveFile=PowerLogLive.log
+SumEnabled=0
+ShowTimeSum=1
 [EventLog]
 Title_0=Ch3
 Symbol_0=0 4 1
@@ -78,10 +90,6 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
-[PowerProbe]
-Frequency=10000
-Probe0=I0
-ProbeSetup0=2 1 1 2 0 0
 [InterruptLog]
 LogEnabled=0
 GraphEnabled=0
@@ -89,49 +97,6 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
-[DataLog]
-LogEnabled=0
-GraphEnabled=0
-ShowTimeLog=1
-SumEnabled=0
-ShowTimeSum=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.259.7" 0 0 1 "" 0 ""
-Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.288.7" 0 0 1 "" 0 ""
-Bp2=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.275.14" 0 0 1 "" 0 ""
-Bp3=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.240.14" 0 0 1 "" 0 ""
-Bp4=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.305.14" 0 0 1 "" 0 ""
-Bp5=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.336.7" 0 0 1 "" 0 ""
-Bp6=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.353.14" 0 0 1 "" 0 ""
-Bp7=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.383.7" 0 0 1 "" 0 ""
-Bp8=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.405.14" 0 0 1 "" 0 ""
-Bp9=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.442.7" 0 0 1 "" 0 ""
-Bp10=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.461.12" 0 0 1 "" 0 ""
-Bp11=_ 0 "STD_CODE2" "{$PROJ_DIR$\src\lab_1_main.c}.480.7" 0 0 1 "" 0 ""
-Count=12
-[Interrupts]
-Enabled=1
-[MemConfig]
-Base=1
-Manual=0
-Ddf=1
-TypeViol=0
-Stop=1
-[DriverProfiling]
-Enabled=0
-Mode=1
-Graph=0
-Symbiont=0
-Exclusions=
-[Trace1]
-Enabled=0
-ShowSource=1
-[CallStackLog]
-Enabled=0
-[CallStackStripe]
-ShowTiming=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -139,17 +104,37 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[DriverProfiling]
+Enabled=0
+Mode=1
+Graph=0
+Symbiont=0
+Exclusions=
+[CallStackLog]
+Enabled=0
+[CallStackStripe]
+ShowTiming=1
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
 [Aliases]
-A0=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\IAR\HAL_CM3.s" ""
-A1=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\rt_CMSIS.c" ""
-A2=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
-A3=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
-A4=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
-A5=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
-A6=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Lib_EaBaseBoard\src\pca9532.c" ""
-A7=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7_lpc1343\projeto_alunos\CMSIS_RTOS_IAR_750\Examples\src\example_board_demo.c" "C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_board_demo.c"
-Count=8
+A0=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso\Examples\src\example_mainC.c" "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c"
+A1=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c" "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c"
+A2=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_EaBaseBoard\src\oled.c" ""
+A3=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_MCU\src\gpio.c" ""
+A4=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_MCU\src\ssp.c" ""
+A5=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_MCU\src\timer32.c" ""
+A6=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\RTOS\RTX\SRC\HAL_CM.c" ""
+A7=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\RTOS\RTX\SRC\rt_CMSIS.c" ""
+A8=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\RTOS\RTX\SRC\rt_HAL_CM.h" ""
+A9=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
+A10=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
+A11=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
+A12=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
+A13=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\RTOS\RTX\SRC\rt_CMSIS.c" ""
+A14=_ "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
+A15=_ "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
+A16=_ "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig_C_ASM_OLED\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c" ""
+Count=17
 SuppressDialog=1
-[Simulator]
-Freq=10000000
-MultiCoreRunAll=1

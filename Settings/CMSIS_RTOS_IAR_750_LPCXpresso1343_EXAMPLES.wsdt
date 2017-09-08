@@ -5,7 +5,7 @@
     
     
     
-  <CurrentConfigs><Project>Lib_EaBaseBoard/Release</Project><Project>RTX_Lib_CM/CM3_LE</Project><Project>Lib_MCU/Debug</Project><Project>Examples/Debug</Project></CurrentConfigs><CurrentProj>Examples</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <CurrentConfigs><Project>Examples/Debug</Project><Project>Lib_EaBaseBoard/Debug</Project><Project>Lib_MCU/Debug</Project><Project>RTX_Lib_CM/CM3_LE</Project></CurrentConfigs><CurrentProj>Examples</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
   <Desktop>
     <Static>
       <Build>
@@ -20,10 +20,10 @@
           
           
           
-        <Column0>259</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>191</Column0><Column1>23</Column1><Column2>27</Column2><Column3>0</Column3></ColumnWidths>
       </Workspace>
-      <TerminalIO/>
-    <Debug-Log><ColumnWidth0>21</ColumnWidth0><ColumnWidth1>1029</ColumnWidth1></Debug-Log><Breakpoints><PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints></Static>
+      <TerminalIO><PreferedWindows><Position>4</Position><ScreenPosX>781</ScreenPosX><ScreenPosY>29</ScreenPosY><Windows/></PreferedWindows></TerminalIO>
+    <Debug-Log><ColumnWidth0>21</ColumnWidth0><ColumnWidth1>1029</ColumnWidth1></Debug-Log></Static>
     <Windows>
       
       
@@ -35,7 +35,7 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/Blinky_wo_library</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/example_Gantt_diagram</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/lab_1</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/oled_periph</ExpandedNode><ExpandedNode>Lib_EaBaseBoard</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/Blinky_wo_library</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo</ExpandedNode><ExpandedNode>&lt;ws&gt;/Example_0_Board_Demo/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Output</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Output/laboratories.out</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/lab_1</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Sources/lab_1/lab_1_main.c</ExpandedNode><ExpandedNode>&lt;ws&gt;/Examples/Startup</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky</ExpandedNode><ExpandedNode>&lt;ws&gt;/blinky/Sources</ExpandedNode><ExpandedNode>&lt;ws&gt;/oled_periph</ExpandedNode><ExpandedNode>Examples</ExpandedNode><ExpandedNode>Lib_MCU</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
@@ -55,14 +55,14 @@
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\lab_1_main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>415</YPos2><SelStart2>17799</SelStart2><SelEnd2>17799</SelEnd2></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_gantt.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>26</YPos2><SelStart2>1820</SelStart2><SelEnd2>1820</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\lab_1_main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>56</YPos2><SelStart2>2164</SelStart2><SelEnd2>2164</SelEnd2></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\libdemo.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Examples\src\example_gantt.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>40</YPos2><SelStart2>1932</SelStart2><SelEnd2>1932</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>167</YPos2><SelStart2>7413</SelStart2><SelEnd2>7413</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-02823908><key>iaridepm.enu1</key></Toolbar-02823908></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>479</Bottom><Right>350</Right><x>-2</x><y>-2</y><xscreen>233</xscreen><yscreen>164</yscreen><sizeHorzCX>170571</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>257687</sizeVertCX><sizeVertCY>701166</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>162</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>164</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>239067</sizeHorzCY><sizeVertCX>170571</sizeVertCX><sizeVertCY>239067</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-025A3908><key>iaridepm.enu1</key></Toolbar-025A3908></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>366</Bottom><Right>278</Right><x>-2</x><y>-2</y><xscreen>364</xscreen><yscreen>182</yscreen><sizeHorzCX>266471</sizeHorzCX><sizeHorzCY>265306</sizeHorzCY><sizeVertCX>204978</sizeVertCX><sizeVertCY>536443</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>275</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>277</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>403790</sizeHorzCY><sizeVertCX>266471</sizeVertCX><sizeVertCY>265306</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

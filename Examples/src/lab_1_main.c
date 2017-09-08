@@ -1,11 +1,6 @@
-#include "mcu_regs.h"
 #include "type.h"
 #include "stdio.h"
-#include "timer32.h"
-#include "pca9532.h"
 #include "cmsis_os.h"
-#include "string.h"
-#include "ctype.h"
 
 //*************************
 //*********************** *
@@ -49,7 +44,7 @@ typedef uint8_t bool;
 #define false 0
 #define true 1
 FILE *file;
-int ticks_factor = 1;
+int ticks_factor = 100;
 //struct para guardar estados da decodificação da mensagem por cada chave gerada
 typedef struct decodingState{
   unsigned char key;                            //chave da decodificação
@@ -112,6 +107,18 @@ uint8_t primeList[PRIME_LIST_SIZE] = {0};
 
 //************************
 //Funções Auxiliares
+void memcpy(void* destination, void* origin, size_t n){
+  uint8_t* d = destination;
+  uint8_t* o = origin;
+  for(size_t i = 0; i < n; i++){
+    d[i] = o[i];
+  }
+}
+
+bool isprint(char c){
+  return c >= ' ' && c <= '~'; 
+}
+
 //retorna um n-esimo numero primeiro por index
 uint8_t getPrime(size_t index){
   //retorna FAILURE se indice for maior que a lista de primos
@@ -324,12 +331,9 @@ void thread_test_1(void const *args){
 
       memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
       **/
+      
       decodingState_t* msgTestState = &(msgInStage(PIPE_STG_VERIFIED));
-      msgTestState->key = currentElem.key;
-      msgTestState->prevPrime = currentElem.prevPrime;
-      msgTestState->hasKey = currentElem.hasKey;
-      memcpy(msgTestState->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
-      msgTestState->hasMsg = currentElem.hasMsg;
+      memcpy(msgTestState, &currentElem, (sizeof(unsigned char) + sizeof(bool))*2 + MSG_SIZE);
       msgTestState->firstTestResult = currentElem.firstTestResult;
       msgTestState->hasFirstTest = currentElem.hasFirstTest;
       
@@ -365,18 +369,9 @@ void thread_test_2(void const *args){
       verifiedByte = true;
     } 
     if(verifiedByte && !hasVerifiedTest2){
-      /** Perigo de concorrencia
-      currentElem.firstTestResult = msgInStage(PIPE_STG_VERIFIED).firstTestResult;
-      currentElem.hasFirstTest = msgInStage(PIPE_STG_VERIFIED).hasFirstTest;
-
-      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
-      **/
       decodingState_t* msgTestState = &(msgInStage(PIPE_STG_VERIFIED));
-      msgTestState->key = currentElem.key;
-      msgTestState->prevPrime = currentElem.prevPrime;
-      msgTestState->hasKey = currentElem.hasKey;
-      memcpy(msgTestState->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
-      msgTestState->hasMsg = currentElem.hasMsg;
+      memcpy(msgTestState, &currentElem, (sizeof(unsigned char) + sizeof(bool))*2 + MSG_SIZE);
+      
       msgTestState->secondTestResult = currentElem.secondTestResult;
       msgTestState->hasSecondTest = currentElem.hasSecondTest;
       

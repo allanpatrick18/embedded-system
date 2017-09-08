@@ -46,6 +46,9 @@ void led3_thread(void const *args) {
       osDelay(300);
       fprintf(file," Led3 : crit, %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     }
+    
+    printf("%i\n", (int)osKernelSysTick());
+    
 }
 osThreadDef(led3_thread, osPriorityHigh, 1, 0);
  
