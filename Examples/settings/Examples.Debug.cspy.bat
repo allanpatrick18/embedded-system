@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\settings\Examples.Debug.general.xcl" --backend -f "D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\settings\Examples.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\settings\Examples.Debug.general.xcl" --backend -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\settings\Examples.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\settings\Examples.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\settings\Examples.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\settings\Examples.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\settings\Examples.Debug.driver.xcl" 
 
 @echo off 
 :end
