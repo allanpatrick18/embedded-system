@@ -68,6 +68,7 @@
       <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
       <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\laboratories.out</name>
@@ -125,11 +126,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 14 34 11 55 61 5 33 53 4 38 59 12 6 58</file>
+          <file> 14 34 11 55 61 5 33 53 4 38 59 62 12 6 58</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 38 12 11 55 34 59 61 53 4 58 14 5 33 6</file>
+          <file> 11 55 5 58 62 38 33 34 12 59 61 53 4 14 6</file>
         </tool>
       </inputs>
     </file>

@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=662310854
+Checksum=1881699050
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -43,20 +43,6 @@ ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
 [InterruptStripe]
 Sort=1
-[Interrupts]
-Enabled=1
-[MemConfig]
-Base=1
-Manual=0
-Ddf=1
-TypeViol=0
-Stop=1
-[Simulator]
-Freq=10000000
-MultiCoreRunAll=1
-[Trace1]
-Enabled=0
-ShowSource=1
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -69,12 +55,6 @@ EventEXC=0
 EventFOLD=0
 EventLSU=0
 EventSLEEP=0
-[DataLog]
-LogEnabled=0
-GraphEnabled=0
-ShowTimeLog=1
-SumEnabled=0
-ShowTimeSum=1
 [EventLog]
 Title_0=Ch3
 Symbol_0=0 4 1
@@ -97,6 +77,37 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
+[DataLog]
+LogEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+SumEnabled=0
+ShowTimeSum=1
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
+[Interrupts]
+Enabled=1
+[MemConfig]
+Base=1
+Manual=0
+Ddf=1
+TypeViol=0
+Stop=1
+[DriverProfiling]
+Enabled=0
+Mode=1
+Graph=0
+Symbiont=0
+Exclusions=
+[Trace1]
+Enabled=0
+ShowSource=1
+[CallStackLog]
+Enabled=0
+[CallStackStripe]
+ShowTiming=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -104,20 +115,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[DriverProfiling]
-Enabled=0
-Mode=1
-Graph=0
-Symbiont=0
-Exclusions=
-[CallStackLog]
-Enabled=0
-[CallStackStripe]
-ShowTiming=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Count=0
 [Aliases]
 A0=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso\Examples\src\example_mainC.c" "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c"
 A1=_ "C:\Users\DALEN\Downloads\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c" "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c"
@@ -138,3 +135,6 @@ A15=_ "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examp
 A16=_ "C:\Users\dell-workstation\Desktop\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig_C_ASM_OLED\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Examples\src\example_mainC.c" ""
 Count=17
 SuppressDialog=1
+[Simulator]
+Freq=10000000
+MultiCoreRunAll=1
