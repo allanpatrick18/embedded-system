@@ -69,6 +69,7 @@
       <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
       <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
+      <file>D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\Lib_MCU\src\i2c.c</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\laboratories.out</name>
@@ -126,11 +127,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 14 34 11 55 61 5 33 53 4 38 59 62 12 6 58</file>
+          <file> 14 47 34 11 55 61 5 33 53 4 38 59 12 6 58 2 10 0 57 60 8 37 23 27 21 28 25 32 39 29 24 30 26 22 62</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 11 55 5 58 62 38 33 34 12 59 61 53 4 14 6</file>
+          <file> 53 27 4 57 30 11 12 32 59 58 34 2 28 29 22 55 61 38 10 47 62 14 23 21 25 39 24 26 5 33 6 37 8 0 60</file>
         </tool>
       </inputs>
     </file>

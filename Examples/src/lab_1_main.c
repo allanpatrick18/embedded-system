@@ -1,4 +1,5 @@
 #include "type.h"
+#include "libdemo.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "cmsis_os.h"
@@ -31,14 +32,33 @@ osThreadId id_thread_validate;
 #define TEST_1_INDEX MSG_SIZE-2
 #define TEST_2_INDEX MSG_SIZE-1
 
+#define MESSAGE_0
+
 //mensagem codificada
+#ifdef MESSAGE_0
 unsigned const char hashed_msg[MSG_SIZE] = { 
   0x67, 0x52, 0x89, 0x4a, 0x8b, 0x4e, 0x8a, 0x09, 
   0x86, 0x4f, 0x37, 0x3c, 0x80, 0x55, 0x80, 0x4c,
   0x86, 0x57, 0x37, 0x3f, 0x78, 0x55, 0x83, 0x4e,
-  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04 //0x8b, 0xd6   
-  //??Quando penultimo e ultimo bytes são 0x8b e 0xd6 funciona??
+  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04 
 };
+#endif
+#ifdef MESSAGE_1
+unsigned const char hashed_msg[MSG_SIZE] = { 
+  0x97, 0x25, 0xa8, 0xdd, 0x96, 0x25, 0xa4, 0x34,
+  0xb6, 0x25, 0xa4, 0x2b, 0xae, 0xdd, 0x95, 0x22,
+  0xa7, 0x22, 0xb0, 0x2d, 0xb7, 0x26, 0xb2, 0x2b,
+  0x63, 0xdd, 0x74, 0xf6, 0x7c, 0xf1, 0x64, 0x06
+};
+#endif
+#ifdef MESSAGE_2
+unsigned const char hashed_msg[MSG_SIZE] = { 
+  0xa7, 0x15, 0xb8, 0xcd, 0x97, 0x0e, 0xc5, 0x18,
+  0x73, 0xf8, 0xc1, 0x16, 0xba, 0x15, 0xc7, 0xcd,
+  0x73, 0xcd, 0x73, 0xcd, 0x73, 0xcd, 0x73, 0xcd,
+  0x73, 0xcd, 0x85, 0xdd, 0x83, 0xe5, 0x7c, 0x04
+};
+#endif
 
 //definições para variaveis booleanas
 typedef uint8_t bool;
@@ -233,8 +253,9 @@ bool verifySecondTest(decodingState_t* msgState){
   uint8_t prevPrime = msgState->prevPrime;
   uint8_t key = msgState->key; 
   uint16_t squaredKey = key*key;
+  uint8_t hashedByte = squaredKey/prevPrime;
   //compara o quadrado da chave dividos pelo primo anterior com o byte de teste
-  return ((squaredKey/prevPrime) == testByte);
+  return (hashedByte == testByte);
 }
 
 //imprime o resultado de uma decodificação
@@ -318,6 +339,11 @@ void thread_generate(void const *args){
       msgTestState->prevPrime = prevPrime;
       msgTestState->key = key;
       msgTestState->hasKey = true;      //flag indica estado do estagio da pipeline (chave gerada)
+
+      osDelay(50);
+      pca_toggle(7);
+      osDelay(50);
+      pca_toggle(7);
       
       //salva tempo de processamento para Gantt
 //      fprintf(file," Thread Generate : [Key 0x%02x], %i, %i\n", msgTestState->key, (int)time, (int)osKernelSysTick()/ticks_factor);
@@ -386,6 +412,7 @@ void thread_decipher(void const *args){
       memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(decodingState_t));
       //indica fim de processamento da thread para Gantt
 //      fprintf(file," Thread Decipher : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
       gantt_times_t* holder = gantt_list;
       if(holder != NULL){
         while(holder->next != NULL && holder->key != currentElem.key)
@@ -445,6 +472,7 @@ void thread_test_1(void const *args){
       
       //indica fim de processamento da thread para Gantt
 //      fprintf(file," Thread Test 1   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
       gantt_times_t* holder = gantt_list;
       if(holder != NULL){
         while(holder->next != NULL && holder->key != currentElem.key)
@@ -507,6 +535,7 @@ void thread_test_2(void const *args){
       
       //indica fim de processamento da thread para Gantt
 //      fprintf(file," Thread Test 2   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
       gantt_times_t* holder = gantt_list;
       if(holder != NULL){
         while(holder->next != NULL && holder->key != currentElem.key)
@@ -573,6 +602,7 @@ void thread_print(void const *args){
     //espera
     if(waitingValidation && hasValidated){
 //      fprintf(file," Thread Print    : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
       gantt_times_t* holder = gantt_list;
       if(holder != NULL){
         while(holder->next != NULL && holder->key != currentElem.key)
@@ -629,6 +659,12 @@ void thread_validate(void const *args){
       //Valida chave com base nos testes realizados
       isValid = validateKey(&currentElem);
       
+      if(isValid){
+        osDelay(50);
+        pca_toggle(0);
+        osDelay(50);
+      }
+      
       //Prepara flags para passagem de estado (espera que Thread Validate 
       //termine)      
       waitingPrinting = true;
@@ -638,6 +674,7 @@ void thread_validate(void const *args){
     //espera
     if(waitingPrinting && hasPrinted){
 //      fprintf(file," Thread Validate : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
       gantt_times_t* holder = gantt_list;
       if(holder != NULL){
         while(holder->next != NULL && holder->key != currentElem.key)
@@ -663,16 +700,8 @@ osThreadDef(thread_validate, osPriorityNormal, 1, 0);
 void thread_main(){
   //Espera execução das threads
   while(RUNNING) yield;
-  
-  file = fopen("gantt.txt","w");
- 
-  fprintf(file,"gantt\n");
-  fprintf(file,"  title A Gantt Diagram\n");
-  fprintf(file,"  dateFormat x\n");
 
   print_gantt(gantt_list);
-
-  fclose(file);
 
   printf("finished");
 }
@@ -698,7 +727,19 @@ int main(int n_args, char** args){
   //************************
   //Inicializacao do Diagrama de Gantt
   //*********************** 
-  
+  file = fopen("gantt.txt","w");
+ 
+  fprintf(file,"gantt\n");
+  fprintf(file,"  title A Gantt Diagram\n");
+  fprintf(file,"  dateFormat x\n");
+
+
+  //*********************** 
+  //Inicialização PCA
+  //*********************** 
+  I2CInit( (uint32_t)I2CMASTER, 0 );
+  pca9532_init();
+
   //Início do SO
   if(osKernelRunning()){
     printf("Kernel already started");
@@ -712,6 +753,8 @@ int main(int n_args, char** args){
   
   //Main thread
   thread_main();
+  
+  fclose(file);
 
   //************************
   //Finalização de Threads aqui
