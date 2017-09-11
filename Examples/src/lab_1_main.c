@@ -447,7 +447,7 @@ void thread_print(void const *args){
     //primeiro estado interno da thread, esperando estagios anteriores enviarem mensagem
     //as Threads Test 1 e Test 2 devem ter terminado de processar uma
     //instancia de decodificacao para poder imprimir resultado
-    if(!waitingValidation && ){
+    if(!waitingValidation && hasVerifiedTest1 && hasVerifiedTest2){
       time = osKernelSysTick()/ticks_factor;            //inicia cronometro para Gantt
       //Copia uma instancia de decodificacao passada por Thread Test 1 e Test 2
       memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(decodingState_t));
