@@ -1,62 +1,11 @@
 gantt
     title A Gantt Diagram
     dateFormat x
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 71999
- thread_validate : crit, 71999, 71999
- thread_generate  :  71999, 71999
- thread_decipher  :  71999, 71999
- thread_test_1 :  crit 71999, 71999
- thread_test_2  : crit 0, 71999
- thread_print : crit 0, 719
+ Led3 : crit, 0, 2160
+ Led1 : 4, 3600
+ Led3 : crit, 2161, 4320
+ Led3 : crit, 4321, 6480
+ Led1 : 3601, 7200
+ Led3 : crit, 6481, 8640
+ Led3 : crit, 8641, 10800
+ Led1 : 7201, 10806

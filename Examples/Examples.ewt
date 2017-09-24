@@ -2183,6 +2183,12 @@
         <name>$PROJ_DIR$\src\lab_1_main.c</name>
       </file>
     </group>
+    <group>
+      <name>lab_2</name>
+      <file>
+        <name>$PROJ_DIR$\src\lab_2_main.c</name>
+      </file>
+    </group>
     <file>
       <name>$PROJ_DIR$\src\libdemo.h</name>
     </file>
