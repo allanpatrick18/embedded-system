@@ -11,6 +11,11 @@
 FILE *file_gantt;
 
 //************************
+//IDs de Mutex
+//************************
+osMutexId id_mutex_ram_lock;
+
+//************************
 //IDs de Timers
 //************************
 osTimerId id_timer_sampling;
@@ -37,13 +42,13 @@ osThreadId id_thread_export_file;
 //************************
 // vetores de
 //************************
-int8_t axis_x[64]={0};
-int8_t axis_y[64]={0};
-int8_t axis_z[64]={0};
+int8_t axis_x[64] = {0};
+int8_t axis_y[64] = {0};
+int8_t axis_z[64] = {0};
 
-int index_x =0;
-int index_y =0;
-int index_z =0;
+int index_x = 0;
+int index_y = 0;
+int index_z = 0;
 
 int8_t filtered_x;
 int8_t filtered_y;
@@ -57,8 +62,12 @@ int8_t filtered_z;
 void PIOINT2_IRQHandler(void)
 {
   if (!GPIOGetValue(PORT2, 0)){
+//    oled_clearScreen(OLED_COLOR_BLACK);
 //    printf("Joystick center\n");
-//    osSignalSet(isr_id, 0x1);
+    osSignalSet(id_thread_samples, 0x02);
+    osSignalSet(id_thread_write_ram, 0x02);
+    osSignalSet(id_thread_display_oled, 0x02);
+//    pca_toggle(1);
   }
   GPIOIntClear(2, 0);
 }
@@ -86,9 +95,9 @@ osTimerDef(timer_sampling, timer_sampling_cb);
 //Thread para geração de chaves
 void thread_samples(void const *args){
   osEvent evt;
-  int8_t queue_x[4]={0};
-  int8_t queue_y[4]={0};
-  int8_t queue_z[4]={0};
+  int8_t queue_x[4] = {0};
+  int8_t queue_y[4] = {0};
+  int8_t queue_z[4] = {0};
 
   int8_t x_off = 0;
   int8_t y_off = 0;
@@ -103,10 +112,9 @@ void thread_samples(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);     
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02){
-        osSignalWait (0x00,1000);
-      }
-      else if (evt.value.signals & 0x01){
+      if (evt.value.signals & 0x02)
+        osDelay (1000);
+      if (evt.value.signals & 0x01){
       int8_t x = 0;
       int8_t y = 0;
       int8_t z = 0;
@@ -148,9 +156,9 @@ void thread_write_ram(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);     
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02){
-        osSignalWait (0x00,1000);
-      }else if (evt.value.signals & 0x01){
+      if (evt.value.signals & 0x02)
+        osDelay (1000);
+      if (evt.value.signals & 0x01){
         index_x =(index_x+63)%64;
         index_y =(index_y+63)%64;
         index_z =(index_z+63)%64;
@@ -187,9 +195,9 @@ void thread_display_oled(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02){
-        osSignalWait (0x00,1000);
-      }else if (evt.value.signals & 0x01){ 
+      if (evt.value.signals & 0x02)
+        osDelay (1000);
+      if (evt.value.signals & 0x01){ 
         oled_clearScreen(OLED_COLOR_WHITE); 
         int last_j = ((axis_z[index_z]+128)*64)/256;
         for (int i=0 ; i< 64;i++){
@@ -229,7 +237,7 @@ osThreadDef(thread_export_file, osPriorityNormal, 1, 0);
 //************************
 
 void thread_main(){    
-  while(1) osThreadYield();
+  while(1) osDelay(osWaitForever);
   printf("finished");
 }
 
@@ -262,7 +270,7 @@ int main(int n_args, int8_t** args){
   //Inicialização de Timers aqui
   //************************
   id_timer_sampling = osTimerCreate(osTimer(timer_sampling), osTimerPeriodic, NULL);
-  osTimerStart(id_timer_sampling, 50);
+  osTimerStart(id_timer_sampling, 250);
   
   //************************
   //Inicialização de Threads aqui
