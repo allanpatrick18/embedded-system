@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Debug.general.xcl" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\aulas\EL68E_SE\install_IAR7\CMSIS_RTOS_IAR7\Lib_MCU\settings\Lib_MCU.Debug.general.xcl" --backend -f "D:\aulas\EL68E_SE\install_IAR7\CMSIS_RTOS_IAR7\Lib_MCU\settings\Lib_MCU.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\aulas\EL68E_SE\install_IAR7\CMSIS_RTOS_IAR7\Lib_MCU\settings\Lib_MCU.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\aulas\EL68E_SE\install_IAR7\CMSIS_RTOS_IAR7\Lib_MCU\settings\Lib_MCU.Debug.driver.xcl" 
 
 @echo off 
 :end

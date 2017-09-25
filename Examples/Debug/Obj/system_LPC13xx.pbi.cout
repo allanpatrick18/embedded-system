@@ -1,18 +1,18 @@
-"C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Device\NXP\LPC13xx\Source\system_LPC13xx.c"
+"C:\Users\Guilherme\Documents\GitHub\embedded-system\Device\NXP\LPC13xx\Source\system_LPC13xx.c"
 -std=c99
 -ferror-limit=100
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..\Device\NXP\LPC13xx\Include
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..\Device\NXP\LPC13xx\Include
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..\Drivers\include
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..\Drivers\include
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..\Lib_EaBaseBoard\inc
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..\Lib_EaBaseBoard\inc
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..\Lib_MCU\inc
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..\Lib_MCU\inc
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\..\RTOS\RTX\INC
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\..\RTOS\RTX\INC
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -I
@@ -20,17 +20,17 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc\c
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit
+C:\Users\Guilherme\Documents\GitHub\embedded-system
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Device\NXP\LPC13xx\Include
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Device\NXP\LPC13xx\Include
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Drivers\include
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Drivers\include
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_EaBaseBoard\inc
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_EaBaseBoard\inc
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\inc
+C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_MCU\inc
 -I
-C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\RTOS\RTX\INC
+C:\Users\Guilherme\Documents\GitHub\embedded-system\RTOS\RTX\INC
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -D__CHAR_BITS__=8

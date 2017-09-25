@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-1359544113
+Checksum=1869548732
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -43,18 +43,6 @@ ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
 [InterruptStripe]
 Sort=1
-[PowerLog]
-Title_0=I0
-Symbol_0=0 4 0
-LogEnabled=0
-GraphEnabled=0
-ShowTimeLog=1
-LiveEnabled=0
-LiveFile=PowerLogLive.log
-[PowerProbe]
-Frequency=10000
-Probe0=I0
-ProbeSetup0=2 1 1 2 0 0
 [Interrupts]
 Enabled=1
 [MemConfig]
@@ -112,9 +100,8 @@ SumSortOrder=0
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\src\example_board_demo.c}.97.1" 0 0 1 "" 0 "" 0
-Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\src\lab_2_main.c}.224.3" 0 0 1 "" 0 "" 0
-Count=2
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\src\lab_2_main.c}.56.3" 0 0 1 "" 0 "" 0
+Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -125,13 +112,14 @@ LogFile=_ ""
 [Aliases]
 A0=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\IAR\HAL_CM3.s" ""
 A1=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\RTOS\RTX\SRC\rt_CMSIS.c" ""
-A2=_ "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\src\lab_1_main.c" ""
-A3=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
-A4=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
-A5=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
-A6=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
-A7=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7_lpc1343\projeto_alunos\CMSIS_RTOS_IAR_750\Examples\src\example_board_demo.c" "C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_board_demo.c"
-Count=8
+A2=_ "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Examples\src\lab_2_main.c" ""
+A3=_ "C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\src\lab_1_main.c" ""
+A4=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\IAR\startup_LPC13xx.s" ""
+A5=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Device\NXP\LPC13xx\Source\system_LPC13xx.c" ""
+A6=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\basic_timer.c" ""
+A7=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Examples\src\demo.h" ""
+A8=_ "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7_lpc1343\projeto_alunos\CMSIS_RTOS_IAR_750\Examples\src\example_board_demo.c" "C:\Users\dell-workstation\Desktop\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Examples\src\example_board_demo.c"
+Count=9
 SuppressDialog=1
 [DriverProfiling]
 Enabled=0

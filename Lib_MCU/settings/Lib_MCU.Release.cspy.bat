@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Release.general.xcl" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Release.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_MCU\settings\Lib_MCU.Release.general.xcl" --backend -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_MCU\settings\Lib_MCU.Release.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Release.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\settings\Lib_MCU.Release.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_MCU\settings\Lib_MCU.Release.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Guilherme\Documents\GitHub\embedded-system\Lib_MCU\settings\Lib_MCU.Release.driver.xcl" 
 
 @echo off 
 :end

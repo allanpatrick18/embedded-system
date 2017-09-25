@@ -1,10 +1,10 @@
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armproc.dll" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armproc.dll" 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armsim2.dll" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armsim2.dll" 
 
-"C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Lib_MCU\Debug\Exe\Lib_MCU.a" 
+"D:\aulas\EL68E_SE\install_IAR7\CMSIS_RTOS_IAR7\Lib_MCU\Debug\Exe\Lib_MCU.a" 
 
---plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armbat.dll" 
+--plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
 
 
 

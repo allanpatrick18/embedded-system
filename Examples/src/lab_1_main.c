@@ -1,11 +1,8 @@
-#include "mcu_regs.h"
 #include "type.h"
+#include "libdemo.h"
 #include "stdio.h"
-#include "timer32.h"
-#include "pca9532.h"
+#include "stdlib.h"
 #include "cmsis_os.h"
-#include "string.h"
-#include "ctype.h"
 
 //*************************
 //*********************** *
@@ -35,21 +32,43 @@ osThreadId id_thread_validate;
 #define TEST_1_INDEX MSG_SIZE-2
 #define TEST_2_INDEX MSG_SIZE-1
 
+//menssagem para decodificar
+#define MESSAGE_0 //_1 ou _2
+//Comentar para nao gerar Gannt
+#define GANTT
+
 //mensagem codificada
+#ifdef MESSAGE_0
 unsigned const char hashed_msg[MSG_SIZE] = { 
   0x67, 0x52, 0x89, 0x4a, 0x8b, 0x4e, 0x8a, 0x09, 
   0x86, 0x4f, 0x37, 0x3c, 0x80, 0x55, 0x80, 0x4c,
   0x86, 0x57, 0x37, 0x3f, 0x78, 0x55, 0x83, 0x4e,
-  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04 //0x8b, 0xd6   
-  //??Quando penultimo e ultimo bytes são 0x8b e 0xd6 funciona??
+  0x90, 0x09, 0x48, 0x22, 0x50, 0x22, 0x22, 0x04 
 };
+#endif
+#ifdef MESSAGE_1
+unsigned const char hashed_msg[MSG_SIZE] = { 
+  0x97, 0x25, 0xa8, 0xdd, 0x96, 0x25, 0xa4, 0x34,
+  0xb6, 0x25, 0xa4, 0x2b, 0xae, 0xdd, 0x95, 0x22,
+  0xa7, 0x22, 0xb0, 0x2d, 0xb7, 0x26, 0xb2, 0x2b,
+  0x63, 0xdd, 0x74, 0xf6, 0x7c, 0xf1, 0x64, 0x06
+};
+#endif
+#ifdef MESSAGE_2
+unsigned const char hashed_msg[MSG_SIZE] = { 
+  0xa7, 0x15, 0xb8, 0xcd, 0x97, 0x0e, 0xc5, 0x18,
+  0x73, 0xf8, 0xc1, 0x16, 0xba, 0x15, 0xc7, 0xcd,
+  0x73, 0xcd, 0x73, 0xcd, 0x73, 0xcd, 0x73, 0xcd,
+  0x73, 0xcd, 0x85, 0xdd, 0x83, 0xe5, 0x7c, 0x04
+};
+#endif
 
 //definições para variaveis booleanas
 typedef uint8_t bool;
 #define false 0
 #define true 1
 FILE *file;
-int ticks_factor = 10;
+int ticks_factor = 100;
 //struct para guardar estados da decodificação da mensagem por cada chave gerada
 typedef struct decodingState{
   unsigned char key;                            //chave da decodificação
@@ -105,6 +124,26 @@ bool validationLoaded = false;  //Flag indica Thread Validate carregou dados da 
 //Lista de primos, cada inidice contem um primo em ordem (calculado em tempo de execução)
 uint8_t primeList[PRIME_LIST_SIZE] = {0};
 
+//estrutura para guradar tempos de uma seção (chave) para diagrama de Gantt
+typedef struct gantt_times{
+  struct gantt_times* next;
+  unsigned char key;
+  int key_init;
+  int key_end;
+  int dec_init;
+  int dec_end;
+  int test1_init;
+  int test1_end;
+  int test2_init;
+  int test2_end;
+  int print_init;
+  int print_end;
+  int valid_init;
+  int valid_end;
+} gantt_times_t;
+
+gantt_times_t* gantt_list = NULL;
+
 //*************************
 //Utilidades diversas
 #define RUNNING !(foundValidKey || threadFailed)
@@ -112,6 +151,22 @@ uint8_t primeList[PRIME_LIST_SIZE] = {0};
 
 //************************
 //Funções Auxiliares
+
+//Implementação minimal para copia de memoria entre endereços
+void memcpy(void* destination, void* origin, size_t n){
+  uint8_t* d = destination;
+  uint8_t* o = origin;
+  for(size_t i = 0; i < n; i++){
+    d[i] = o[i];
+  }
+}
+
+//Verifica se caracter pode ser visualizado quando impresso
+bool isprint(char c){
+  //na tabela ascii, carecteres validos estao nesta regiao
+  return c >= ' ' && c <= '~'; 
+}
+
 //retorna um n-esimo numero primeiro por index
 uint8_t getPrime(size_t index){
   //retorna FAILURE se indice for maior que a lista de primos
@@ -201,16 +256,19 @@ bool verifySecondTest(decodingState_t* msgState){
   uint8_t prevPrime = msgState->prevPrime;
   uint8_t key = msgState->key; 
   uint16_t squaredKey = key*key;
+  uint8_t hashedByte = squaredKey/prevPrime;
   //compara o quadrado da chave dividos pelo primo anterior com o byte de teste
-  return ((squaredKey/prevPrime) == testByte);
+  return (hashedByte == testByte);
 }
 
+//imprime o resultado de uma decodificação
 void printMsgState(decodingState_t* msgState){
       printf("--------------------\n");
       printf("Key: %d (0x%02X)\n", msgState->key ,msgState->key);
       printf("Printable chars: ");
       for(int i = 0; i < MSG_SIZE-2; i++)
-        if(isprint(msgState->deciphered_msg[i])) printf("%c", msgState->deciphered_msg[i]);
+        if(isprint(msgState->deciphered_msg[i])) //imprime apenas caracteres visiveis
+          printf("%c", msgState->deciphered_msg[i]);
       printf("\n");
       printf("Message Bytes: \n");
       for(int i = 0; i < MSG_SIZE; i++){
@@ -223,8 +281,28 @@ void printMsgState(decodingState_t* msgState){
       printf("\n");
 }
 
+//realiza validação de uma decodificação comparando o resultado dos testes
 bool validateKey(decodingState_t* msgState){
   return msgState->firstTestResult && msgState->secondTestResult;
+}
+
+//grava diagrama de gantt a partir dos dados obtidos
+gantt_times_t* print_gantt(gantt_times_t* gantt){
+  fprintf(file,"  section [Key 0x%02x]\n", gantt->key);
+  if(gantt->key_init != -1 && gantt->key_end != -1)
+    fprintf(file,"    Thread Generate : [Key 0x%02x], %i, %i\n", gantt->key, gantt->key_init, gantt->key_end);
+  if(gantt->dec_init != -1 && gantt->dec_end != -1)
+    fprintf(file,"    Thread Decipher : [Key 0x%02x], %i, %i\n", gantt->key, gantt->dec_init, gantt->dec_end);
+  if(gantt->test1_init != -1 && gantt->test1_end != -1)
+    fprintf(file,"    Thread Test 1   : [Key 0x%02x], %i, %i\n", gantt->key, gantt->test1_init, gantt->test1_end);
+  if(gantt->test2_init != -1 && gantt->test2_end != -1)
+    fprintf(file,"    Thread Test 2   : [Key 0x%02x], %i, %i\n", gantt->key, gantt->test2_init, gantt->test2_end);
+  if(gantt->print_init != -1 && gantt->print_end != -1)
+    fprintf(file,"    Thread Print    : [Key 0x%02x], %i, %i\n", gantt->key, gantt->print_init, gantt->print_end);
+  if(gantt->valid_init != -1 && gantt->valid_end != -1)
+    fprintf(file,"    Thread Validate : [Key 0x%02x], %i, %i\n", gantt->key, gantt->valid_init, gantt->valid_end);
+  
+  return gantt->next;
 }
 
 //************************
@@ -232,31 +310,76 @@ bool validateKey(decodingState_t* msgState){
 
 //Thread para geração de chaves
 void thread_generate(void const *args){
-  size_t p_index = 0;
+  size_t p_index = 0;   //indice na tabela de primos
   
-  uint32_t time = osKernelSysTick()/ticks_factor;
-  while(RUNNING){
-    if(!hasGeneratedKey){
-      decodingState_t *msgTestState = &(msgInStage(PIPE_STG_GENERATED));
+  uint32_t time;        //cronometro para gerar Gantt        
+  while(RUNNING){       //enquanto programa estiver ativo      
+    if(!hasGeneratedKey){       //se ultima chave foi consumida
+      time = osKernelSysTick()/ticks_factor;    //inicio do cronometro para Gantt
+      //estado de decodificação no primeiro estagio do pipeline
+      decodingState_t *msgTestState = &(msgInStage(PIPE_STG_GENERATED));        
 
+      //recupera numero primo e verifica se é valido
+      //este valor sera utilizado na verificação do ultimo digito
       uint8_t prevPrime = getPrime(p_index++);
       if(isFailure(prevPrime)) {
+        //se nao for, termina execução do programa
         threadFailed = true;
         break;
       }
 
+      //recupera proximo primo para chave e verifica se é valido
       uint8_t key = getPrime(p_index);
       if(isFailure(key)) {
+        //se nao for, termina execução do programa
         threadFailed = true;
         break;
       }
 
+      //guardando informações no primeiro estagio do pipeline
       msgTestState->prevPrime = prevPrime;
       msgTestState->key = key;
-      msgTestState->hasKey = true;
-      hasGeneratedKey = true;
+      msgTestState->hasKey = true;      //flag indica estado do estagio da pipeline (chave gerada)
+
+      osDelay(50);
+      pca_toggle(7);
+      osDelay(50);
+      pca_toggle(7);
+      
+      //salva tempo de processamento para Gantt
+//      fprintf(file," Thread Generate : [Key 0x%02x], %i, %i\n", msgTestState->key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      gantt_times_t* gantt;
+      if(!(gantt = (gantt_times_t*) malloc(sizeof(gantt_times_t)))){
+        //se nao for, termina execução do programa
+        threadFailed = true;
+        break;
+      }      
+      gantt_times_t* last = gantt_list;
+      gantt->next = NULL;
+      if(last == NULL)
+        gantt_list = gantt;
+      else{
+        while(last->next != NULL)
+          last = last->next;
+        last->next = gantt;
+      }
+      gantt->key = key;
+      gantt->key_init = (int)time;
+      gantt->key_end = (int)osKernelSysTick()/ticks_factor;
+      gantt->dec_init = -1;
+      gantt->dec_end = -1;
+      gantt->test1_init = -1;
+      gantt->test1_end = -1;
+      gantt->test2_init = -1;
+      gantt->test2_end = -1;
+      gantt->print_init = -1;
+      gantt->print_end = -1;
+      gantt->valid_init = -1;
+      gantt->valid_end = -1;
+      
+      hasGeneratedKey = true;   //indica que estagio do pipeline esta ocupado e precisa ser esvaziado
     }
-    fprintf(file," thread_generate  :  %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    //abdica do processador quando termina processamento
     yield;
   }
   osDelay(osWaitForever);
@@ -265,27 +388,43 @@ osThreadDef(thread_generate, osPriorityNormal, 1, 0);
 
 //Thread para decifrar chaves
 void thread_decipher(void const *args){
-  bool processedMessage = false;
-  decodingState_t currentElem;
-   uint32_t time;
-  while(RUNNING){
+  bool processedMessage = false;        //flag de estado interno indica se mensagem foi decifrado e pode ser armazenado no proximo estagio do pipeline
+  decodingState_t currentElem;          //estado interno de codificação da mensagem
+  uint32_t time;                        //cronometro para gerar Gantt
+  while(RUNNING){                       //enquanto programa estiver ativo
+    //primeiro estado interno da thread, espera chave estar disponivel
     if(!processedMessage && hasGeneratedKey){
-      time = osKernelSysTick()/ticks_factor;
+      time = osKernelSysTick()/ticks_factor;    //inicio do cronometro para Gantt
+      //copia estado de decodificacao do primeiro estagio da pipeline para estado interno da thread
       memcpy(&currentElem, &(msgInStage(PIPE_STG_GENERATED)), sizeof(decodingState_t));
-      hasGeneratedKey = false;
+      hasGeneratedKey = false;  //indicando que chave foi consumida e thread anterior ja pode executar        
+      //---
+      //execucao principal da thread (decifrar)
       //---
       decipherMsg(&currentElem);
       //---
-      currentElem.hasMsg = true;
-      processedMessage = true;
-     
+      currentElem.hasMsg = true;        //flag indica estado de decodificacao (decifrado)
+      //flag indica passagem para proximo estado interno, onde esperara proximo estagio de pipeline liberar
+      processedMessage = true;          
     } 
+    //segundo estagio da thread, espera proximo estagio da pipeline para guardar novo estado de decodificacao
     if(processedMessage && !hasDecipheredMsg){
+      //copia estado interno de decodificacao para proximo estagio de pipeline
       memcpy(&(msgInStage(PIPE_STG_DECIPHERED)), &currentElem, sizeof(decodingState_t));
-      hasDecipheredMsg = true;
-      processedMessage = false;
+      //indica fim de processamento da thread para Gantt
+//      fprintf(file," Thread Decipher : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
+      gantt_times_t* holder = gantt_list;
+      if(holder != NULL){
+        while(holder->next != NULL && holder->key != currentElem.key)
+          holder = holder->next;
+        holder->dec_init = (int)time;
+        holder->dec_end = (int)osKernelSysTick()/ticks_factor;
+      }
+      hasDecipheredMsg = true;  //indica para proxima thread que a mensagem foi decifrada
+      processedMessage = false; //retorno ao primeiro estado interno da thread
     }
-    fprintf(file," thread_decipher  :  %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    //enquanto nao poder entrar em nenhum estado interno, libera processador
     yield;
   }  
   osDelay(osWaitForever);
@@ -294,19 +433,27 @@ osThreadDef(thread_decipher, osPriorityNormal, 1, 0);
 
 //Thread para testar penultimo digito verificador
 void thread_test_1(void const *args){
-  bool verifiedByte = false;
-  decodingState_t currentElem;
-  uint32_t time;
-  while(RUNNING){
+  bool verifiedByte = false;            //flag de estado interno indica se mensagem decifrada teve penultimo byte testado e pode ser armazenado no proximo estagio do pipeline
+  decodingState_t currentElem;          //estado interno de codificação da mensagem
+  uint32_t time;                        //cronometro para gerar Gantt
+  while(RUNNING){                       //enquanto programa estiver ativo
+    //primeiro estado interno da thread, espera mensagem ser decifrada
     if(!verifiedByte && hasDecipheredMsg){
-       time = osKernelSysTick()/ticks_factor;
+      time = osKernelSysTick()/ticks_factor;    //inicio do cronometro para Gantt
+      //copia estado de decodificacao estagio anterior da pipeline para estado interno da thread
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
+      //flag para sincronizar threads paralelas durante carregamento
       test1Loaded = true;
+      //se ambas threads finalizaram carregamento da pipeline (primeiro estado interno) ...
       if(test2Loaded){
+        //... entao thread anterior ja pode carregar novos dados no estagio
         hasDecipheredMsg = false;
         test1Loaded = false;
         test2Loaded = false;
       }
+      
+      //---
+      //execucao principal da thread (verificar penultimo byte)
       //---
       currentElem.firstTestResult = verifyFirstTest(&currentElem);
       //---
@@ -314,26 +461,33 @@ void thread_test_1(void const *args){
       verifiedByte = true;
   
     } 
+    //segundo estagio da thread, espera proximo estagio da pipeline para guardar novo estado de decodificao
     if(verifiedByte && !hasVerifiedTest1){
-      /** Perigo de concorrencia
-      currentElem.secondTestResult = msgInStage(PIPE_STG_VERIFIED).secondTestResult;
-      currentElem.hasSecondTest = msgInStage(PIPE_STG_VERIFIED).hasSecondTest;
-
-      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
-      **/
+      //recupera referencia do proximo estagio
       decodingState_t* msgTestState = &(msgInStage(PIPE_STG_VERIFIED));
-      msgTestState->key = currentElem.key;
-      msgTestState->prevPrime = currentElem.prevPrime;
-      msgTestState->hasKey = currentElem.hasKey;
-      memcpy(msgTestState->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
-      msgTestState->hasMsg = currentElem.hasMsg;
+      //copia informacoes comuns para ambas as threads paralelas
+      memcpy(msgTestState, &currentElem, (sizeof(unsigned char) + sizeof(bool))*2 + MSG_SIZE);
+      //copia resultado da verificacao
       msgTestState->firstTestResult = currentElem.firstTestResult;
-      msgTestState->hasFirstTest = currentElem.hasFirstTest;
+      msgTestState->hasFirstTest = currentElem.hasFirstTest; //flag indica estado de decodificacao (penultimo byte verificado)
       
+      //indica fim de processamento da thread para Gantt
+//      fprintf(file," Thread Test 1   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
+      gantt_times_t* holder = gantt_list;
+      if(holder != NULL){
+        while(holder->next != NULL && holder->key != currentElem.key)
+          holder = holder->next;
+        holder->test1_init = (int)time;
+        holder->test1_end = (int)osKernelSysTick()/ticks_factor;
+      }
+
+      //indica para proxima thread que o penultimo byte da mensagem foi verificado
       hasVerifiedTest1 = true;
+      //retorno ao primeiro estado interno da thread
       verifiedByte = false;
     }
-    fprintf(file," thread_test_1 :  crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    //enquanto nao poder entrar em nenhum estado interno, libera processador
     yield;
   }
   osDelay(osWaitForever);
@@ -342,46 +496,61 @@ osThreadDef(thread_test_1, osPriorityNormal, 1, 0);
 
 //Thread para testar ultimo digito verificador
 void thread_test_2(void const *args){
-  bool verifiedByte = false;
-  decodingState_t currentElem;
-  uint32_t time;
-  while(RUNNING){
+  bool verifiedByte = false;            //flag de estado interno indica se mensagem decifrada teve ultimo byte testado e pode ser armazenado no proximo estagio do pipeline
+  decodingState_t currentElem;          //estado interno de codificação da mensagem
+  uint32_t time;                        //cronometro para gerar Gantt
+  while(RUNNING){                       //enquanto programa estiver ativo
+    //primeiro estado interno da thread, espera mensagem ser decifrada
     if(!verifiedByte && hasDecipheredMsg){
-      uint32_t time = osKernelSysTick()/ticks_factor;
+      time = osKernelSysTick()/ticks_factor;    //inicio do cronometro para Gantt
+      //copia estado de decodificacao estagio anterior da pipeline para estado interno da thread
       memcpy(&currentElem, &(msgInStage(PIPE_STG_DECIPHERED)), sizeof(decodingState_t));
+      //flag para sincronizar threads paralelas durante carregamento
       test2Loaded = true;
+      //se ambas threads finalizaram carregamento da pipeline (primeiro estado interno) ...
       if(test1Loaded){
+        //... entao thread anterior ja pode carregar novos dados no estagio
         hasDecipheredMsg = false;
         test1Loaded = false;
         test2Loaded = false;
       }
+
+      //---
+      //execucao principal da thread (verificar ultimo byte)
       //---
       currentElem.secondTestResult = verifySecondTest(&currentElem);      
       //---
       currentElem.hasSecondTest = true;
       verifiedByte = true;
- 
     } 
+    //segundo estagio da thread, espera proximo estagio da pipeline para guardar novo estado de decodificao
     if(verifiedByte && !hasVerifiedTest2){
-      /** Perigo de concorrencia
-      currentElem.firstTestResult = msgInStage(PIPE_STG_VERIFIED).firstTestResult;
-      currentElem.hasFirstTest = msgInStage(PIPE_STG_VERIFIED).hasFirstTest;
-
-      memcpy(&(msgInStage(PIPE_STG_VERIFIED)), &currentElem, MSG_SIZE);
-      **/
+      //recupera referencia do proximo estagio
       decodingState_t* msgTestState = &(msgInStage(PIPE_STG_VERIFIED));
-      msgTestState->key = currentElem.key;
-      msgTestState->prevPrime = currentElem.prevPrime;
-      msgTestState->hasKey = currentElem.hasKey;
-      memcpy(msgTestState->deciphered_msg, currentElem.deciphered_msg, MSG_SIZE);
-      msgTestState->hasMsg = currentElem.hasMsg;
-      msgTestState->secondTestResult = currentElem.secondTestResult;
-      msgTestState->hasSecondTest = currentElem.hasSecondTest;
+      //copia informacoes comuns para ambas as threads paralelas
+      memcpy(msgTestState, &currentElem, (sizeof(unsigned char) + sizeof(bool))*2 + MSG_SIZE);
       
+      //copia resultado da verificacao
+      msgTestState->secondTestResult = currentElem.secondTestResult;
+      msgTestState->hasSecondTest = currentElem.hasSecondTest;  //flag indica estado de decodificacao (ultimo byte verificado)
+      
+      //indica fim de processamento da thread para Gantt
+//      fprintf(file," Thread Test 2   : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
+      gantt_times_t* holder = gantt_list;
+      if(holder != NULL){
+        while(holder->next != NULL && holder->key != currentElem.key)
+          holder = holder->next;
+        holder->test2_init = (int)time;
+        holder->test2_end = (int)osKernelSysTick()/ticks_factor;
+      }
+
+      //indica para proxima thread que o ultimo byte da mensagem foi verificado
       hasVerifiedTest2 = true;
+      //retorno ao primeiro estado interno da thread
       verifiedByte = false;
     }
-    fprintf(file," thread_test_2  : crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    //enquanto nao poder entrar em nenhum estado interno, libera processador
     yield;
   }
   osDelay(osWaitForever);
@@ -395,18 +564,15 @@ void thread_print(void const *args){
   bool waitingValidation = false;
   //Estado de codificação de mensagem interno à Thread
   decodingState_t currentElem;
+   uint32_t time;               //cronometro para gerar Gantt
   //Enquanto não houver uma falha critica e uma chave valida não for encontrada,
   //execute...
-   uint32_t time;
   while(RUNNING){
-    if(!waitingValidation){
-       uint32_t time = osKernelSysTick()/ticks_factor;
-      //As Threads Test 1 e Test 2 devem ter terminado de processar uma
-      //instancia de decodificacao para poder imprimir resultado
-      if(!(hasVerifiedTest1 && hasVerifiedTest2)){
-        yield;
-        continue;
-      }
+    //primeiro estado interno da thread, esperando estagios anteriores enviarem mensagem
+    //as Threads Test 1 e Test 2 devem ter terminado de processar uma
+    //instancia de decodificacao para poder imprimir resultado
+    if(!waitingValidation && hasVerifiedTest1 && hasVerifiedTest2){
+      time = osKernelSysTick()/ticks_factor;            //inicia cronometro para Gantt
       //Copia uma instancia de decodificacao passada por Thread Test 1 e Test 2
       memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(decodingState_t));
       
@@ -432,18 +598,24 @@ void thread_print(void const *args){
       //termine)
       hasPrinted = true;
       waitingValidation = true;
-    
     }
     //Se estiver esperando a Thread Validate, e ela terminar, reseta flags de 
     //espera
-    if(waitingValidation){
-      if(hasValidated){
-        waitingValidation = false;
-        hasValidated = false;
+    if(waitingValidation && hasValidated){
+//      fprintf(file," Thread Print    : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
+      gantt_times_t* holder = gantt_list;
+      if(holder != NULL){
+        while(holder->next != NULL && holder->key != currentElem.key)
+          holder = holder->next;
+        holder->print_init = (int)time;
+        holder->print_end = (int)osKernelSysTick()/ticks_factor;
       }
+
+      waitingValidation = false;
+      hasValidated = false;
     }
     //Após processamento, libera processador
-     fprintf(file," thread_print : crit %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
     yield;
   }
   //Finaliza thread ao identificar fim de execução
@@ -453,36 +625,79 @@ osThreadDef(thread_print, osPriorityNormal, 1, 0);
 
 //Thread para validar a chave gerada, utilizando os testes realizados
 void thread_validate(void const *args){
+  //Controlador de estado interno, espera Thread Printing para 
+  //sincronizacao
   bool waitingPrinting = false;
-  bool isValid = false;
+  bool isValid = false; 
+  //Estado de codificação de mensagem interno à Thread
   decodingState_t currentElem;
-  uint32_t time;
+  uint32_t time;                //cronometro para gerar Gantt
+  //Enquanto não houver uma falha critica e uma chave valida não for encontrada,
+  //execute...
   while(RUNNING){
-    time = osKernelSysTick()/ticks_factor;
+    //primeiro estado interno da thread, esperando estagios anteriores enviarem mensagem
+    //as Threads Test 1 e Test 2 devem ter terminado de processar uma
+    //instancia de decodificacao para poder imprimir resultado
     if(!waitingPrinting && hasVerifiedTest1 && hasVerifiedTest2){
+      time = osKernelSysTick()/ticks_factor;            //inicia cronometro para Gantt
+      //Copia uma instancia de decodificacao passada por Thread Test 1 e Test 2
       memcpy(&currentElem, &(msgInStage(PIPE_STG_VERIFIED)), sizeof(decodingState_t));
       
+      //Garante que as Threads Test 1 e Test 2 poderao salvar nova 
+      //instancia de decodificacao apenas depois que Thread Print e Validate
+      //carregar ultima instancia passada.
       validationLoaded = true;
       if(printLoaded){
+          //Se ambas as threads tiverem carregado os dados, Test 1 e Test 2 
+          //podem armazenar nova instancia
           hasVerifiedTest1 = false;
           hasVerifiedTest2 = false;
+          //Reseta flags de carregamento
           printLoaded = false;
           validationLoaded = false;
       }
       
+      //Valida chave com base nos testes realizados
       isValid = validateKey(&currentElem);
       
+      if(isValid){
+        osDelay(50);
+        pca_toggle(0);
+        osDelay(50);
+      }
+      
+      //Prepara flags para passagem de estado (espera que Thread Validate 
+      //termine)      
       waitingPrinting = true;
       hasValidated = true;
-    
     }
+    //Se estiver esperando a Thread Validate, e ela terminar, reseta flags de 
+    //espera
     if(waitingPrinting && hasPrinted){
+//      fprintf(file," Thread Validate : [Key 0x%02x], %i, %i\n", currentElem.key, (int)time, (int)osKernelSysTick()/ticks_factor);
+      osDelay(100);
+      gantt_times_t* holder = gantt_list;
+      gantt_times_t* last = NULL;
+      if(holder != NULL){
+        while(holder->next != NULL && holder->key != currentElem.key){
+          last = holder;
+          holder = holder->next;
+        }
+        holder->valid_init = (int)time;
+        holder->valid_end = (int)osKernelSysTick()/ticks_factor;
+        
+        if(last != NULL)
+          last->next = print_gantt(holder);
+        else
+          gantt_list = print_gantt(holder);
+        free(holder);
+      }
+
       foundValidKey = isValid;
       waitingPrinting = false;
       hasPrinted = false;
     }
-     time = osKernelSysTick()/ticks_factor;
-     fprintf(file," thread_validate : crit, %i, %i\n", (int)time, (int)osKernelSysTick()/ticks_factor);
+    //Após processamento, libera processador
     yield;
   }
   osDelay(osWaitForever);
@@ -493,16 +708,28 @@ osThreadDef(thread_validate, osPriorityNormal, 1, 0);
 //Código da thread Main
 //************************
 void thread_main(){
+  //Espera execução das threads
   while(RUNNING) yield;
+
+#ifdef GANTT
+  gantt_times_t* gantt = gantt_list;
+  while (gantt != NULL)
+    gantt = print_gantt(gantt);
+#endif
+  
   printf("finished");
 }
 
 int main(int n_args, char** args){
   //Inicialização de Kernel vai aqui
-  osKernelInitialize();
+  int status = osKernelInitialize();
+  if(status != osOK){
+    printf("Kernel failed to initialise. Status: %d", status);
+    return -1;
+  }
   
   //************************
-  //Inicialização de Threads aqui
+  //Inicializacao de Threads aqui
   //************************
   id_thread_generate =  osThreadCreate(osThread(thread_generate),       NULL);
   id_thread_decipher =  osThreadCreate(osThread(thread_decipher),       NULL);
@@ -510,29 +737,37 @@ int main(int n_args, char** args){
   id_thread_test_2 =    osThreadCreate(osThread(thread_test_2),         NULL);
   id_thread_print =     osThreadCreate(osThread(thread_print),          NULL);
   id_thread_validate =  osThreadCreate(osThread(thread_validate),       NULL);
+
+  //************************
+  //Inicializacao do PCA
+  //*********************** 
+  I2CInit( (uint32_t)I2CMASTER, 0 );
+  pca9532_init();
   
   //************************
-  //Fim de inicializações de Threads
-  //***********************  
+  //Inicializacao do Diagrama de Gantt
+  //*********************** 
+  file = fopen("gantt.txt","w");
+ 
+  fprintf(file,"gantt\n");
+  fprintf(file,"  title A Gantt Diagram\n");
+  fprintf(file,"  dateFormat x\n");
   
   //Início do SO
-  osKernelStart();
+  if(osKernelRunning()){
+    printf("Kernel already started");
+    return -1;
+  }
   
-  //************************
-  //Init Diagram of Gantt
-  //*********************** 
-  
-    file = fopen("gantt.txt","w");
-   
-    fprintf(file,"gantt\n");
-    fprintf(file,"    title A Gantt Diagram\n");
-    fprintf(file,"    dateFormat x\n");
+  status = osKernelStart();
+  if(status != osOK){
+    printf("Kernel failed to start. Status: %d", status);
+  }
   
   //Main thread
   thread_main();
-  
-  
-  
+
+  fclose(file);
 
   //************************
   //Finalização de Threads aqui
