@@ -65,7 +65,7 @@ void setup_isr()
     GPIOIntEnable(PORT2, 0); // JOYSTICK_CENTER
 }
 
-int8_t formula(char [4] eixo){
+int8_t formula(char eixo[4]){
 
    return(int8_t)(eixo[0]+ 0.6*eixo[1] +0.3*eixo[2]+ 0.1*eixo[3])/2;
 }
@@ -132,14 +132,13 @@ osThreadDef(thread_samples, osPriorityNormal, 1, 0);
 //Thread 
 void thread_write_ram(void const *args){
     
-  
-     evt = osSignalWait (0x03, osWaitForever);
-      
+     osEvent evt;
+     evt = osSignalWait (0x03, osWaitForever);     
       if(evt.status == osEventSignal){
-        if (evt.value & 0x02){
+        if (evt.value.signals & 0x02){
             osSignalWait (0x00,1000);
-        }else if (evt.value & 0x01){             
-          while(evt.value & 0x08){
+        }else if (evt.value.signals & 0x01){             
+          while(evt.value.signals & 0x08){
              osSignalClear(osThreadGetId(),0x08);
             osSignalWait (0x04,osWaitForever);
           }
@@ -175,27 +174,27 @@ osThreadDef(thread_write_ram, osPriorityNormal, 1, 0);
 //Thread para 
 void thread_red_led(void const *args){
      
-    pca_toggle(2);
+
 }
 osThreadDef(thread_red_led, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_green_led(void const *args){
-    osSignalWait(0x1, osWaitForever);
-     pca_toggle(2);
+  
 }
 osThreadDef(thread_green_led, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_display_oled(void const *args){
       
+     osEvent evt;
      evt = osSignalWait (0x03, osWaitForever);
      if(evt.status == osEventSignal){
-        if (evt.value & 0x02){
+        if (evt.value.signals & 0x02){
             osSignalWait (0x00,1000);
-        }else if (evt.value & 0x01){ 
+        }else if (evt.value.signals & 0x01){ 
            oled_clearScreen(OLED_COLOR_WHITE);
-          while(evt.value & 0x08){
+          while(evt.value.signals & 0x08){
              osSignalClear(osThreadGetId(),0x08);
              osSignalWait (0x04,osWaitForever);
           }
@@ -208,7 +207,7 @@ void thread_display_oled(void const *args){
           osSignalSet(id_thread_write_ram, 0x04);          
         }
         
-          
+     }   
           
 }
 osThreadDef(thread_display_oled, osPriorityNormal, 1, 0);
