@@ -2,11 +2,16 @@
 #include "type.h"
 #include "stdio.h"
 #include "timer32.h"
+#include "i2c.h"
 #include "pca9532.h"
+#include "gpio.h"
+#include "ssp.h"
 #include "cmsis_os.h"
-#include "string.h"
 #include "ctype.h"
-#include "libdemo.h"
+#include "oled.h"
+#include "acc.h"
+#include "joystick.h"
+//#include "libdemo.h"
 
 FILE *file_gantt;
 
@@ -33,11 +38,19 @@ osThreadId id_thread_export_file;
 //************************
 // flags
 //************************
-// 0x04 memória ram liberada
-// 0x08 memória ram bloqueada
-// 0x01 acorda para execução
-// 0x02 proteçaõ contra queda
+uint8_t flags_thread_samples = 0;
+uint8_t flags_thread_write_ram = 0;
+uint8_t flags_thread_bar_red_leds = 0;
+uint8_t flags_thread_bar_green_leds = 0;
+uint8_t flags_thread_display_oled = 0;
+uint8_t flags_thread_export_file = 0;
 
+#define f_set(v, f)     (v = v |  f)
+#define f_clear(v, f)   (v = v & ~f)
+#define f_get(v, f)     (v & f)
+
+#define T_NOTIFY        0x01
+#define T_PROTECT       0x02
 
 //************************
 // vetores de
@@ -54,38 +67,78 @@ int8_t filtered_x;
 int8_t filtered_y;
 int8_t filtered_z;
 
-
 //************************
 //ISR
 //************************
 
-void PIOINT2_IRQHandler(void)
-{
+void PIOINT2_IRQHandler(void) {
   if (!GPIOGetValue(PORT2, 0)){
-//    oled_clearScreen(OLED_COLOR_BLACK);
-//    printf("Joystick center\n");
-    osSignalSet(id_thread_samples, 0x02);
-    osSignalSet(id_thread_write_ram, 0x02);
-    osSignalSet(id_thread_display_oled, 0x02);
-//    pca_toggle(1);
+    f_set(flags_thread_samples, T_PROTECT);
+    osSignalSet(id_thread_samples, 0x01);
+    f_set(flags_thread_write_ram, T_PROTECT);
+    osSignalSet(id_thread_write_ram, 0x01);
+    f_set(flags_thread_display_oled, T_PROTECT);
+    osSignalSet(id_thread_display_oled, 0x01);
   }
   GPIOIntClear(2, 0);
 }
 
-void setup_isr()
-{   
+volatile unsigned long *porta1_IS  = (volatile unsigned long *)0x50018004;
+volatile unsigned long *porta1_IBE = (volatile unsigned long *)0x50018008;
+volatile unsigned long *porta1_IEV = (volatile unsigned long *)0x5001800C;
+volatile unsigned long *porta2_IS  = (volatile unsigned long *)0x50028004;
+volatile unsigned long *porta2_IBE = (volatile unsigned long *)0x50028008;
+volatile unsigned long *porta2_IEV = (volatile unsigned long *)0x5002800C;
+
+void setup_port(uint32_t port, uint32_t bitPosi, uint32_t sense, uint32_t single, uint32_t event)
+{
+    switch (port) {
+    case 1:
+
+        if (sense == 0)
+        {
+            *porta1_IS &= ~(0x1 << bitPosi);
+
+            if (single == 0) *porta1_IBE &= ~(0x1 << bitPosi);
+            else *porta1_IBE |= (0x1 << bitPosi);
+        }
+        else *porta1_IS |= (0x1 << bitPosi);
+
+        if (event == 0) *porta1_IEV &= ~(0x1 << bitPosi);
+        else *porta1_IEV |= (0x1 << bitPosi);
+        break;
+
+    case 2:
+
+        if (sense == 0)
+        {
+            *porta2_IS &= ~(0x1 << bitPosi);
+
+            if (single == 0) *porta2_IBE &= ~(0x1 << bitPosi);
+            else *porta2_IBE |= (0x1 << bitPosi);
+        }
+        else *porta2_IS |= (0x1 << bitPosi);
+
+        if (event == 0) *porta2_IEV &= ~(0x1 << bitPosi);
+        else *porta2_IEV |= (0x1 << bitPosi);
+        break;
+    }
+}
+
+void setup_isr() {   
   setup_port(PORT2, 0, 0, 1, 1);
   GPIOIntEnable(PORT2, 0); // JOYSTICK_CENTER
 }
 
-int8_t formula(int8_t eixo[4]){
+int8_t filter(int8_t eixo[4]){
   return(int8_t)(eixo[0]+ 0.6*eixo[1] +0.3*eixo[2]+ 0.1*eixo[3])/2;
 }
 
 //************************
 //Callback de Timers
 void timer_sampling_cb(void const *arg) {
-  osSignalSet(id_thread_samples, 0x1);
+  f_set(flags_thread_samples, T_NOTIFY);
+  osSignalSet(id_thread_samples, 0x01);
 }
 osTimerDef(timer_sampling, timer_sampling_cb);
 
@@ -112,38 +165,42 @@ void thread_samples(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);     
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02)
+      if (f_get(flags_thread_samples,T_PROTECT)){
+        f_clear(flags_thread_samples, T_PROTECT);
         osDelay (1000);
-      if (evt.value.signals & 0x01){
-      int8_t x = 0;
-      int8_t y = 0;
-      int8_t z = 0;
-      
-      acc_read(&x, &y, &z);
-      
-      x = x+x_off;
-      y = y+y_off;
-      z = z+z_off;
-      
-      queue_x[3] = queue_x[2];
-      queue_x[2] = queue_x[1];
-      queue_x[1] = queue_x[0];
-      queue_x[0] = x;
-      filtered_x =formula(queue_x);
-      
-      queue_y[3] = queue_y[2];
-      queue_y[2] = queue_y[1];
-      queue_y[1] = queue_y[0];
-      queue_y[0] = y;
-      filtered_y =formula(queue_y);
-      
-      queue_z[3] = queue_z[2];
-      queue_z[2] = queue_z[1];
-      queue_z[1] = queue_z[0];
-      queue_z[0] = z;
-      filtered_z =formula(queue_z);
-      
-      osSignalSet(id_thread_write_ram, 0x1);
+      }
+      if (f_get(flags_thread_samples,T_NOTIFY)){
+        f_clear(flags_thread_samples, T_NOTIFY);
+        int8_t x = 0;
+        int8_t y = 0;
+        int8_t z = 0;
+        
+        acc_read(&x, &y, &z);
+        
+        x = x+x_off;
+        y = y+y_off;
+        z = z+z_off;
+        
+        queue_x[3] = queue_x[2];
+        queue_x[2] = queue_x[1];
+        queue_x[1] = queue_x[0];
+        queue_x[0] = x;
+        filtered_x = filter(queue_x);
+        
+        queue_y[3] = queue_y[2];
+        queue_y[2] = queue_y[1];
+        queue_y[1] = queue_y[0];
+        queue_y[0] = y;
+        filtered_y = filter(queue_y);
+        
+        queue_z[3] = queue_z[2];
+        queue_z[2] = queue_z[1];
+        queue_z[1] = queue_z[0];
+        queue_z[0] = z;
+        filtered_z = filter(queue_z);
+        
+        f_set(flags_thread_write_ram, T_NOTIFY);
+        osSignalSet(id_thread_write_ram, 0x1);
       }
     }
   }
@@ -156,20 +213,27 @@ void thread_write_ram(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);     
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02)
+      if (f_get(flags_thread_write_ram, T_PROTECT)){
+        f_clear(flags_thread_write_ram, T_PROTECT);
         osDelay (1000);
-      if (evt.value.signals & 0x01){
-        index_x =(index_x+63)%64;
-        index_y =(index_y+63)%64;
-        index_z =(index_z+63)%64;
+      }
+      if (f_get(flags_thread_write_ram, T_NOTIFY)){
+        f_clear(flags_thread_write_ram, T_NOTIFY);
+        index_x = (index_x+63)%64;
+        index_y = (index_y+63)%64;
+        index_z = (index_z+63)%64;
         
         axis_x[index_x] = filtered_x;
         axis_y[index_y] = filtered_y;
         axis_z[index_z] = filtered_z;
         
+        f_set(flags_thread_bar_red_leds, T_NOTIFY);
         osSignalSet(id_thread_bar_red_leds, 0x1);
+        f_set(flags_thread_bar_green_leds, T_NOTIFY);
         osSignalSet(id_thread_bar_green_leds, 0x1);
+        f_set(flags_thread_display_oled, T_NOTIFY);
         osSignalSet(id_thread_display_oled, 0x1);
+        f_set(flags_thread_export_file, T_NOTIFY);
         osSignalSet(id_thread_export_file, 0x1);    
       }
     }
@@ -178,16 +242,56 @@ void thread_write_ram(void const *args){
 osThreadDef(thread_write_ram, osPriorityNormal, 1, 0);
 
 //Thread para 
-void thread_red_led(void const *args){
-  osDelay(osWaitForever);
+void thread_bar_red_led(void const *args){
+  osEvent evt;
+  uint16_t last_mask = 0;
+  while(1){
+    evt = osSignalWait (0x01, osWaitForever);     
+    if(evt.status == osEventSignal){
+      if (f_get(flags_thread_bar_red_leds, T_PROTECT)){
+        f_clear(flags_thread_bar_red_leds, T_PROTECT);
+        osDelay (1000);
+      }
+      if (f_get(flags_thread_bar_red_leds, T_NOTIFY)){
+        f_clear(flags_thread_bar_red_leds, T_NOTIFY);
+        int8_t value_x = axis_x[index_x];
+        uint8_t norm_x = (value_x+127)*8/255;
+        uint16_t mask = 0;
+        for(int i = 0; i < norm_x; i++)
+          mask += 1 << i;
+        pca9532_setLeds(mask, last_mask);
+        last_mask = mask;
+      }
+    }
+  }
 }
-osThreadDef(thread_red_led, osPriorityNormal, 1, 0);
+osThreadDef(thread_bar_red_led, osPriorityNormal, 1, 0);
 
 //Thread para 
-void thread_green_led(void const *args){
-  osDelay(osWaitForever);
+void thread_bar_green_led(void const *args){
+  osEvent evt;
+  uint16_t last_mask = 0;
+  while(1){
+    evt = osSignalWait (0x01, osWaitForever);     
+    if(evt.status == osEventSignal){
+      if (f_get(flags_thread_bar_green_leds, T_PROTECT)){
+        f_clear(flags_thread_bar_green_leds, T_PROTECT);
+        osDelay (1000);
+      }
+      if (f_get(flags_thread_bar_green_leds, T_NOTIFY)){
+        f_clear(flags_thread_bar_green_leds, T_NOTIFY);
+        int8_t value_y = axis_y[index_y];
+        uint8_t norm_y = (value_y+128)*8/255;
+        uint16_t mask = 0;
+        for(int i = 0; i < norm_y; i++)
+          mask += 0x8000 >> i;
+        pca9532_setLeds(mask, last_mask);
+        last_mask = mask;
+      }
+    }
+  }  
 }
-osThreadDef(thread_green_led, osPriorityNormal, 1, 0);
+osThreadDef(thread_bar_green_led, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_display_oled(void const *args){
@@ -195,14 +299,17 @@ void thread_display_oled(void const *args){
   while(1){
     evt = osSignalWait (0x01, osWaitForever);
     if(evt.status == osEventSignal){
-      if (evt.value.signals & 0x02)
+      if (f_get(flags_thread_display_oled, T_PROTECT)){
+        f_clear(flags_thread_display_oled, T_PROTECT);
         osDelay (1000);
-      if (evt.value.signals & 0x01){ 
+      }
+      if (f_get(flags_thread_display_oled, T_NOTIFY)){ 
+        f_clear(flags_thread_display_oled, T_NOTIFY);
         oled_clearScreen(OLED_COLOR_WHITE); 
-        int last_j = ((axis_z[index_z]+128)*64)/256;
+        int last_j = ((axis_z[index_z]+127)*63)/255;
         for (int i=0 ; i< 64;i++){
-          int j = axis_z[(i+index_z)%64]+128;
-          j = (j*64)/256;
+          int j = axis_z[(i+index_z)%64]+127;
+          j = (j*63)/255;
           oled_putPixel(i, j, OLED_COLOR_BLACK);
           if(abs(last_j - j) > 1){
             int min_j, max_j;
@@ -255,16 +362,16 @@ int main(int n_args, int8_t** args){
 //  fclose(file_gantt);  
   
   // Setup IRS
+  I2CInit( (uint32_t)I2CMASTER, 0 );
   GPIOInit();
   SSPInit();
-  I2CInit( (uint32_t)I2CMASTER, 0 );
   
-  oled_init();
-  oled_clearScreen(OLED_COLOR_WHITE);
-  
+  pca9532_init();
   acc_init();
   joystick_init();
   setup_isr();
+  oled_init();
+  oled_clearScreen(OLED_COLOR_WHITE);  
   
   //************************
   //Inicialização de Timers aqui
@@ -277,8 +384,8 @@ int main(int n_args, int8_t** args){
   //************************
   id_thread_samples =                   osThreadCreate(osThread(thread_samples),        NULL);
   id_thread_write_ram =                 osThreadCreate(osThread(thread_write_ram),      NULL);
-  id_thread_bar_red_leds =              osThreadCreate(osThread(thread_red_led),        NULL);
-  id_thread_bar_green_leds =            osThreadCreate(osThread(thread_green_led),      NULL);
+  id_thread_bar_red_leds =              osThreadCreate(osThread(thread_bar_red_led),    NULL);
+  id_thread_bar_green_leds =            osThreadCreate(osThread(thread_bar_green_led),  NULL);
   id_thread_display_oled =              osThreadCreate(osThread(thread_display_oled),   NULL);
   id_thread_export_file =               osThreadCreate(osThread(thread_export_file),    NULL);
   
