@@ -77,9 +77,7 @@ int8_t formula(char eixo[4]){
 
 //Thread para geração de chaves
 void thread_samples(void const *args){
-//    osSignalWait(0x1, osWaitForever);
-//    osSignalSet(id_thread_write_ram, 0x1);
-//    osSignalWait(0x1, osWaitForever);
+
     
     osEvent evt;
     char queue_x[4]={0};
