@@ -77,7 +77,7 @@ void thread_samples(void const *args){
   int8_t queue_z[4]={0};
   
   while(1){
-    evt = osSignalWait (0x02, 50);
+    evt = osSignalWait (0x02, 250);
     if (evt.status == osEventSignal){
       osSignalWait (0x00,1000);
     }else if(evt.status == osEventTimeout || evt.status == osOK){
@@ -185,12 +185,26 @@ void thread_display_oled(void const *args){
           osSignalWait (0x04,osWaitForever);
         }
         osSignalSet(id_thread_write_ram, 0x08);
+        int last_j = ((axis_z[index_z]+128)*64)/256;
         for (int i=0 ; i< 64;i++){
           int j = axis_z[(i+index_z)%64]+128;
           j = (j*64)/256;
           oled_putPixel(i, j, OLED_COLOR_BLACK);
+          if(abs(last_j - j) > 1){
+            int min_j, max_j;
+            if(j < last_j){
+              min_j = j;
+              max_j = last_j;
+            }
+            else{
+              min_j = last_j;
+              max_j = j;
+            }
+            for(int delta_j = 1; delta_j < max_j - min_j; delta_j++)
+              oled_putPixel(i, min_j + delta_j, OLED_COLOR_BLACK);
+            }
           oled_putPixel(64, i, OLED_COLOR_BLACK);
-
+          last_j = j;
         }
         osSignalSet(id_thread_write_ram, 0x04);          
       }
@@ -209,7 +223,7 @@ osThreadDef(thread_export_file, osPriorityNormal, 1, 0);
 //Código da thread Main
 //************************
 
-void thread_main(){  
+void thread_main(){    
   while(1) osThreadYield();
   printf("finished");
 }
@@ -218,6 +232,15 @@ void thread_main(){
 int main(int n_args, int8_t** args){
   //Inicialização de Kernel vai aqui
   osKernelInitialize();  
+  //************************
+  //Init Diagram of Gantt
+  //*********************** 
+  
+//  file = fopen("gantt.txt","w");
+//  fprintf(file,"gantt\n");
+//  fprintf(file,"    title A Gantt Diagram\n");
+//  fprintf(file,"    dateFormat x\n");
+//  fclose(file);  
 
   // Setup IRS
   GPIOInit();
@@ -247,20 +270,8 @@ int main(int n_args, int8_t** args){
 
   //Início do SO
   osKernelStart();
-
-  //************************
-  //Init Diagram of Gantt
-  //*********************** 
   
-//  file = fopen("gantt.txt","w");
-//  fprintf(file,"gantt\n");
-//  fprintf(file,"    title A Gantt Diagram\n");
-//  fprintf(file,"    dateFormat x\n");
-//  
-    
   thread_main();
-  
-//  fclose(file);
   
   //************************
   //Finalização de Threads aqui
