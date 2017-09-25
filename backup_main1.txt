@@ -1,0 +1,177 @@
+#include "mcu_regs.h"
+#include "type.h"
+#include "stdio.h"
+#include "uart.h"
+#include "timer32.h"
+#include "i2c.h"
+#include "gpio.h"
+#include "ssp.h"
+#include "adc.h"
+#include "oled.h"
+
+
+#define figura 0x00001000
+#define imagem 0x00001034
+
+
+
+
+extern int f_asm(void);
+
+void rotateImageToRight();
+void justprint();
+void binaryImage(int **ptr);
+static void intToString(int value, uint8_t* pBuf, uint32_t len, uint32_t base);
+static uint8_t buf[10];
+
+int main()
+{
+    uint8_t i;
+    GPIOInit();
+    I2CInit( (uint32_t)I2CMASTER, 0 );
+    SSPInit();
+    oled_init();
+    oled_clearScreen(OLED_COLOR_WHITE);
+    i = f_asm();
+    GPIOSetDir( PORT1, 4, 0 );
+    GPIOSetDir( PORT2, 9, 0 );
+    int *mat = (int *)malloc(64 * 96 * sizeof(int));
+    binaryImage(&mat);
+    //uint8_t *p = (uint8_t *) imagem;
+    //uint8_t z[64][96];
+    oled_clearScreen(OLED_COLOR_WHITE);
+    while(1){
+      int x=0;
+      int y=0;
+      while(1){
+          x = GPIOGetValue( PORT1, 4);
+          y = GPIOGetValue( PORT2, 9);
+          if(x == 0 || y == 0){
+            break;
+          }
+      }
+      
+      switch ( x ) {
+      case 0:
+        oled_clearScreen(OLED_COLOR_WHITE);
+        rotateImageToRight();
+        break;
+      case 1:
+        oled_clearScreen(OLED_COLOR_WHITE);
+        justprint();
+        break;
+      }
+    }
+  return 0;
+}
+
+
+
+
+void rotateImageToRight(){
+    uint8_t *p = (uint8_t *) imagem;
+    uint8_t i;
+    uint8_t j;
+    // Percorre a área do oled imprime no display
+    for (i = 0; i < 64; i++){
+        for (j = 0; j < 96; j++){
+          if(j>16 && j<80){
+          if(*p> 128)
+          oled_putPixel(80-i, j-16, OLED_COLOR_WHITE);
+          else
+          oled_putPixel(80-i, j-16, OLED_COLOR_BLACK);
+          }
+          p=p+3; 
+        }                                
+      }
+ }
+void binaryImage(int** mtrx){
+    uint8_t *p = (uint8_t *) imagem;
+    uint8_t i;
+    uint8_t j;
+    // Percorre a área do oled imprime no display
+    for (i = 0; i < 64; i++){
+        for (j = 0; j < 96; j++){
+          if(mtrx[i][j] > 128)
+          mtrx[i][j] =0;
+          else
+          mtrx[i][j] =0;
+          p=p+3;
+        }                                
+      }
+ }
+
+
+
+void justprint(){
+    uint8_t *p = (uint8_t *) imagem;
+    uint8_t i;
+    uint8_t j;
+    // Percorre a área do oled imprime no display
+    for (i = 0; i < 64; i++){
+        for (j = 0; j < 96; j++){
+          if(*p> 128)
+          oled_putPixel(j, i, OLED_COLOR_WHITE);
+          else
+          oled_putPixel(j, i, OLED_COLOR_BLACK); 
+          p=p+3;
+        }                                
+      }
+ }
+
+static void intToString(int value, uint8_t* pBuf, uint32_t len, uint32_t base)
+{
+    static const char* pAscii = "0123456789abcdefghijklmnopqrstuvwxyz";
+    int pos = 0;
+    int tmpValue = value;
+
+    // the buffer must not be null and at least have a length of 2 to handle one
+    // digit and null-terminator
+    if (pBuf == NULL || len < 2)
+    {
+        return;
+    }
+
+    // a valid base cannot be less than 2 or larger than 36
+    // a base value of 2 means binary representation. A value of 1 would mean only zeros
+    // a base larger than 36 can only be used if a larger alphabet were used.
+    if (base < 2 || base > 36)
+    {
+        return;
+    }
+
+    // negative value
+    if (value < 0)
+    {
+        tmpValue = -tmpValue;
+        value    = -value;
+        pBuf[pos++] = '-';
+    }
+
+    // calculate the required length of the buffer
+    do {
+        pos++;
+        tmpValue /= base;
+    } while(tmpValue > 0);
+
+
+    if (pos > len)
+    {
+        // the len parameter is invalid.
+        return;
+    }
+
+    pBuf[pos] = '\0';
+
+    do {
+        pBuf[--pos] = pAscii[value % base];
+        value /= base;
+    } while(value > 0);
+
+    return;
+
+}
+ 
+
+
+

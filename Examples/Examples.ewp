@@ -55,7 +55,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -730,7 +730,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\linker\ldscript_irom_iar.icf</state>
+          <state>C:\Users\Allan Patrick\Dropbox\Embarcados\Labgit\Linker\lpc1343.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>

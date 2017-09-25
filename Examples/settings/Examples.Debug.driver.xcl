@@ -4,7 +4,13 @@
 
 "--fpu=None" 
 
+"-p" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CONFIG\debugger\NXP\LPC1343.ddf" 
+
 "--semihosting" 
+
+"--device=LPC1343" 
 
 "--multicore_nr_of_cores=1" 
 

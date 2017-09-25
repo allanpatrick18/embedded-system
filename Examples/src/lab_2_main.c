@@ -167,6 +167,7 @@ void thread_write_ram(void const *args){
             osSignalSet(id_thread_export_file, 0x1);
           
       }
+      }
 
 }
 osThreadDef(thread_write_ram, osPriorityNormal, 1, 0);
