@@ -20,6 +20,9 @@ FILE *file_gantt;
 //************************
 osMutexId id_mutex_ram_lock;
 
+osMutexId stdio_mutex;
+osMutexDef(stdio_mutex);
+
 //************************
 //IDs de Timers
 //************************
@@ -223,9 +226,11 @@ void thread_write_ram(void const *args){
         index_y = (index_y+63)%64;
         index_z = (index_z+63)%64;
         
+        osMutexWait(stdio_mutex, osWaitForever);
         axis_x[index_x] = filtered_x;
         axis_y[index_y] = filtered_y;
         axis_z[index_z] = filtered_z;
+        osMutexRelease(stdio_mutex);
         
         f_set(flags_thread_bar_red_leds, T_NOTIFY);
         osSignalSet(id_thread_bar_red_leds, 0x1);
@@ -254,7 +259,9 @@ void thread_bar_red_led(void const *args){
       }
       if (f_get(flags_thread_bar_red_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_red_leds, T_NOTIFY);
+        osMutexWait(stdio_mutex, osWaitForever);
         int8_t value_x = axis_x[index_x];
+        osMutexRelease(stdio_mutex);
         uint8_t norm_x = (value_x+127)*8/255;
         uint16_t mask = 0;
         for(int i = 0; i < norm_x; i++)
@@ -280,7 +287,9 @@ void thread_bar_green_led(void const *args){
       }
       if (f_get(flags_thread_bar_green_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_green_leds, T_NOTIFY);
+        osMutexWait(stdio_mutex, osWaitForever);
         int8_t value_y = axis_y[index_y];
+        osMutexRelease(stdio_mutex);
         uint8_t norm_y = (value_y+128)*8/255;
         uint16_t mask = 0;
         for(int i = 0; i < norm_y; i++)
@@ -307,6 +316,7 @@ void thread_display_oled(void const *args){
         f_clear(flags_thread_display_oled, T_NOTIFY);
         oled_clearScreen(OLED_COLOR_WHITE); 
         int last_j = ((axis_z[index_z]+127)*63)/255;
+        osMutexWait(stdio_mutex, osWaitForever);
         for (int i=0 ; i< 64;i++){
           int j = axis_z[(i+index_z)%64]+127;
           j = (j*63)/255;
@@ -327,6 +337,7 @@ void thread_display_oled(void const *args){
           oled_putPixel(64, i, OLED_COLOR_BLACK);
           last_j = j;
         }
+        osMutexRelease(stdio_mutex);
       }
     }
   }
@@ -378,6 +389,11 @@ int main(int n_args, int8_t** args){
   //************************
   id_timer_sampling = osTimerCreate(osTimer(timer_sampling), osTimerPeriodic, NULL);
   osTimerStart(id_timer_sampling, 250);
+  
+  //************************
+  //Inicialização de Mutex
+  //************************
+  stdio_mutex = osMutexCreate(osMutex(stdio_mutex));
   
   //************************
   //Inicialização de Threads aqui
