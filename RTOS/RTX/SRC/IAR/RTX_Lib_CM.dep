@@ -14,9 +14,6 @@
   <configuration>
     <name>CM0_LE</name>
     <outputs>
-      <file>$PROJ_DIR$\CM0_LE\rt_Event.o</file>
-      <file>$PROJ_DIR$\..\rt_List.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$PROJ_DIR$\HAL_CM0.s</file>
       <file>$PROJ_DIR$\..\HAL_CM.c</file>
       <file>$PROJ_DIR$\SVC_Table.s</file>
@@ -33,13 +30,16 @@
       <file>$PROJ_DIR$\..\rt_Task.c</file>
       <file>$PROJ_DIR$\..\rt_Time.c</file>
       <file>$PROJ_DIR$\..\rt_Timer.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\CM0_LE\rt_List.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\CM0_LE\rt_Event.o</file>
+      <file>$PROJ_DIR$\..\rt_List.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$PROJ_DIR$\CM0_LE\rt_System.o</file>
-      <file>$PROJ_DIR$\CM0_LE\rt_Robin.o</file>
       <file>$PROJ_DIR$\CM0_LE\rt_System.pbi</file>
+      <file>$PROJ_DIR$\CM0_LE\rt_Robin.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\CM0_LE\rt_List.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
       <file>$PROJ_DIR$\..\RTX_Config.h</file>
       <file>$PROJ_DIR$\CM0_LE\rt_CMSIS.o</file>
       <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
@@ -126,7 +126,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 75 58 22 63 26 19 68 28 57 53 2</file>
+          <file> 75 58 22 63 26 25 68 28 57 53 18</file>
         </tool>
       </inputs>
     </file>
@@ -154,7 +154,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 1 75 58 26 44 68 65 32 47 55 70 36 61 57 77 34 60 41 42 63 73 19 43 22 28 53 2 71 20</file>
+          <file> 17 75 58 26 44 68 65 32 47 55 70 36 61 57 77 34 60 41 42 63 73 25 43 22 28 53 18 71 24</file>
         </tool>
       </inputs>
     </file>
@@ -163,7 +163,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 0</file>
+          <file> 16</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -173,7 +173,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 2 1 77 63 58 68 26 34 32 19 53 57 22 28 75</file>
+          <file> 18 17 77 63 58 68 26 34 32 25 53 57 22 28 75</file>
         </tool>
       </inputs>
     </file>
@@ -186,13 +186,13 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 21</file>
+          <file> 23</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 19 2 32 77 63 68 26 1 60 58 53 57 22 28 75</file>
+          <file> 25 18 32 77 63 68 26 17 60 58 53 57 22 28 75</file>
         </tool>
       </inputs>
     </file>
@@ -211,7 +211,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 44 19 68 77 32 53 26 1 42 63 58 2 57 22 28 75</file>
+          <file> 44 25 68 77 32 53 26 17 42 63 58 18 57 22 28 75</file>
         </tool>
       </inputs>
     </file>
@@ -230,7 +230,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 19 58 68 63 75 77 26 42 22 28 53 2 57</file>
+          <file> 25 58 68 63 75 77 26 42 22 28 53 18 57</file>
         </tool>
       </inputs>
     </file>
@@ -268,7 +268,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 22 47 75 1 58 26 32 63 19 68 28 57 53 2</file>
+          <file> 22 47 75 17 58 26 32 63 25 68 28 57 53 18</file>
         </tool>
       </inputs>
     </file>
@@ -277,7 +277,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 24</file>
+          <file> 21</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -287,7 +287,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 22 60 75 1 63 58 26 32 39 19 68 28 57 53 2</file>
+          <file> 22 60 75 17 63 58 26 32 39 25 68 28 57 53 18</file>
         </tool>
       </inputs>
     </file>
@@ -306,7 +306,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 2 32 19 77 63 68 26 1 41 58 53 57 22 28 75</file>
+          <file> 18 32 25 77 63 68 26 17 41 58 53 57 22 28 75</file>
         </tool>
       </inputs>
     </file>
@@ -315,17 +315,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 23</file>
+          <file> 19</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 25</file>
+          <file> 20</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 60 34 32 44 39 19 58 68 75 26 77 1 41 33 63 22 28 53 2 57</file>
+          <file> 60 34 32 44 39 25 58 68 75 26 77 17 41 33 63 22 28 53 18 57</file>
         </tool>
       </inputs>
     </file>
@@ -344,7 +344,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 1 68 77 39 53 26 32 42 63 58 2 57 19 22 28 75</file>
+          <file> 17 68 77 39 53 26 32 42 63 58 18 57 25 22 28 75</file>
         </tool>
       </inputs>
     </file>
@@ -363,7 +363,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 22 68 32 19 75 26 60 58 28 57 53 2</file>
+          <file> 22 68 32 25 75 26 60 58 28 57 53 18</file>
         </tool>
       </inputs>
     </file>
@@ -382,7 +382,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 58 33 68 75 26 42 19 22 28 57 53 2</file>
+          <file> 58 33 68 75 26 42 25 22 28 57 53 18</file>
         </tool>
       </inputs>
     </file>
@@ -402,11 +402,7 @@
   <configuration>
     <name>CM3_LE</name>
     <outputs>
-      <file>$PROJ_DIR$\..\rt_List.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\HAL_CM4.s</file>
       <file>$PROJ_DIR$\HAL_CM3.s</file>
-      <file>$PROJ_DIR$\HAL_CM0.s</file>
       <file>$PROJ_DIR$\..\HAL_CM.c</file>
       <file>$PROJ_DIR$\SVC_Table.s</file>
       <file>$PROJ_DIR$\..\rt_CMSIS.c</file>
@@ -422,36 +418,11 @@
       <file>$PROJ_DIR$\..\rt_Task.c</file>
       <file>$PROJ_DIR$\..\rt_Time.c</file>
       <file>$PROJ_DIR$\..\rt_Timer.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Semaphore.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_System.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Robin.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_CMSIS.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Event.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Mutex.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Semaphore.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\HAL_CM3.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_System.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_List.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Mailbox.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Task.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\HAL_CM.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Memory.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_MemBox.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_List.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Timer.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Time.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\SVC_Table.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Mailbox.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Task.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Robin.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Memory.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_MemBox.__cstat.et</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Timer.o</file>
-      <file>$PROJ_DIR$\CM3_LE\rt_Time.o</file>
+      <file>$PROJ_DIR$\..\rt_List.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
       <file>$PROJ_DIR$\..\RTX_Config.h</file>
       <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\..\rt_Task.h</file>
@@ -477,6 +448,33 @@
       <file>$PROJ_DIR$\..\..\INC\cmsis_os.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
       <file>$PROJ_DIR$\..\rt_System.h</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_System.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Semaphore.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Robin.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_CMSIS.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Event.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Mutex.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Semaphore.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\HAL_CM3.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_System.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_List.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Mailbox.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Task.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\HAL_CM.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Memory.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_MemBox.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_List.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Timer.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Time.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\SVC_Table.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Mailbox.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Task.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Robin.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Memory.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_MemBox.__cstat.et</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Timer.o</file>
+      <file>$PROJ_DIR$\CM3_LE\rt_Time.o</file>
       <file>$PROJ_DIR$\CM3_LE\rt_Event.o</file>
       <file>$PROJ_DIR$\CM3_LE\HAL_CM.__cstat.et</file>
       <file>$PROJ_DIR$\CM3_LE\rt_Mutex.__cstat.et</file>
@@ -487,7 +485,7 @@
       <outputs>
         <tool>
           <name>IARCHIVE</name>
-          <file> 78</file>
+          <file> 76</file>
         </tool>
       </outputs>
     </file>
@@ -496,7 +494,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 29</file>
+          <file> 53</file>
         </tool>
       </outputs>
     </file>
@@ -505,17 +503,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 34</file>
+          <file> 58</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 76</file>
+          <file> 74</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 39</file>
         </tool>
       </inputs>
     </file>
@@ -524,7 +522,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 41</file>
+          <file> 65</file>
         </tool>
       </outputs>
     </file>
@@ -533,13 +531,13 @@
       <outputs>
         <tool>
           <name>__cstat</name>
-          <file> 25</file>
+          <file> 49</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 36 20 69 65 49 62 1 51 73 70 55 71 59 64 50 74 52 54 0 66 61 57 60 58 63 68 72 67 21</file>
+          <file> 60 20 40 36 18 33 17 22 44 41 26 42 30 35 21 45 23 25 16 37 32 28 31 29 34 39 43 38 19</file>
         </tool>
       </inputs>
     </file>
@@ -548,17 +546,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 75</file>
+          <file> 73</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 26</file>
+          <file> 50</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 54 0 52 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 25 16 23 39</file>
         </tool>
       </inputs>
     </file>
@@ -567,17 +565,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 31</file>
+          <file> 55</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 38</file>
+          <file> 62</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 0 52 66 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 16 23 37 39</file>
         </tool>
       </inputs>
     </file>
@@ -586,17 +584,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 42</file>
+          <file> 66</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 32</file>
+          <file> 56</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 0 60 58 52 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 16 31 29 23 39</file>
         </tool>
       </inputs>
     </file>
@@ -605,17 +603,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 37</file>
+          <file> 61</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 46</file>
+          <file> 70</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 58 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 29 39</file>
         </tool>
       </inputs>
     </file>
@@ -624,17 +622,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 45</file>
+          <file> 69</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 35</file>
+          <file> 59</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 63</file>
+          <file> 35 34</file>
         </tool>
       </inputs>
     </file>
@@ -643,17 +641,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 27</file>
+          <file> 51</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 77</file>
+          <file> 75</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 0 52 61 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 16 23 32 39</file>
         </tool>
       </inputs>
     </file>
@@ -662,17 +660,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 44</file>
+          <file> 68</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 24</file>
+          <file> 48</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 0 52 66 56 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 16 23 37 27 39</file>
         </tool>
       </inputs>
     </file>
@@ -681,17 +679,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 22</file>
+          <file> 47</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 28</file>
+          <file> 52</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 0 52 57 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 16 23 28 39</file>
         </tool>
       </inputs>
     </file>
@@ -700,17 +698,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 23</file>
+          <file> 46</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 30</file>
+          <file> 54</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 52 74 54 0 60 57 66 53 56 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 23 45 25 16 31 28 37 24 27 39</file>
         </tool>
       </inputs>
     </file>
@@ -719,17 +717,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 43</file>
+          <file> 67</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 33</file>
+          <file> 57</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 74 52 0 58 56 68</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 45 23 16 29 27 39</file>
         </tool>
       </inputs>
     </file>
@@ -738,17 +736,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 48</file>
+          <file> 72</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 40</file>
+          <file> 64</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 52 66</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 23 37</file>
         </tool>
       </inputs>
     </file>
@@ -757,17 +755,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 47</file>
+          <file> 71</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 39</file>
+          <file> 63</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 64 50 20 69 65 49 62 1 51 73 53 58</file>
+          <file> 35 21 20 40 36 18 33 17 22 44 24 29</file>
         </tool>
       </inputs>
     </file>
