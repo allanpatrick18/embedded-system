@@ -270,12 +270,8 @@ void thread_bar_red_led(void const *args){
         f_clear(flags_thread_bar_red_leds, T_NOTIFY);
         osMutexWait(stdio_mutex, osWaitForever);
         int8_t value_x = axis_x[index_x];
-<<<<<<< HEAD
-        uint8_t norm_x = (value_x+64)*8/124;
-=======
         osMutexRelease(stdio_mutex);
         uint8_t norm_x = (value_x+127)*8/255;
->>>>>>> 943c8d6054716d059b58e3ccba38f2fffea64412
         uint16_t mask = 0;
         for(int i = 0; i < norm_x; i++)
           mask += 1 << i;
@@ -302,12 +298,8 @@ void thread_bar_green_led(void const *args){
         f_clear(flags_thread_bar_green_leds, T_NOTIFY);
         osMutexWait(stdio_mutex, osWaitForever);
         int8_t value_y = axis_y[index_y];
-<<<<<<< HEAD
-        uint8_t norm_y = (value_y+64)*8/124;
-=======
         osMutexRelease(stdio_mutex);
         uint8_t norm_y = (value_y+128)*8/255;
->>>>>>> 943c8d6054716d059b58e3ccba38f2fffea64412
         uint16_t mask = 0;
         for(int i = 0; i < norm_y; i++)
           mask += 0x8000 >> i;
@@ -332,12 +324,8 @@ void thread_display_oled(void const *args){
       if (f_get(flags_thread_display_oled, T_NOTIFY)){ 
         f_clear(flags_thread_display_oled, T_NOTIFY);
         oled_clearScreen(OLED_COLOR_WHITE); 
-<<<<<<< HEAD
-        int last_j = ((axis_z[index_z]+64)*63)/127;
-=======
         int last_j = ((axis_z[index_z]+127)*63)/255;
         osMutexWait(stdio_mutex, osWaitForever);
->>>>>>> 943c8d6054716d059b58e3ccba38f2fffea64412
         for (int i=0 ; i< 64;i++){
           int j = axis_z[(i+index_z)%64]+64;
           j = (j*63)/127;
