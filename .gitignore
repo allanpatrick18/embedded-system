@@ -12,3 +12,4 @@ Lib_EaBaseBoard/Lib_EaBaseBoard.dep
 Lib_MCU/Lib_MCU.dep
 RTOS/RTX/SRC/IAR/RTX_Lib_CM.dep
 Settings/CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES.wsdt
+Examples/settings/Examples.dni
