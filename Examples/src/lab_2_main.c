@@ -1,8 +1,8 @@
 #include "mcu_regs.h"
 #include "type.h"
-#include "stdio.h"
 #include "timer32.h"
 #include "i2c.h"
+#include "ssp.h"
 #include "pca9532.h"
 #include "gpio.h"
 #include "ssp.h"
@@ -11,9 +11,7 @@
 #include "oled.h"
 #include "acc.h"
 #include "joystick.h"
-//#include "libdemo.h"
-
-FILE *file_gantt;
+#include "stdio.h"
 
 //************************
 //IDs de Mutex
@@ -55,6 +53,11 @@ uint8_t flags_thread_export_file = 0;
 //************************
 // vetores de
 //************************
+#define ACC_CALIBRATE
+#ifdef ACC_CALIBRATE
+  #define ACC_FLAT
+#endif
+
 int8_t axis_x[64] = {0};
 int8_t axis_y[64] = {0};
 int8_t axis_z[64] = {0};
@@ -67,10 +70,17 @@ int8_t filtered_x;
 int8_t filtered_y;
 int8_t filtered_z;
 
+
+//************************
+//Gantt
+//************************
+FILE *file_gantt;
+//Fator para exibir tempo em milisegundos
+int ticks_factor = 72000;
+
 //************************
 //ISR
 //************************
-
 void PIOINT2_IRQHandler(void) {
   if (!GPIOGetValue(PORT2, 0)){
     f_set(flags_thread_samples, T_PROTECT);
@@ -94,7 +104,6 @@ void setup_port(uint32_t port, uint32_t bitPosi, uint32_t sense, uint32_t single
 {
     switch (port) {
     case 1:
-
         if (sense == 0)
         {
             *porta1_IS &= ~(0x1 << bitPosi);
@@ -255,7 +264,7 @@ void thread_bar_red_led(void const *args){
       if (f_get(flags_thread_bar_red_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_red_leds, T_NOTIFY);
         int8_t value_x = axis_x[index_x];
-        uint8_t norm_x = (value_x+127)*8/255;
+        uint8_t norm_x = (value_x+64)*8/124;
         uint16_t mask = 0;
         for(int i = 0; i < norm_x; i++)
           mask += 1 << i;
@@ -281,7 +290,7 @@ void thread_bar_green_led(void const *args){
       if (f_get(flags_thread_bar_green_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_green_leds, T_NOTIFY);
         int8_t value_y = axis_y[index_y];
-        uint8_t norm_y = (value_y+128)*8/255;
+        uint8_t norm_y = (value_y+64)*8/124;
         uint16_t mask = 0;
         for(int i = 0; i < norm_y; i++)
           mask += 0x8000 >> i;
@@ -306,10 +315,10 @@ void thread_display_oled(void const *args){
       if (f_get(flags_thread_display_oled, T_NOTIFY)){ 
         f_clear(flags_thread_display_oled, T_NOTIFY);
         oled_clearScreen(OLED_COLOR_WHITE); 
-        int last_j = ((axis_z[index_z]+127)*63)/255;
+        int last_j = ((axis_z[index_z]+64)*63)/127;
         for (int i=0 ; i< 64;i++){
-          int j = axis_z[(i+index_z)%64]+127;
-          j = (j*63)/255;
+          int j = axis_z[(i+index_z)%64]+64;
+          j = (j*63)/127;
           oled_putPixel(i, j, OLED_COLOR_BLACK);
           if(abs(last_j - j) > 1){
             int min_j, max_j;
@@ -335,7 +344,29 @@ osThreadDef(thread_display_oled, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_export_file(void const *args){
-  osDelay(osWaitForever);
+  osEvent evt;
+  FILE *log_file = fopen("acc_log.txt", "w");
+  fprintf(log_file, "t x y z\n");
+  fclose(log_file);
+  while(1){
+    evt = osSignalWait (0x01, osWaitForever);
+    if(evt.status == osEventSignal){
+      if (f_get(flags_thread_export_file, T_PROTECT)){
+        f_clear(flags_thread_export_file, T_PROTECT);
+        osDelay (1000);
+      }
+      if (f_get(flags_thread_export_file, T_NOTIFY)){ 
+        f_clear(flags_thread_export_file, T_NOTIFY);
+        
+        FILE *log_file = fopen("acc_log.txt", "a");
+        fseek(log_file, 0, SEEK_END);
+        fprintf(log_file, "%lu %d %d %d\n",  
+                osKernelSysTick()/ticks_factor,
+                axis_x[index_x],  axis_y[index_y], axis_z[index_z]);
+        fclose(log_file);
+      }
+    }
+  }
 }
 osThreadDef(thread_export_file, osPriorityNormal, 1, 0);
 
@@ -344,8 +375,7 @@ osThreadDef(thread_export_file, osPriorityNormal, 1, 0);
 //************************
 
 void thread_main(){    
-  while(1) osDelay(osWaitForever);
-  printf("finished");
+  osDelay(osWaitForever);
 }
 
 int main(int n_args, int8_t** args){
@@ -359,17 +389,17 @@ int main(int n_args, int8_t** args){
   fprintf(file_gantt,"gantt\n");
   fprintf(file_gantt,"    title A Gantt Diagram\n");
   fprintf(file_gantt,"    dateFormat x\n");
-//  fclose(file_gantt);  
+  fclose(file_gantt);  
   
   // Setup IRS
+  SSPInit();
   I2CInit( (uint32_t)I2CMASTER, 0 );
   GPIOInit();
-  SSPInit();
   
   pca9532_init();
   acc_init();
   joystick_init();
-  setup_isr();
+//  setup_isr();
   oled_init();
   oled_clearScreen(OLED_COLOR_WHITE);  
   
@@ -378,7 +408,7 @@ int main(int n_args, int8_t** args){
   //************************
   id_timer_sampling = osTimerCreate(osTimer(timer_sampling), osTimerPeriodic, NULL);
   osTimerStart(id_timer_sampling, 250);
-  
+    
   //************************
   //Inicialização de Threads aqui
   //************************
@@ -410,4 +440,4 @@ int main(int n_args, int8_t** args){
   
   osDelay(osWaitForever); 
   return 0;
-}
+} 
