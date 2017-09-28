@@ -1,0 +1,9 @@
+
+Examples/acc_log.txt
+Examples/gantt.txt
+Examples/Debug/Obj/lab_2_main.o
+Examples/Debug/Obj/lab_2_main.pbi
+*.o
+*.pbi
+*.pbd
+*.out
