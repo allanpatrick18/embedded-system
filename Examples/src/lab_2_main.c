@@ -41,6 +41,8 @@ osThreadId id_thread_bar_green_leds;
 osThreadId id_thread_display_oled;
 osThreadId id_thread_export_file;
 
+#define yield() osThreadYield(); 
+
 //************************
 // flags
 //************************
@@ -282,7 +284,7 @@ void thread_samples(void const *args){
       if (f_get(flags_thread_samples,T_NOTIFY)){
         f_clear(flags_thread_samples, T_NOTIFY);
         time = osKernelSysTick()/gantt_ticks_factor;
-//        osThreadYield();
+        yield();
         
         int8_t x = 0;
         int8_t y = 0;
@@ -344,11 +346,11 @@ void thread_write_ram(void const *args){
         index_z = (index_z+63)%64;
         
         osSemaphoreWait(id_semaphore_write_lock, osWaitForever);
-        osThreadYield();
+        yield();
         axis_x[index_x] = filtered_x;
-        osThreadYield();
+        yield();
         axis_y[index_y] = filtered_y;
-        osThreadYield();
+        yield();
         axis_z[index_z] = filtered_z;
         osSemaphoreRelease(id_semaphore_write_lock);
         
@@ -387,14 +389,14 @@ void thread_bar_red_led(void const *args){
         time = osKernelSysTick()/gantt_ticks_factor;
 
         osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
-        osThreadYield();
+        yield();
         int8_t value_x = axis_x[index_x];
         osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
         
         uint8_t norm_x = (value_x+128)*8/255;
         uint16_t mask = 0;
         for(int i = 0; i < norm_x; i++){
-          osThreadYield();
+          yield();
           mask += 1 << i;
         }
         pca9532_setLeds(mask, last_mask);
@@ -426,14 +428,14 @@ void thread_bar_green_led(void const *args){
         time = osKernelSysTick()/gantt_ticks_factor;
 
         osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
-        osThreadYield();
+        yield();
         int8_t value_y = axis_y[index_y];
         osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
         
         uint8_t norm_y = (value_y+128)*8/255;
         uint16_t mask = 0;
         for(int i = 0; i < norm_y; i++){
-          osThreadYield();          
+          yield();          
           mask += 0x8000 >> i;
         }
         pca9532_setLeds(mask, last_mask);
@@ -475,7 +477,7 @@ void thread_display_oled(void const *args){
         int last_i = 0;
         int last_j = ((axis_z[index_z]+128)*63)/255;
         for (int i=0 ; i< 64;i++){
-          osThreadYield();          
+          yield();          
           int j = ((axis_z[(i+index_z)%64]+128)*63)/255;
           int x = i;
           int y = j;
@@ -524,7 +526,7 @@ void thread_export_file(void const *args){
         time = osKernelSysTick()/gantt_ticks_factor;
 
         osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
-//        osThreadYield();
+//        yield();
         int8_t x = axis_x[index_x];
         int8_t y = axis_y[index_y];
         int8_t z = axis_z[index_z];
@@ -555,7 +557,7 @@ void thread_protection(){
     if(evt.status == osEventSignal){
       time = osKernelSysTick()/gantt_ticks_factor;
 
-      osDelay(20);
+      osDelay(15);
       if(GPIOGetValue(PORT2, 9))
         continue;
       f_set(flags_thread_samples, T_PROTECT);
