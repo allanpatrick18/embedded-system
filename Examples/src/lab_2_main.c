@@ -93,8 +93,8 @@ typedef uint8_t orientation_t;
 //************************
 #define SAVE_GANTT
 //Fator para exibir tempo em milisegundos
-#define gantt_ticks_factor 72;
-#define milis_ticks_factor 72000;
+#define gantt_ticks_factor 72
+#define milis_ticks_factor 72000
 
 //************************
 //ISR

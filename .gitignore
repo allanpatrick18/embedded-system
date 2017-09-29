@@ -22,3 +22,10 @@ Examples/settings/Examples.dni
 *.dbgdt
 *.dni
 *.dep
+*.o
+*.out
+*.pbd
+*.browse
+*.pbi
+*.dep
+*.wsdt

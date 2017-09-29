@@ -222,10 +222,6 @@
       <name>$PROJ_DIR$\src\lab_2_main.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 87</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
           <file> 59</file>
         </tool>
@@ -241,7 +237,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 13 30 26 83 33 43 32 58 41 40 79 81 6 15 8 56 53 38 35 19 36 48 49 24 3 52 0 88 82 44 39 75 51 45 78 42 23 4</file>
+          <file> 30 26 83 33 43 32 58 41 13 40 79 81 6 15 8 56 53 38 35 19 36 48 49 24 3 52 0 88 82 44 39 75 51 45 78 42 23 4</file>
         </tool>
       </inputs>
     </file>
