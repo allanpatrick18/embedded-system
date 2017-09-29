@@ -15,8 +15,14 @@
 //************************
 //IDs de Mutex
 //************************
-osMutexId id_mutex_ram_lock;
-osMutexDef(mutex_ram_lock);
+osMutexId id_mutex_read_lock;
+osMutexDef(mutex_read_lock);
+
+//************************
+//IDs de Semaforos
+//************************
+osSemaphoreId id_semaphore_write_lock;
+osSemaphoreDef(semaphore_write_lock);
 
 //************************
 //IDs de Timers
@@ -67,16 +73,28 @@ int8_t filtered_x;
 int8_t filtered_y;
 int8_t filtered_z;
 
+int readers_count = 0;
+
 #define true 1
 #define false 0
 typedef uint8_t bool;
 
+#define NORTH   0x01
+#define SOUTH   0x11
+#define EAST    0x22
+#define WEST    0x32
+
+#define is_vertical(i)          i&0x01
+#define is_horizontal(i)        i&0x02
+typedef uint8_t orientation_t;
+
 //************************
-//Gantt
+//tempo
 //************************
-FILE *file_gantt;
+#define SAVE_GANTT
 //Fator para exibir tempo em milisegundos
-int ticks_factor = 72000;
+#define gantt_ticks_factor 72;
+#define milis_ticks_factor 72000;
 
 //************************
 //ISR
@@ -132,6 +150,34 @@ void setup_isr() {
   GPIOIntEnable(PORT2, 9); // SW3
 }
 
+void osMutexReaderWait(osMutexId read_lock, osSemaphoreId write_lock, int* counter) {
+  osMutexWait(read_lock, osWaitForever);
+  if((*counter)++ == 0) 
+    osSemaphoreWait(write_lock, osWaitForever);
+  osMutexRelease(read_lock);
+}
+
+void osMutexReaderRelease(osMutexId read_lock, osSemaphoreId write_lock, int* counter) {
+  osMutexWait(read_lock, osWaitForever);
+  if(--(*counter) == 0) 
+    osSemaphoreRelease(write_lock);
+  osMutexRelease(read_lock);
+}
+
+//led2
+void led_set(){
+  GPIOSetValue(PORT0, 7, 1);
+}
+
+void led_clear(){
+  GPIOSetValue(PORT0, 7, 0);
+}
+
+void led_init(){
+  GPIOSetDir(PORT0, 7, 1);
+  led_clear();
+}
+
 int8_t filter(int8_t eixo[4]){
   int16_t t0 = eixo[0];
   int16_t t1 = eixo[1];
@@ -141,18 +187,53 @@ int8_t filter(int8_t eixo[4]){
   return (int8_t) r;
 }
 
-void led_set(){
-  GPIOSetValue(PORT0, 7, 1);
+orientation_t get_orientation(int x, int y, orientation_t prev){
+  if(x*x + y*y > 1024){
+    if(abs(x) > abs(y)*1.1){
+      if(x < 0)
+        return WEST;
+      else
+        return EAST;
+    }
+    if(abs(y) > abs(x)*1.1){
+      if(y < 0)
+        return NORTH;
+      else
+        return SOUTH;
+    }
+  }
+  return prev;
 }
 
-void led_clear(){
-  GPIOSetValue(PORT0, 7, 0);
+void rotate_coordinates(int *pX, int *pY, size_t sX, size_t sY, orientation_t dir){
+  int x = *pX;
+  int y = *pY;
+  switch(dir){
+  case NORTH:
+    (*pY) = sY-1-y;
+    (*pX) = sX-1-x;
+    break;
+  case SOUTH:
+    break;
+  case EAST:
+    (*pX) = sX-1-y;
+    (*pY) =      x;
+    break;
+  case WEST:
+    (*pX) =      y;
+    (*pY) = sY-1-x;
+    break;
+  }
 }
 
-//led2
-void led_init(){
-  GPIOSetDir(PORT0, 7, 1);
-  led_clear();
+void save_gantt(const char* name, uint32_t init, uint32_t end){
+#ifdef SAVE_GANTT
+  FILE* file_gantt = fopen("gantt.txt","a");
+  fseek(file_gantt, 0, SEEK_END);
+  fputs(name, file_gantt);
+  fprintf(file_gantt,": a, %lu, %lu\n", init, end);
+  fclose(file_gantt);
+#endif
 }
 
 //************************
@@ -173,6 +254,7 @@ osTimerDef(timer_protection, timer_protection_cb);
 
 //Thread para geração de chaves
 void thread_samples(void const *args){
+  uint32_t time;
   osEvent evt;
   int8_t queue_x[4] = {0};
   int8_t queue_y[4] = {0};
@@ -199,6 +281,9 @@ void thread_samples(void const *args){
       }
       if (f_get(flags_thread_samples,T_NOTIFY)){
         f_clear(flags_thread_samples, T_NOTIFY);
+        time = osKernelSysTick()/gantt_ticks_factor;
+//        osThreadYield();
+        
         int8_t x = 0;
         int8_t y = 0;
         int8_t z = 0;
@@ -229,6 +314,8 @@ void thread_samples(void const *args){
         
         f_set(flags_thread_write_ram, T_NOTIFY);
         osSignalSet(id_thread_write_ram, 0x1);
+
+        save_gantt(" Thread Samples ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }
@@ -237,6 +324,7 @@ osThreadDef(thread_samples, osPriorityNormal, 1, 0);
 
 //Thread 
 void thread_write_ram(void const *args){
+  uint32_t time;
   osEvent evt;
   while(1){
     evt = osSignalWait (0x01, osWaitForever);     
@@ -249,15 +337,20 @@ void thread_write_ram(void const *args){
       }
       if (f_get(flags_thread_write_ram, T_NOTIFY)){
         f_clear(flags_thread_write_ram, T_NOTIFY);
+        time = osKernelSysTick()/gantt_ticks_factor;
+
         index_x = (index_x+63)%64;
         index_y = (index_y+63)%64;
         index_z = (index_z+63)%64;
         
-        osMutexWait(id_mutex_ram_lock, osWaitForever);
+        osSemaphoreWait(id_semaphore_write_lock, osWaitForever);
+        osThreadYield();
         axis_x[index_x] = filtered_x;
+        osThreadYield();
         axis_y[index_y] = filtered_y;
+        osThreadYield();
         axis_z[index_z] = filtered_z;
-        osMutexRelease(id_mutex_ram_lock);
+        osSemaphoreRelease(id_semaphore_write_lock);
         
         f_set(flags_thread_bar_red_leds, T_NOTIFY);
         osSignalSet(id_thread_bar_red_leds, 0x1);
@@ -267,6 +360,8 @@ void thread_write_ram(void const *args){
         osSignalSet(id_thread_display_oled, 0x1);
         f_set(flags_thread_export_file, T_NOTIFY);
         osSignalSet(id_thread_export_file, 0x1);    
+
+        save_gantt(" Thread Buffer  ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }
@@ -275,6 +370,7 @@ osThreadDef(thread_write_ram, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_bar_red_led(void const *args){
+  uint32_t time;
   osEvent evt;
   uint16_t last_mask = 0;
   while(1){
@@ -288,17 +384,23 @@ void thread_bar_red_led(void const *args){
       }
       if (f_get(flags_thread_bar_red_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_red_leds, T_NOTIFY);
-        
-        osMutexWait(id_mutex_ram_lock, osWaitForever);
+        time = osKernelSysTick()/gantt_ticks_factor;
+
+        osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
+        osThreadYield();
         int8_t value_x = axis_x[index_x];
-        osMutexRelease(id_mutex_ram_lock);
+        osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
         
         uint8_t norm_x = (value_x+128)*8/255;
         uint16_t mask = 0;
-        for(int i = 0; i < norm_x; i++)
+        for(int i = 0; i < norm_x; i++){
+          osThreadYield();
           mask += 1 << i;
+        }
         pca9532_setLeds(mask, last_mask);
         last_mask = mask;
+
+        save_gantt(" Thread LEDR    ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }
@@ -307,6 +409,7 @@ osThreadDef(thread_bar_red_led, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_bar_green_led(void const *args){
+  uint32_t time;
   osEvent evt;
   uint16_t last_mask = 0;
   while(1){
@@ -320,17 +423,23 @@ void thread_bar_green_led(void const *args){
       }
       if (f_get(flags_thread_bar_green_leds, T_NOTIFY)){
         f_clear(flags_thread_bar_green_leds, T_NOTIFY);
-        
-        osMutexWait(id_mutex_ram_lock, osWaitForever);
+        time = osKernelSysTick()/gantt_ticks_factor;
+
+        osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
+        osThreadYield();
         int8_t value_y = axis_y[index_y];
-        osMutexRelease(id_mutex_ram_lock);
+        osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
         
         uint8_t norm_y = (value_y+128)*8/255;
         uint16_t mask = 0;
-        for(int i = 0; i < norm_y; i++)
+        for(int i = 0; i < norm_y; i++){
+          osThreadYield();          
           mask += 0x8000 >> i;
+        }
         pca9532_setLeds(mask, last_mask);
         last_mask = mask;
+        
+        save_gantt(" Thread LEDG    ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }  
@@ -339,7 +448,13 @@ osThreadDef(thread_bar_green_led, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_display_oled(void const *args){
+  uint32_t time;
+  orientation_t facing = SOUTH;
   osEvent evt;
+
+  for (int i=0 ; i< 64;i++)
+    oled_putPixel(64, i, OLED_COLOR_BLACK);
+  
   while(1){
     evt = osSignalWait (0x01, osWaitForever);
     if(evt.status == osEventSignal){
@@ -351,30 +466,37 @@ void thread_display_oled(void const *args){
       }
       if (f_get(flags_thread_display_oled, T_NOTIFY)){ 
         f_clear(flags_thread_display_oled, T_NOTIFY);
-        oled_clearScreen(OLED_COLOR_WHITE); 
+        time = osKernelSysTick()/gantt_ticks_factor;
+        
+        osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
+        int vX = axis_x[index_x];
+        int vY = axis_y[index_y];
+        facing = get_orientation(vX, vY, facing);
+        int last_i = 0;
         int last_j = ((axis_z[index_z]+128)*63)/255;
-        osMutexWait(id_mutex_ram_lock, osWaitForever);
         for (int i=0 ; i< 64;i++){
-          int j = axis_z[(i+index_z)%64]+128;
-          j = (j*63)/255;
-          oled_putPixel(i, j, OLED_COLOR_BLACK);
-          if(abs(last_j - j) > 1){
-            int min_j, max_j;
-            if(j < last_j){
-              min_j = j;
-              max_j = last_j;
-            }
-            else{
-              min_j = last_j;
-              max_j = j;
-            }
-            for(int delta_j = 1; delta_j < max_j - min_j; delta_j++)
-              oled_putPixel(i, min_j + delta_j, OLED_COLOR_BLACK);
-            }
-          oled_putPixel(64, i, OLED_COLOR_BLACK);
+          osThreadYield();          
+          int j = ((axis_z[(i+index_z)%64]+128)*63)/255;
+          int x = i;
+          int y = j;
+          int last_x = last_i;
+          int last_y = last_j;
+          rotate_coordinates(&x, &y, 64, 64, facing);
+          rotate_coordinates(&last_x, &last_y, 64, 64, facing);
+          if(is_vertical(facing))
+            for(int k = 0; k < 64; k++)
+              oled_putPixel(x, k, OLED_COLOR_WHITE);
+          else if(is_horizontal(facing))
+            for(int k = 0; k < 64; k++)
+              oled_putPixel(k, y, OLED_COLOR_WHITE);
+            
+          oled_line(last_x, last_y, x, y, OLED_COLOR_BLACK);
+          last_i = i;
           last_j = j;
         }
-        osMutexRelease(id_mutex_ram_lock);
+        osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
+        
+        save_gantt(" Thread OLED    ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }
@@ -383,6 +505,7 @@ osThreadDef(thread_display_oled, osPriorityNormal, 1, 0);
 
 //Thread para 
 void thread_export_file(void const *args){
+  uint32_t time;
   osEvent evt;
   FILE *log_file = fopen("acc_log.txt", "w");
   fprintf(log_file, "Acelerometro\n");
@@ -398,18 +521,22 @@ void thread_export_file(void const *args){
       }
       if (f_get(flags_thread_export_file, T_NOTIFY)){ 
         f_clear(flags_thread_export_file, T_NOTIFY);
+        time = osKernelSysTick()/gantt_ticks_factor;
 
-        osMutexWait(id_mutex_ram_lock, osWaitForever);
+        osMutexReaderWait(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
+//        osThreadYield();
         int8_t x = axis_x[index_x];
         int8_t y = axis_y[index_y];
         int8_t z = axis_z[index_z];
-        osMutexRelease(id_mutex_ram_lock);
+        osMutexReaderRelease(id_mutex_read_lock, id_semaphore_write_lock, &readers_count);
         
         FILE *log_file = fopen("acc_log.txt", "a");
         fseek(log_file, 0, SEEK_END);
         fprintf(log_file, "t: %05lu x: %04d y: %04d z: %04d\n",  
-                osKernelSysTick()/ticks_factor, x,  y, z);
+                osKernelSysTick()/milis_ticks_factor, x,  y, z);
         fclose(log_file);
+        
+        save_gantt(" Thread Export  ", time, osKernelSysTick()/gantt_ticks_factor);
       }
     }
   }
@@ -420,13 +547,14 @@ osThreadDef(thread_export_file, osPriorityNormal, 1, 0);
 //Código da thread Main
 //************************
 
-void thread_main(){    
+void thread_protection(){    
+  uint32_t time;
   osEvent evt;
-  id_thread_protection = osThreadGetId();
-  osThreadSetPriority(id_thread_protection, osPriorityHigh);
   while(1){
     evt = osSignalWait (0x01, osWaitForever);    
     if(evt.status == osEventSignal){
+      time = osKernelSysTick()/gantt_ticks_factor;
+
       osDelay(20);
       if(GPIOGetValue(PORT2, 9))
         continue;
@@ -449,6 +577,8 @@ void thread_main(){
       osSignalSet(id_thread_export_file, 0x02);
       
       led_clear();
+      
+      save_gantt(" Thread Protect ", time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
 }
@@ -460,7 +590,7 @@ int main(int n_args, int8_t** args){
   //************************
   //Init Diagram of Gantt
   //*********************** 
-  file_gantt = fopen("gantt.txt","w");
+  FILE* file_gantt = fopen("gantt.txt","w");
   fprintf(file_gantt,"gantt\n");
   fprintf(file_gantt,"    title A Gantt Diagram\n");
   fprintf(file_gantt,"    dateFormat x\n");
@@ -490,8 +620,10 @@ int main(int n_args, int8_t** args){
   //************************
   //Inicialização de Mutex
   //************************
-  id_mutex_ram_lock = osMutexCreate(osMutex(mutex_ram_lock));
+  id_mutex_read_lock = osMutexCreate(osMutex(mutex_read_lock));
   
+  id_semaphore_write_lock = osSemaphoreCreate(osSemaphore(semaphore_write_lock), 1);
+
   //************************
   //Inicialização de Threads aqui
   //************************
@@ -509,7 +641,9 @@ int main(int n_args, int8_t** args){
   //Início do SO
   osKernelStart();
   
-  thread_main();
+  id_thread_protection = osThreadGetId();
+  osThreadSetPriority(id_thread_protection, osPriorityHigh);
+  thread_protection();
   
   //************************
   //Finalização de Threads aqui

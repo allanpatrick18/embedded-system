@@ -6,6 +6,45 @@
   <configuration>
     <name>Debug</name>
     <outputs>
+      <file>$PROJ_DIR$\Debug\Obj\adc.o</file>
+      <file>$PROJ_DIR$\Debug\Exe\Lib_MCU.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\timer16.o</file>
+      <file>$PROJ_DIR$\inc\adc.h</file>
+      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\system_LPC13xx.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\i2c.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\inc\timer32.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ssp.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\clkconfig.o</file>
+      <file>$PROJ_DIR$\inc\i2c.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\timer32.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\gpio.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart.o</file>
+      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\LPC13xx.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\inc\uart.h</file>
+      <file>$PROJ_DIR$\inc\timer16.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\adc.__cstat.et</file>
+      <file>$PROJ_DIR$\inc\mcu_regs.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\i2c.__cstat.et</file>
+      <file>$PROJ_DIR$\inc\gpio.h</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\timer16.__cstat.et</file>
+      <file>$PROJ_DIR$\inc\clkconfig.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart.__cstat.et</file>
+      <file>$PROJ_DIR$\inc\ssp.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ssp.o</file>
+      <file>$PROJ_DIR$\inc\type.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\clkconfig.__cstat.et</file>
       <file>$PROJ_DIR$\src\i2c.c</file>
       <file>$PROJ_DIR$\src\gpio.c</file>
       <file>$PROJ_DIR$\src\adc.c</file>
@@ -14,65 +53,26 @@
       <file>$PROJ_DIR$\src\timer16.c</file>
       <file>$PROJ_DIR$\src\timer32.c</file>
       <file>$PROJ_DIR$\src\uart.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\gpio.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$PROJ_DIR$\Debug\Obj\timer32.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\adc.o</file>
-      <file>$PROJ_DIR$\Debug\Exe\Lib_MCU.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\timer16.o</file>
-      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\system_LPC13xx.h</file>
-      <file>$PROJ_DIR$\inc\adc.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\inc\timer32.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\i2c.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ssp.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
-      <file>$PROJ_DIR$\inc\i2c.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\clkconfig.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\timer32.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\gpio.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\uart.o</file>
-      <file>$PROJ_DIR$\..\Device\NXP\LPC13xx\Include\LPC13xx.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\inc\timer16.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\adc.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\mcu_regs.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\i2c.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\gpio.h</file>
-      <file>$PROJ_DIR$\inc\uart.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\timer16.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\clkconfig.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\uart.__cstat.et</file>
-      <file>$PROJ_DIR$\inc\ssp.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ssp.o</file>
-      <file>$PROJ_DIR$\inc\type.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\clkconfig.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\gpio.__cstat.et</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\src\i2c.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 20</file>
+          <file> 6</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 36</file>
+          <file> 26</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 48 23</file>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 37 13</file>
         </tool>
       </inputs>
     </file>
@@ -81,45 +81,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 29</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 8</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 37</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\adc.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 11</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 34</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 16</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\clkconfig.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 25</file>
+          <file> 18</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -129,7 +91,45 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 40</file>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 27</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\adc.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 4</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\clkconfig.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 12</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 38</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 30</file>
         </tool>
       </inputs>
     </file>
@@ -138,45 +138,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 47</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 21</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 37 46</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\timer16.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 14</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 39</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 33</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\src\timer32.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 28</file>
+          <file> 36</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -186,7 +148,45 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 18</file>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 27 35</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\timer16.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 3</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 23</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\timer32.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 47</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 8</file>
         </tool>
       </inputs>
     </file>
@@ -195,17 +195,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 30</file>
+          <file> 19</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 45</file>
+          <file> 34</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 31 43 19 24 13 26 27 9 17 32 42 41 44 22 15 38</file>
+          <file> 25 20 32 9 14 2 15 16 48 7 21 28 31 33 11 5 22</file>
         </tool>
       </inputs>
     </file>
@@ -214,7 +214,7 @@
       <outputs>
         <tool>
           <name>IARCHIVE</name>
-          <file> 12</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
