@@ -29,3 +29,10 @@ Examples/settings/Examples.dni
 *.pbi
 *.dep
 *.wsdt
+*.out
+*.pbd
+*.browse
+*.o
+*.pbi
+*.dep
+*.wsdt
