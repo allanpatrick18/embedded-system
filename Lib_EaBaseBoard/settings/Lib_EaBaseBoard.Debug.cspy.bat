@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.general.xcl" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.general.xcl" --backend -f "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Allan Patrick\Dropbox\Embarcados\CMSIS_RTOS_IAR_750_LPCXpresso1343_EXAMPLES_ASO\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\Lib_EaBaseBoard\settings\Lib_EaBaseBoard.Debug.driver.xcl" 
 
 @echo off 
 :end

@@ -1,10 +1,12 @@
 "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armproc.dll" 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armsim2.dll" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armjlink2.dll" 
 
-"C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\Debug\Exe\blinky.out" 
+"C:\Users\Guilherme\Documents\GitHub\embedded-system\Examples\Debug\Exe\laboratories.out" 
 
 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armbat.dll" 
+
+--device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\config\debugger\NXP\lpc1311.dmac" 
 
 
 

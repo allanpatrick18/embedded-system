@@ -55,7 +55,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -105,7 +105,7 @@
         </option>
         <option>
           <name>GenStdoutInterface</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>GeneralMisraRules98</name>
@@ -335,16 +335,16 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -410,7 +410,7 @@
         </option>
         <option>
           <name>CCOptimizationNoSizeConstraints</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCNoLiteralPool</name>
@@ -419,7 +419,7 @@
         <option>
           <name>CCOptStrategySlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCGuardCalls</name>
@@ -611,7 +611,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state></state>
+          <state>Examples.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -666,7 +666,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>blinky.out</state>
+          <state>laboratories.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -730,7 +730,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\linker\ldscript_irom_iar.icf</state>
+          <state>$PROJ_DIR$\src\lpc1343.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1037,7 +1037,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>7.50.2.10499</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1049,7 +1049,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state></state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1083,7 +1083,7 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
@@ -1109,7 +1109,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>-</state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -1128,7 +1128,7 @@
         <option>
           <name>GFPUCoreSlave2</name>
           <version>22</version>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1254,7 +1254,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1299,7 +1299,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1512,7 +1512,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1621,7 +1621,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>###Unitialized###</state>
+          <state>Examples.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -2034,9 +2034,30 @@
       </file>
     </group>
     <group>
+      <name>lab_0</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\src\lab_0_asm.s</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\lab_0_main.c</name>
+      </file>
+    </group>
+    <group>
       <name>lab_1</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
       <file>
         <name>$PROJ_DIR$\src\lab_1_main.c</name>
+      </file>
+    </group>
+    <group>
+      <name>lab_2</name>
+      <file>
+        <name>$PROJ_DIR$\src\lab_2_main.c</name>
       </file>
     </group>
     <file>

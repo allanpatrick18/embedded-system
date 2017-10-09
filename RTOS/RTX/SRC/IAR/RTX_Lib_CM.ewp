@@ -2253,7 +2253,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -2328,7 +2328,7 @@
         <option>
           <name>CCOptStrategySlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCGuardCalls</name>
@@ -2861,7 +2861,7 @@
         </option>
         <option>
           <name>IarchiveOutput</name>
-          <state>C:\Users\andre\Desktop\CMSIS_RTOS_IAR7\CMSIS_RTOS_IAR7\RTOS\RTX\SRC\IAR\CM3_LE\RTX_Lib_CM.a</state>
+          <state>D:\IAR\Projects\cmsis_rtos_iar_750_lpcxpresso1343_examples_aso_fig\RTOS\RTX\SRC\IAR\CM3_LE\RTX_Lib_CM.a</state>
         </option>
       </data>
     </settings>

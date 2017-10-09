@@ -1,0 +1,11 @@
+*.o
+*.pbi
+*.pbd
+*.out
+*.txt
+*.out
+*.browse
+*.dbgdt
+*.dni
+*.wsdt
+*.dep
