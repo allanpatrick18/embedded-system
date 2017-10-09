@@ -4,7 +4,6 @@
 #include "ssp.h"
 #include "pca9532.h"
 #include "gpio.h"
-#include "ssp.h"
 #include "cmsis_os.h"
 #include "ctype.h"
 #include "oled.h"
@@ -158,7 +157,7 @@ axis_t selected_axis = AXIS_X;
 //Tempo
 //************************
 //Comente para não gerar o diagrama de Gantt (e não atrapalhar execução)
-#define SAVE_GANTT
+//#define SAVE_GANTT
 //Fator para exibir tempo em milisegundos
 #define gantt_ticks_factor 72
 #define milis_ticks_factor 72000
@@ -188,6 +187,22 @@ void PIOINT2_IRQHandler(void) {
   GPIOIntClear(PI_NEXT_AXIS);
   GPIOIntClear(PI_PROTECT);
 }
+
+//void SSP_IRQHandler(void){
+//  uint32_t regValue;
+//
+//  regValue = LPC_SSP0->MIS;
+//  if ( regValue & SSPMIS_RORMIS )	/* Receive overrun interrupt */
+//  {
+//	LPC_SSP0->ICR = SSPICR_RORIC;		/* clear interrupt */
+//  }
+//  if ( regValue & SSPMIS_RTMIS )	/* Receive timeout interrupt */
+//  {
+//	LPC_SSP0->ICR = SSPICR_RTIC;		/* clear interrupt */
+//  }
+//
+//  return;
+//}
 
 volatile unsigned long *porta1_IS  = (volatile unsigned long *)0x50018004;
 volatile unsigned long *porta1_IBE = (volatile unsigned long *)0x50018008;
@@ -854,6 +869,9 @@ void thread_isr(){
           osTimerStart(id_timer_protection, 1000);
           osSignalWait (S_PROT_WAKE, osWaitForever);    
           
+          //Grava intervalo de execucao
+          write_gantt(" Thread ISR     ", time, osKernelSysTick()/gantt_ticks_factor);
+
           //Após ser acordado pelo temporizador, acorda as outras threads
           osSignalSet(id_thread_samples,        S_PROT_WAKE);
           osSignalSet(id_thread_filter,         S_PROT_WAKE);
@@ -863,8 +881,6 @@ void thread_isr(){
           //Apaga LED de protecao
           led_clear();
           
-          //Grava intervalo de execucao
-          write_gantt(" Thread ISR     ", time, osKernelSysTick()/gantt_ticks_factor);
         }
       }
     }
@@ -933,7 +949,7 @@ int main(int n_args, char** args){
   //Thread Main
   //************************
   id_thread_isr = osThreadGetId();
-  osThreadSetPriority(id_thread_isr, osPriorityNormal);
+  osThreadSetPriority(id_thread_isr, osPriorityBelowNormal);
   thread_isr();
   
   //************************
