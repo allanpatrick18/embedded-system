@@ -6,6 +6,18 @@
 #include "oled.h"
 #include "timer32.h"
 
+#define FPS_24
+
+//Definições físicas
+#define V_MAX 3
+
+#ifdef FPS_24
+#define REFRESH_RATE 40
+#else
+#define REFRESH_RATE 80
+#endif
+
+//Definições de Layout
 #define BACKGROUND OLED_COLOR_BLACK
 #define FOREGROUND OLED_COLOR_WHITE
 
@@ -21,7 +33,7 @@
 
 #define P1_X (LEFT_BNDS)
 #define P2_X (RIGHT_BNDS - THICK)
-#define BAR_HEIGHT (7)
+#define BAR_HEIGHT (8)
 #define BAR_CENTER (BAR_HEIGHT/2)
 
 #define SCORE_HEIGHT (8)
@@ -41,7 +53,8 @@ void draw_table(){
 }
 
 void draw_player(uint8_t pos_y, uint8_t pos_x, uint8_t height, oled_color_t color){
-  oled_rect(pos_x, pos_y, pos_x+THICK, pos_y+height, color);
+  if(abs(height) > 0)
+    oled_rect(pos_x, pos_y, pos_x+THICK, pos_y+height-1, color);
 }
 
 void draw_score(uint8_t score, uint8_t pos_x){
@@ -52,7 +65,7 @@ void draw_ball(uint8_t pos_x, uint8_t pos_y){
   oled_rect(pos_x, pos_y, pos_x+THICK, pos_y+THICK, FOREGROUND);
 }
 
-uint8_t clamp(uint8_t min, uint8_t max, uint8_t value){
+int clamp(int min, uint8_t max, int value){
   if(value < min)
     return min;
   if(value > max)
@@ -66,17 +79,21 @@ int main(char** args, int n_args){
   SSPInit();
   UARTInit(115200);
   oled_init();
-
+  init_timer32(1, 10);
+ 
   clear_scene();
   draw_score(3, SCORE_P1_X);
   draw_score(0, SCORE_P2_X);
   draw_table();
-  draw_ball(P1_X+2*THICK, V_CENTER);
+  draw_ball(P1_X+2*THICK, V_CENTER-1);
 
   uint8_t p1_y = V_CENTER-BAR_CENTER;
   uint8_t p2_y = V_CENTER-BAR_CENTER;
   uint8_t p1_y_last = p1_y;
   uint8_t p2_y_last = p2_y;
+  
+  int8_t v_p1_y = 0;
+  int8_t v_p2_y = 0;
         
   while(1){
     uint8_t rec = 0;
@@ -84,24 +101,41 @@ int main(char** args, int n_args){
     if(rec != 0)
       UARTSend(&rec, 1);
     
+    if(rec == 'w')
+      v_p1_y--;
+    if(rec == 's')
+      v_p1_y++;
+    if(rec == 'i')
+      v_p2_y--;
+    if(rec == 'k')
+      v_p2_y++;
+    
+    v_p1_y = (int8_t) clamp(-V_MAX, V_MAX, v_p1_y);
+    v_p2_y = (int8_t) clamp(-V_MAX, V_MAX, v_p2_y);
+
     p1_y_last = p1_y;
     p2_y_last = p2_y;
-    if(rec == 'w')
-      p1_y--;
-    if(rec == 's')
-      p1_y++;
-    if(rec == 'i')
-      p2_y--;
-    if(rec == 'k')
-      p2_y++;
-    p1_y = clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT, p1_y);
-    p2_y = clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT, p2_y);
+    
+    p1_y += v_p1_y;
+    p2_y += v_p2_y;
+      
+    p1_y = (uint8_t) clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT+1, p1_y);
+    p2_y = (uint8_t) clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT+1, p2_y);
 
-    draw_player(p1_y_last, P1_X, BAR_HEIGHT, BACKGROUND);
-    draw_player(p2_y_last, P2_X, BAR_HEIGHT, BACKGROUND);
+    if(p1_y_last == p1_y) v_p1_y = 0;
+    if(p2_y_last == p2_y) v_p2_y = 0;
+    
+    uint8_t delta_y_p1 = p1_y-p1_y_last;
+    draw_player(p1_y > p1_y_last ? p1_y_last : p1_y_last + BAR_HEIGHT-1, 
+                P1_X, delta_y_p1, BACKGROUND);
     draw_player(p1_y, P1_X, BAR_HEIGHT, FOREGROUND);
+
+    uint8_t delta_y_p2 = p2_y-p2_y_last;
+    draw_player(p2_y > p2_y_last ? p2_y_last : p2_y_last + BAR_HEIGHT-1, 
+                P2_X, delta_y_p2, BACKGROUND);
     draw_player(p2_y, P2_X, BAR_HEIGHT, FOREGROUND);
-    delay32Ms(0, 80);
+    
+    delay32Ms(1, REFRESH_RATE);
   } 
   return 0;
 }
