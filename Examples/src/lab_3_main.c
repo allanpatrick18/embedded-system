@@ -24,6 +24,9 @@
 
 #define THICK 1
 
+#define P1_GOAL_BORDER (0)
+#define P2_GOAL_BORDER (95)
+
 #define UPPER_BNDS (01)
 #define DOWN_BNDS  (62) 
 #define LEFT_BNDS  (01)
@@ -117,7 +120,6 @@ int main(char** args, int n_args){
       v_p2_y--;
     if(rec == 'k')
       v_p2_y++;
-    if(rec == 'b')
     
     //Controll players
     v_p1_y = (int8_t) clamp(-V_MAX, V_MAX, v_p1_y);
@@ -153,33 +155,35 @@ int main(char** args, int n_args){
     ball_x += ball_vx;
     ball_y += ball_vy;
     
-    if(ball_y <= UPPER_BNDS + 2*THICK){
+    if(ball_y < UPPER_BNDS + 2*THICK){
       ball_y = (float) UPPER_BNDS + 2*THICK;
       ball_vy = -ball_vy;
     }
-    if(ball_y + 2*THICK >= DOWN_BNDS - THICK ){
+    if(ball_y + 2*THICK > DOWN_BNDS - THICK ){
       ball_y = (float) DOWN_BNDS - 3*THICK;
       ball_vy = -ball_vy;
     }
     
-    if(ball_x < LEFT_BNDS + THICK){
+    if(ball_x < LEFT_BNDS + THICK && 
+          p1_y < ball_y + 2* THICK &&
+          p1_y + BAR_HEIGHT > ball_y){
       ball_x = (float) LEFT_BNDS + THICK;
       ball_vx = -ball_vx;
-      UARTSend(&bell, 1);
      }
-    if(ball_x+2*THICK > RIGHT_BNDS - THICK){
+    if(ball_x+2*THICK > RIGHT_BNDS - THICK &&
+          p2_y < ball_y + 2* THICK &&
+          p2_y + BAR_HEIGHT > ball_y){
       ball_x = (float) RIGHT_BNDS - 3*THICK;
       ball_vx = -ball_vx;
+    }
+    if(ball_x < P1_GOAL_BORDER){
+      ball_x = H_CENTER-(THICK/2+1);
+      ball_y = V_CENTER-(THICK/2+1);
       UARTSend(&bell, 1);
     }
-    if(ball_x < LEFT_BNDS + THICK){
-      ball_x = (float) LEFT_BNDS + THICK;
-      ball_vx = -ball_vx;
-      UARTSend(&bell, 1);
-     }
-    if(ball_x+2*THICK > RIGHT_BNDS - THICK){
-      ball_x = (float) RIGHT_BNDS - 3*THICK;
-      ball_vx = -ball_vx;
+    if(ball_x+2*THICK > P2_GOAL_BORDER){
+      ball_x = H_CENTER-(THICK/2+1);
+      ball_y = V_CENTER-(THICK/2+1);
       UARTSend(&bell, 1);
     }
     
