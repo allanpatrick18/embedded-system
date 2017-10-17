@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "uart.h"
 #include "oled.h"
+#include "ctype.h"
 #include "timer32.h"
 
 #define FPS_24
@@ -61,8 +62,8 @@ void draw_score(uint8_t score, uint8_t pos_x){
   oled_putChar(pos_x, SCORE_Y, '0' + score%10, FOREGROUND, BACKGROUND);
 }
 
-void draw_ball(uint8_t pos_x, uint8_t pos_y){
-  oled_rect(pos_x, pos_y, pos_x+THICK, pos_y+THICK, FOREGROUND);
+void draw_ball(uint8_t pos_x, uint8_t pos_y, oled_color_t color){
+  oled_rect(pos_x, pos_y, pos_x+THICK, pos_y+THICK, color);
 }
 
 int clamp(int min, uint8_t max, int value){
@@ -74,7 +75,6 @@ int clamp(int min, uint8_t max, int value){
 }
 
 int main(char** args, int n_args){
-  
   GPIOInit();
   SSPInit();
   UARTInit(115200);
@@ -82,20 +82,28 @@ int main(char** args, int n_args){
   init_timer32(1, 10);
  
   clear_scene();
-  draw_score(3, SCORE_P1_X);
-  draw_score(0, SCORE_P2_X);
-  draw_table();
-  draw_ball(P1_X+2*THICK, V_CENTER-1);
 
-  uint8_t p1_y = V_CENTER-BAR_CENTER;
-  uint8_t p2_y = V_CENTER-BAR_CENTER;
-  uint8_t p1_y_last = p1_y;
-  uint8_t p2_y_last = p2_y;
+  uint8_t bell = 0x07;
+
+  int8_t p1_y = V_CENTER-BAR_CENTER;
+  int8_t p2_y = V_CENTER-BAR_CENTER;
+  uint8_t p1_last_y = p1_y;
+  uint8_t p2_last_y = p2_y;
   
   int8_t v_p1_y = 0;
   int8_t v_p2_y = 0;
         
+  float ball_x = H_CENTER-(THICK/2+1);
+  float ball_y = V_CENTER-(THICK/2+1);
+  
+  float ball_vx = 1;
+  float ball_vy = 1;
+  
+  uint8_t ball_last_x = (uint8_t) ball_x;
+  uint8_t ball_last_y = (uint8_t) ball_y;
+
   while(1){
+    //Input Usuário
     uint8_t rec = 0;
     UARTReceive(&rec, 1, 0);
     if(rec != 0)
@@ -109,12 +117,14 @@ int main(char** args, int n_args){
       v_p2_y--;
     if(rec == 'k')
       v_p2_y++;
+    if(rec == 'b')
     
+    //Controll players
     v_p1_y = (int8_t) clamp(-V_MAX, V_MAX, v_p1_y);
     v_p2_y = (int8_t) clamp(-V_MAX, V_MAX, v_p2_y);
 
-    p1_y_last = p1_y;
-    p2_y_last = p2_y;
+    p1_last_y = p1_y;
+    p2_last_y = p2_y;
     
     p1_y += v_p1_y;
     p2_y += v_p2_y;
@@ -122,18 +132,65 @@ int main(char** args, int n_args){
     p1_y = (uint8_t) clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT+1, p1_y);
     p2_y = (uint8_t) clamp(UPPER_BNDS+2*THICK, DOWN_BNDS-2*THICK-BAR_HEIGHT+1, p2_y);
 
-    if(p1_y_last == p1_y) v_p1_y = 0;
-    if(p2_y_last == p2_y) v_p2_y = 0;
+    if(p1_last_y == p1_y) v_p1_y = 0;
+    if(p2_last_y == p2_y) v_p2_y = 0;
     
-    uint8_t delta_y_p1 = p1_y-p1_y_last;
-    draw_player(p1_y > p1_y_last ? p1_y_last : p1_y_last + BAR_HEIGHT-1, 
+    //Print players
+    uint8_t delta_y_p1 = p1_y-p1_last_y;
+    draw_player(p1_y > p1_last_y ? p1_last_y : p1_last_y + BAR_HEIGHT-1, 
                 P1_X, delta_y_p1, BACKGROUND);
     draw_player(p1_y, P1_X, BAR_HEIGHT, FOREGROUND);
 
-    uint8_t delta_y_p2 = p2_y-p2_y_last;
-    draw_player(p2_y > p2_y_last ? p2_y_last : p2_y_last + BAR_HEIGHT-1, 
+    uint8_t delta_y_p2 = p2_y-p2_last_y;
+    draw_player(p2_y > p2_last_y ? p2_last_y : p2_last_y + BAR_HEIGHT-1, 
                 P2_X, delta_y_p2, BACKGROUND);
     draw_player(p2_y, P2_X, BAR_HEIGHT, FOREGROUND);
+    
+    //Controll ball
+    ball_last_x = (uint8_t) ball_x;
+    ball_last_y = (uint8_t) ball_y;
+
+    ball_x += ball_vx;
+    ball_y += ball_vy;
+    
+    if(ball_y <= UPPER_BNDS + 2*THICK){
+      ball_y = (float) UPPER_BNDS + 2*THICK;
+      ball_vy = -ball_vy;
+    }
+    if(ball_y + 2*THICK >= DOWN_BNDS - THICK ){
+      ball_y = (float) DOWN_BNDS - 3*THICK;
+      ball_vy = -ball_vy;
+    }
+    
+    if(ball_x < LEFT_BNDS + THICK){
+      ball_x = (float) LEFT_BNDS + THICK;
+      ball_vx = -ball_vx;
+      UARTSend(&bell, 1);
+     }
+    if(ball_x+2*THICK > RIGHT_BNDS - THICK){
+      ball_x = (float) RIGHT_BNDS - 3*THICK;
+      ball_vx = -ball_vx;
+      UARTSend(&bell, 1);
+    }
+    if(ball_x < LEFT_BNDS + THICK){
+      ball_x = (float) LEFT_BNDS + THICK;
+      ball_vx = -ball_vx;
+      UARTSend(&bell, 1);
+     }
+    if(ball_x+2*THICK > RIGHT_BNDS - THICK){
+      ball_x = (float) RIGHT_BNDS - 3*THICK;
+      ball_vx = -ball_vx;
+      UARTSend(&bell, 1);
+    }
+    
+    //Print ball
+    draw_ball(ball_last_x, ball_last_y, BACKGROUND);
+    draw_ball((uint8_t) ball_x, (uint8_t) ball_y, FOREGROUND);
+    
+    //Print table and scores
+    draw_score(3, SCORE_P1_X);
+    draw_score(0, SCORE_P2_X);
+    draw_table();
     
     delay32Ms(1, REFRESH_RATE);
   } 
