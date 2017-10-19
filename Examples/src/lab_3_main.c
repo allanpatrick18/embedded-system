@@ -2,19 +2,44 @@
 #include "type.h"
 #include "ssp.h"
 #include "gpio.h"
+#include "cmsis_os.h"
 #include "uart.h"
 #include "oled.h"
 #include "ctype.h"
 #include "timer32.h"
+#include "stdio.h"
 
+//Configurações diversas
 #define FPS_24
+
+//************************
+// Definições e tipos do sistema
+//************************
+//Definições de sistema
 
 #define true 1
 #define false 0
 typedef uint8_t bool;
 
-//Game defines
-#define MAX_SCORE 8
+#ifdef FPS_24
+#define REFRESH_RATE 40
+#else
+#define REFRESH_RATE 80
+#endif
+
+#define T_WAKE 0x01
+#define T_P1_WAKE 0x01
+#define T_P2_WAKE 0x02
+
+#define MAIL_SIZE 8
+
+//************************
+// Definições e tipos do domínio
+//************************
+//Definições do Jogo
+#define MAX_SCORE (8)
+#define PLAYER1 (1)
+#define PLAYER2 (2)
 
 //Definições Físicas
 #define V_BAR_MAX  (4)
@@ -22,12 +47,6 @@ typedef uint8_t bool;
 #define BALL_VOX (1)
 #define BALL_VOY (1)
 #define ACCEL_F (.02)
-
-#ifdef FPS_24
-#define REFRESH_RATE 40
-#else
-#define REFRESH_RATE 80
-#endif
 
 //Definições de Layout
 #define BACKGROUND OLED_COLOR_BLACK
@@ -81,6 +100,52 @@ typedef uint8_t bool;
         y1 + h1 >= y2      && \
         y1      <= y2 + h2 )
 
+//************************
+//Tipos
+typedef struct {
+  uint8_t sx, sy, sx_p, sy_p;
+  int8_t dx, dy;
+} kinematic_t;
+
+typedef struct {
+  uint8_t p1;
+  uint8_t p2;
+  bool p1_changed;
+  bool p2_changed;
+} score_t;
+
+typedef struct {
+  kinematic_t p1;
+  kinematic_t p2;
+  kinematic_t ball;
+  score_t score;
+} game_obj_t;
+
+//************************
+//IDs de Timers
+osTimerId id_timer_game_loop;    
+
+//************************
+//IDs de correspondencias
+osMailQId id_mail_p1_input;
+osMailQId id_mail_p2_input;
+osMailQId id_mail_p1_pos;
+osMailQId id_mail_p2_pos;
+osMailQId id_mail_score;
+osMailQId id_mail_drawer;
+
+//************************
+//IDs de Threads
+osThreadId id_thread_input_receiver;
+osThreadId id_thread_player1;
+osThreadId id_thread_player2;
+osThreadId id_thread_manager;
+osThreadId id_thread_score;
+osThreadId id_thread_drawer;
+
+//************************
+//Funções auxiliares
+//************************
 void clear_scene(){
     oled_clearScreen(BACKGROUND);
 }
@@ -122,7 +187,289 @@ int clamp(int min, uint8_t max, int value){
   return value;
 }
 
+//************************
+//Callback de Timers
+//************************
+//Acorda thread de amostragem apos periodo de amostragem
+void timer_game_loop_cb(void const *arg) {
+  osSignalSet(id_thread_input_receiver, T_WAKE);
+}
+osTimerDef(timer_game_loop, timer_game_loop_cb);
+
+//************************
+//Definições de Correspondencia
+//************************
+osMailQDef(mail_p1_input, MAIL_SIZE, int8_t);
+osMailQDef(mail_p2_input, MAIL_SIZE, int8_t);
+osMailQDef(mail_p1_pos,   MAIL_SIZE, kinematic_t);
+osMailQDef(mail_p2_pos,   MAIL_SIZE, kinematic_t);
+osMailQDef(mail_score,    MAIL_SIZE, score_t);
+osMailQDef(mail_drawer,   MAIL_SIZE, game_obj_t);
+
+//************************
+//Threads
+//************************
+void thread_input_receiver(void const *args){
+  uint32_t time;
+  
+  while(1){
+    osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
+    if(evt.status == osEventSignal){
+      uint8_t rec = 0;
+      UARTReceive(&rec, 1, 0);
+
+      int8_t p1_in = 0;
+      int8_t p2_in = 0;
+      if(rec == 'w')
+        p1_in--;
+      if(rec == 's')
+        p1_in++;
+      if(rec == 'i')
+        p2_in--;
+      if(rec == 'k')
+        p2_in++;
+      
+      int8_t *p1_input = (int8_t*) osMailAlloc(id_mail_p1_input, osWaitForever);
+      int8_t *p2_input = (int8_t*) osMailAlloc(id_mail_p2_input, osWaitForever);
+      *p1_input = p1_in;
+      *p2_input = p2_in;
+      osMailPut(id_mail_p1_input, p1_input);
+      osMailPut(id_mail_p2_input, p2_input);
+    }
+  }
+}
+osThreadDef(thread_input_receiver, osPriorityNormal, 1, 0);
+
+void thread_player(void const *args){
+  osMailQId id_mail_input = NULL;
+  osMailQId id_mail_output = NULL;
+  int signal = 0;
+  kinematic_t knt;
+  knt.sy = V_CENTER-BAR_CENTER;
+  knt.dx = 0;
+  knt.dy = 0;
+
+  switch((int) args){
+  case PLAYER1:
+    id_mail_input  = id_mail_p1_input;
+    id_mail_output = id_mail_p1_pos;
+    signal = T_P1_WAKE;
+    knt.sx = P1_X;
+    break;
+
+  case PLAYER2:
+    id_mail_input  = id_mail_p2_input;
+    id_mail_output = id_mail_p2_pos;
+    signal = T_P2_WAKE;
+    knt.sx = P2_X;
+    break;
+
+  default:
+    osDelay(osWaitForever);
+  }
+   
+  while(1){
+    osEvent evt = osMailGet(id_mail_input, osWaitForever);
+    if (evt.status == osEventMail) {
+      int8_t* input = (int8_t*) evt.value.p;
+      int8_t input_accel = *input;
+      osMailFree(id_mail_input, input);
+      
+      knt.dy   += input_accel;
+      knt.dy    = (int8_t) clamp(-V_BAR_MAX, V_BAR_MAX, knt.dy);
+
+      knt.sx_p  = knt.sx;
+      knt.sy_p  = knt.sy;
+
+      knt.sy   += knt.dy;
+      knt.sy    = (uint8_t) clamp(TABLE_UPPER+1, TABLE_BOTTOM-BAR_HEIGHT, knt.sy);
+      if(knt.sy_p == knt.sy) 
+        knt.dy = 0;
+
+      kinematic_t *out = 
+        (kinematic_t*) osMailAlloc(id_mail_output, osWaitForever);
+      *out = knt;
+      osMailPut(id_mail_output, out);
+      
+      osSignalSet(id_thread_manager, signal);
+    }
+  }
+}
+osThreadDef(thread_player, osPriorityNormal, 1, 0);
+
+void thread_manager(void const *args){
+  game_obj_t objs;
+  objs.score.p1= 0;
+  objs.score.p2 = 0;
+  objs.score.p1_changed = true;
+  objs.score.p2_changed = true;
+  
+  float ball_x, ball_y, ball_vx, ball_vy;
+  
+  reset_ball(ball_x, ball_y, ball_vx, ball_vy, false);  
+  while(1){
+    osEvent evt = osSignalWait (T_P1_WAKE & T_P2_WAKE, osWaitForever);     
+    if(evt.status == osEventSignal){
+      evt = osMailGet(id_mail_p1_pos, 10);
+      if(evt.status == osEventMail){
+        objs.p1 = *((kinematic_t*) evt.value.p);
+        osMailFree(id_mail_p1_pos, evt.value.p);
+      }
+      evt = osMailGet(id_mail_p2_pos, 10);
+      if(evt.status == osEventMail){
+        objs.p2 = *((kinematic_t*) evt.value.p);
+        osMailFree(id_mail_p2_pos, evt.value.p);
+      }
+      
+      //Ball controll
+      objs.ball.sx_p = objs.ball.sx;
+      objs.ball.sy_p = objs.ball.sy;
+
+      //apply_velocity()
+      ball_x += ball_vx;
+      ball_y += ball_vy;
+      
+      //if(has_ball_collided_uppper_border)
+      if(ball_y < TABLE_UPPER+1){
+        ball_y = (float) TABLE_UPPER + 1;
+        ball_vy = -ball_vy;
+      }
+      //if(has_ball_collided_bottom_border)
+      if(ball_y + BALL_DIAMETER > TABLE_BOTTOM){
+        ball_y = (float) TABLE_BOTTOM - (BALL_DIAMETER);
+        ball_vy = -ball_vy;
+      }
+      
+      //if(has_p1_collided_ball)
+      if(ball_x < TABLE_START + THICK && 
+            objs.p1.sy <= ball_y + BALL_DIAMETER &&
+            objs.p1.sy + BAR_HEIGHT >= ball_y){
+        ball_x = (float) TABLE_START + THICK;
+        ball_vx = -ball_vx;
+        ball_vy = (ball_vy + BALL_CENTER - (objs.p1.dy + BAR_CENTER))/BAR_CENTER;
+        float r = ball_vx*(1 + ACCEL_F + abs(objs.p1.dy*objs.p1.dy)*ACCEL_F);
+        if(r*r <= V_BALL_MAX*V_BALL_MAX)
+          ball_vx = r;
+       }
+      //if(has_p2_collided_ball)
+      if(ball_x + BALL_DIAMETER > TABLE_END - THICK + 1&&
+            objs.p2.sy <= ball_y + BALL_DIAMETER &&
+            objs.p2.sy + BAR_HEIGHT >= ball_y){
+        ball_x = (float) TABLE_END - (BALL_DIAMETER + THICK - 1);
+        ball_vx = -ball_vx;
+        ball_vy = (ball_y + BALL_CENTER - (objs.p2.sy + BAR_CENTER))/BAR_CENTER;
+        float r = ball_vx*(1 + ACCEL_F + abs(objs.p2.dy*objs.p2.dy)*ACCEL_F);
+        if(r*r <= V_BALL_MAX*V_BALL_MAX)
+          ball_vx = r;
+      }
+      //if(is_p2_goal)
+      if(ball_x < P1_GOAL_BORDER){
+        reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);
+        objs.score.p2++;
+        objs.score.p2_changed = true;
+        if(objs.score.p2 > MAX_SCORE){
+          objs.score.p1_changed = true;
+          objs.score.p1 = 0;
+          objs.score.p2 = 0;
+        }
+      }
+      //if(is_p1_goal)
+      if(ball_x+BALL_DIAMETER > P2_GOAL_BORDER){
+        reset_ball(ball_x, ball_y, ball_vx, ball_vy, false);
+        objs.score.p1++;
+        objs.score.p1_changed = true;
+        if(objs.score.p1> MAX_SCORE){
+          objs.score.p2_changed = true;
+          objs.score.p1= 0;
+          objs.score.p2 = 0;
+        }
+      }
+      
+      objs.ball.sx = (uint8_t) ball_x;
+      objs.ball.sy = (uint8_t) ball_y;
+      objs.ball.dx = (int8_t)ball_vx;
+      objs.ball.dy = (int8_t)ball_vy;
+            
+      game_obj_t *msg = (game_obj_t*) osMailAlloc(id_mail_drawer, osWaitForever);
+      *msg = objs;
+      osMailPut(id_mail_drawer, msg);
+
+      if(objs.score.p1_changed || objs.score.p2_changed){
+        objs.score.p1_changed = false;
+        objs.score.p2_changed = false;
+        //send 
+      }
+    }
+  }
+}
+osThreadDef(thread_manager, osPriorityNormal, 1, 0);
+
+void thread_score(void const *args){
+}
+osThreadDef(thread_score, osPriorityNormal, 1, 0);
+
+void thread_drawer(void const *args){
+  game_obj_t objs;
+  while(1){
+    osEvent evt = osMailGet(id_mail_drawer, osWaitForever);
+    if (evt.status == osEventMail) {
+      game_obj_t* msg = (game_obj_t*) evt.value.p;
+      objs = *msg;
+      osMailFree(id_mail_drawer, msg);
+      
+      //Print ball
+      draw_ball(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BACKGROUND);
+      draw_ball(objs.ball.sx,   objs.ball.sy,   BALL_DIAMETER, FOREGROUND);
+   
+      //Print players
+//      uint8_t delta_y_p1 = p1_y-p1_last_y;
+      draw_player(objs.p1.sy > objs.p1.sy_p ? objs.p1.sy_p : objs.p1.sy_p + BAR_HEIGHT-1, 
+                  objs.p1.sx, objs.p1.dy, BACKGROUND);
+      draw_player(objs.p1.sy, objs.p1.sx, BAR_HEIGHT, FOREGROUND);
+
+//      uint8_t delta_y_p2 = p2_y-p2_last_y;
+      draw_player(objs.p2.sy > objs.p2.sy_p ? objs.p2.sy_p: objs.p2.sy_p + BAR_HEIGHT-1, 
+                  objs.p2.sx, objs.p2.dy, BACKGROUND);
+      draw_player(objs.p2.sy, objs.p2.sx, BAR_HEIGHT, FOREGROUND);
+
+      //Print table and scores
+      if(objs.score.p1_changed || 
+         isOver(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BALL_DIAMETER,
+                SCORE_P1_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
+        draw_score(objs.score.p1, SCORE_P1_X);
+      }
+      if(objs.score.p2_changed || 
+         isOver(objs.ball.sx_p, objs.ball.sx_p, BALL_DIAMETER, BALL_DIAMETER,
+                SCORE_P2_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
+        draw_score(objs.score.p2, SCORE_P2_X);
+      }
+      if(objs.ball.sx_p <= H_CENTER+THICK/2+THICK%2-1 &&
+         objs.ball.sx_p + BALL_DIAMETER >= H_CENTER-THICK/2)
+        draw_table(THICK, false);
+    }
+  }
+}
+osThreadDef(thread_drawer, osPriorityNormal, 1, 0);
+
+void thread_gantt(){
+}
+
+//************************
+//Codigo Main
+//************************
 int main(char** args, int n_args){
+//Inicialização de Kernel vai aqui
+  osKernelInitialize();  
+
+  //************************
+  //Init Gantt Diagram
+  //*********************** 
+  FILE* file_gantt = fopen("gantt.txt","w");
+  fprintf(file_gantt,"gantt\n");
+  fprintf(file_gantt,"    title A Gantt Diagram\n");
+  fprintf(file_gantt,"    dateFormat x\n");
+  fclose(file_gantt);  
+  
   GPIOInit();
   SSPInit();
   UARTInit(115200);
@@ -130,7 +477,61 @@ int main(char** args, int n_args){
   init_timer32(1, 10);
  
   clear_scene();
+  
+  //************************
+  //Inicialização de Timers
+  //************************
+  id_timer_game_loop =  osTimerCreate(osTimer(timer_game_loop),   osTimerPeriodic, NULL);
 
+  osTimerStart(id_timer_game_loop, REFRESH_RATE);  
+
+  //************************
+  //Inicialização de Correspondências
+  //************************
+  id_mail_p1_input = osMailCreate(osMailQ(mail_p1_input), NULL);
+  id_mail_p2_input = osMailCreate(osMailQ(mail_p2_input), NULL);
+  id_mail_p1_pos   = osMailCreate(osMailQ(mail_p1_pos),   NULL);
+  id_mail_p2_pos   = osMailCreate(osMailQ(mail_p2_pos),   NULL);
+  id_mail_score    = osMailCreate(osMailQ(mail_score),    NULL);
+  id_mail_drawer   = osMailCreate(osMailQ(mail_drawer),     NULL);
+  
+  //************************
+  //Inicialização de Threads
+  //************************
+  id_thread_input_receiver = osThreadCreate(osThread(thread_input_receiver), NULL);
+  id_thread_player1        = osThreadCreate(osThread(thread_player),         (void*) PLAYER1);
+  id_thread_player2        = osThreadCreate(osThread(thread_player),         (void*) PLAYER2);
+  id_thread_manager        = osThreadCreate(osThread(thread_manager),        NULL);
+  id_thread_score          = osThreadCreate(osThread(thread_score),          NULL);
+  id_thread_drawer         = osThreadCreate(osThread(thread_drawer),         NULL);
+ 
+  //************************
+  //Início do SO
+  //************************
+  osKernelStart();
+  
+  //************************
+  //Thread Main
+  //************************
+  thread_gantt();
+
+  //************************
+  //Finalização de Threads
+  //************************
+  osThreadTerminate(id_thread_input_receiver);
+  osThreadTerminate(id_thread_player1);
+  osThreadTerminate(id_thread_player2);
+  osThreadTerminate(id_thread_manager);
+  osThreadTerminate(id_thread_score);
+  osThreadTerminate(id_thread_drawer);
+  
+  osDelay(osWaitForever); 
+  return 0;
+  
+
+
+
+  
   int8_t p1_y = V_CENTER-BAR_CENTER;
   int8_t p2_y = V_CENTER-BAR_CENTER;
   uint8_t p1_last_y = p1_y;
