@@ -6,8 +6,8 @@
 #include "uart.h"
 #include "oled.h"
 #include "ctype.h"
-#include "timer32.h"
 #include "stdio.h"
+//#include "timer32.h"
 
 //Configurações diversas
 #define FPS_24
@@ -31,7 +31,7 @@ typedef uint8_t bool;
 #define T_P1_WAKE 0x01
 #define T_P2_WAKE 0x02
 
-#define MAIL_SIZE 8
+#define MAIL_SIZE 4
 
 //************************
 // Definições e tipos do domínio
@@ -103,8 +103,8 @@ typedef uint8_t bool;
 //************************
 //Tipos
 typedef struct {
-  uint8_t sx, sy, sx_p, sy_p;
-  int8_t dx, dy;
+  int8_t sx, sy, dx, dy;
+  int8_t sx_p, sy_p;
 } kinematic_t;
 
 typedef struct {
@@ -405,12 +405,14 @@ void thread_manager(void const *args){
 osThreadDef(thread_manager, osPriorityNormal, 1, 0);
 
 void thread_score(void const *args){
+  osDelay(osWaitForever);
 }
 osThreadDef(thread_score, osPriorityNormal, 1, 0);
 
 void thread_drawer(void const *args){
   game_obj_t objs;
-  while(1){
+  draw_table(THICK, true);
+   while(1){
     osEvent evt = osMailGet(id_mail_drawer, osWaitForever);
     if (evt.status == osEventMail) {
       game_obj_t* msg = (game_obj_t*) evt.value.p;
@@ -439,7 +441,7 @@ void thread_drawer(void const *args){
         draw_score(objs.score.p1, SCORE_P1_X);
       }
       if(objs.score.p2_changed || 
-         isOver(objs.ball.sx_p, objs.ball.sx_p, BALL_DIAMETER, BALL_DIAMETER,
+         isOver(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BALL_DIAMETER,
                 SCORE_P2_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
         draw_score(objs.score.p2, SCORE_P2_X);
       }
@@ -452,6 +454,7 @@ void thread_drawer(void const *args){
 osThreadDef(thread_drawer, osPriorityNormal, 1, 0);
 
 void thread_gantt(){
+  osDelay(osWaitForever);
 }
 
 //************************
@@ -474,7 +477,7 @@ int main(char** args, int n_args){
   SSPInit();
   UARTInit(115200);
   oled_init();
-  init_timer32(1, 10);
+//  init_timer32(1, 10);
  
   clear_scene();
   
@@ -493,7 +496,7 @@ int main(char** args, int n_args){
   id_mail_p1_pos   = osMailCreate(osMailQ(mail_p1_pos),   NULL);
   id_mail_p2_pos   = osMailCreate(osMailQ(mail_p2_pos),   NULL);
   id_mail_score    = osMailCreate(osMailQ(mail_score),    NULL);
-  id_mail_drawer   = osMailCreate(osMailQ(mail_drawer),     NULL);
+  id_mail_drawer   = osMailCreate(osMailQ(mail_drawer),   NULL);
   
   //************************
   //Inicialização de Threads
@@ -686,7 +689,7 @@ int main(char** args, int n_args){
        ball_last_x + BALL_DIAMETER >= H_CENTER-THICK/2)
       draw_table(THICK, false);
     
-    delay32Ms(1, REFRESH_RATE);
+//    delay32Ms(1, REFRESH_RATE);
   } 
   return 0;
 }
