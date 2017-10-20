@@ -1,6 +1,8 @@
 #include "mcu_regs.h"
 #include "type.h"
 #include "ssp.h"
+#include "i2c.h"
+#include "pca9532.h"
 #include "gpio.h"
 #include "cmsis_os.h"
 #include "uart.h"
@@ -143,6 +145,14 @@ osThreadId id_thread_manager;
 osThreadId id_thread_score;
 osThreadId id_thread_drawer;
 
+
+//************************
+//Flags IDs
+//************************
+int flag_pausa = 0;
+int flag_restart= 0;
+int flag_start =1;
+
 //************************
 //Funções auxiliares
 //************************
@@ -154,6 +164,23 @@ void beep(){
   static uint8_t bell = 0x07;
   UARTSend(&bell, 1);
 }
+
+void draw_menu(){
+    uint8_t clear_screan = 0x0C;
+    UARTSend(&clear_screan,1);
+    UARTSendString((uint8_t*)"Welcome The Pong game\r\n");
+    UARTSendString((uint8_t*)"1- Start\r\n");
+    UARTSendString((uint8_t*)"2- Pause\r\n");
+    UARTSendString((uint8_t*)"3- Restart\r\n");
+    UARTSendString((uint8_t*)"Player1 \t Player2 \r\n");    
+}
+void draw_score_cmd( uint8_t score_pl , uint8_t score_p2){
+    UARTSendString((uint8_t*)"\t"); 
+    UARTSend(&score_pl, 1);
+    UARTSendString((uint8_t*)"\t"); 
+    UARTSend(&score_p2, 1);
+}
+
 
 void draw_table(uint8_t thickness, bool draw_sides){
   if(thickness > 0){
@@ -228,6 +255,26 @@ void thread_input_receiver(void const *args){
         p2_in--;
       if(rec == 'k')
         p2_in++;
+       if(rec == 'i')
+        flag_start = 1;
+      if(rec == 'r')
+        flag_restart = 1;
+      if(rec == 'p')
+        flag_pausa = 0;
+      
+      if(flag_start){
+        draw_menu();
+        flag_start = 0;
+        // acordar threads
+      }
+       if(flag_restart){
+        flag_restart = 0;
+        // reset the score
+      }
+       if(flag_pausa){
+        flag_restart = 0;
+        // spleep threads
+      }
       
       int8_t *p1_input = (int8_t*) osMailAlloc(id_mail_p1_input, osWaitForever);
       int8_t *p2_input = (int8_t*) osMailAlloc(id_mail_p2_input, osWaitForever);
@@ -389,15 +436,17 @@ void thread_manager(void const *args){
       objs.ball.sy = (uint8_t) ball_y;
       objs.ball.dx = (int8_t)ball_vx;
       objs.ball.dy = (int8_t)ball_vy;
-            
+      
       game_obj_t *msg = (game_obj_t*) osMailAlloc(id_mail_drawer, osWaitForever);
       *msg = objs;
       osMailPut(id_mail_drawer, msg);
-
-      if(objs.score.p1_changed || objs.score.p2_changed){
+      
+      if(objs.score.p1_changed || objs.score.p2_changed){   
+        score_t *score_msg = (score_t*) osMailAlloc(id_mail_score, osWaitForever);
+        *score_msg = objs.score;
+        osMailPut(id_mail_score, score_msg);
         objs.score.p1_changed = false;
         objs.score.p2_changed = false;
-        //send 
       }
     }
   }
@@ -405,7 +454,42 @@ void thread_manager(void const *args){
 osThreadDef(thread_manager, osPriorityNormal, 1, 0);
 
 void thread_score(void const *args){
-  osDelay(osWaitForever);
+
+  uint16_t last_mask_red = 0;
+  uint16_t last_mask_green= 0;
+  while(1){
+  osEvent evt = osMailGet(id_mail_score, osWaitForever);
+  if (evt.status == osEventMail){
+     score_t * input = (score_t*) evt.value.p;
+     uint8_t score_p1 =  input->p1;
+     uint8_t score_p2 =  input->p2;
+     bool p1_changed = input->p1_changed;
+     bool p2_changed = input->p2_changed;
+     osMailFree(id_mail_score, input);
+     uint16_t mask_red = 0;
+     uint16_t mask_green = 0;
+     if(p1_changed){
+       //Calcula mascara de escrita 
+       //Os indices dos 8 ultimos bits em 1 representam os leds verdes que serao acesos, em ordem inversa
+       //LED  green
+       for(uint8_t i = 0; i < score_p1; i++) mask_green |= 0x8000 >> i;
+       //Apaga ultimos LEDs acesos e acende os atuais
+        pca9532_setLeds(mask_green, last_mask_green); 
+       //LEDs que deverao ser apagados na proxima execucao foram acesos agora
+        last_mask_green = mask_green;
+     }
+     if(p2_changed){
+       //Calcula mascara de escrita 
+       //Os indices dos 8 primeiros bits em 1 representam os leds vermelhos que serao acesos, respectivamente
+       //LED red
+        for(uint8_t i = 0; i < score_p2; i++) mask_red |= 1 << i;
+        //Apaga ultimos LEDs acesos e acende os atuais
+        pca9532_setLeds(mask_red, last_mask_red);
+        //LEDs que deverao ser apagados na proxima execucao foram acesos agora
+        last_mask_red = mask_red;      
+     }
+    }
+  }
 }
 osThreadDef(thread_score, osPriorityNormal, 1, 0);
 
@@ -477,6 +561,8 @@ int main(char** args, int n_args){
   SSPInit();
   UARTInit(115200);
   oled_init();
+  I2CInit( (uint32_t)I2CMASTER, 0 );
+  pca9532_init();
 //  init_timer32(1, 10);
  
   clear_scene();
