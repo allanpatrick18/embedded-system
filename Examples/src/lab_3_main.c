@@ -16,10 +16,7 @@
 // Definições e tipos do sistema
 //************************
 //Definições de sistema
-
-#define true 1
-#define false 0
-typedef uint8_t bool;
+typedef enum {false = 0, true} bool;
 
 #ifdef FPS_24
 #define REFRESH_RATE 40
@@ -27,7 +24,7 @@ typedef uint8_t bool;
 #define REFRESH_RATE 80
 #endif
 
-#define T_WAKE 0x01
+#define T_WAKE    0x01
 #define T_P1_WAKE 0x01
 #define T_P2_WAKE 0x02
 
@@ -41,12 +38,23 @@ typedef uint8_t bool;
 #define PLAYER1 (1)
 #define PLAYER2 (2)
 
+//Definições de comando
+#define ESC 0x1B
+#define SPC ' '
+#define BSP 0x08
+#define BEL 0x07
+
+#define P1_U 'w'
+#define P1_D 's'
+#define P2_U 'i'
+#define P2_D 'k'
+
 //Definições Físicas
-#define V_BAR_MAX  (4)
-#define V_BALL_MAX (8)
-#define BALL_VOX (1)
-#define BALL_VOY (1)
-#define ACCEL_F (.02)
+#define V_BAR_MAX       (REFRESH_RATE/10.0)
+#define V_BALL_MAX      (REFRESH_RATE/10.0)
+#define BALL_VOX        (REFRESH_RATE/80.0)
+#define BALL_VOY        (REFRESH_RATE/80.0)
+#define ACCEL_F         (REFRESH_RATE/2000.0)
 
 //Definições de Layout
 #define BACKGROUND OLED_COLOR_BLACK
@@ -77,11 +85,11 @@ typedef uint8_t bool;
 
 #define SCORE_HEIGHT (7)
 #define SCORE_WIDTH  (5)
-#define SCORE_LAYOUT_Y (4)
-#define SCORE_LAYOUT_X (8)
-#define SCORE_Y (TABLE_UPPER+SCORE_LAYOUT_Y+SCORE_HEIGHT/2)
-#define SCORE_P1_X (H_CENTER-SCORE_WIDTH/2-SCORE_LAYOUT_X-SCORE_WIDTH/2)
-#define SCORE_P2_X (H_CENTER-SCORE_WIDTH/2+SCORE_LAYOUT_X+SCORE_WIDTH/2)
+#define SCORE_SPACING_X (8)
+#define SCORE_SPACING_Y (4)
+#define SCORE_P1_X (H_CENTER-SCORE_WIDTH/2-SCORE_SPACING_X-SCORE_WIDTH/2)
+#define SCORE_P2_X (H_CENTER-SCORE_WIDTH/2+SCORE_SPACING_X+SCORE_WIDTH/2)
+#define SCORE_Y (TABLE_UPPER+SCORE_SPACING_Y+SCORE_HEIGHT/2)
 
 #define BALL_RADIUS (1)
 #define BALL_DIAMETER (BALL_RADIUS*2)
@@ -91,7 +99,7 @@ typedef uint8_t bool;
 #define reset_ball(px, py, vx, vy, t) \
         px = H_CENTER-(BALL_CENTER+1);\
         py = V_CENTER-(BALL_CENTER+1);\
-        vx = BALL_VOX*t?1:-1;\
+        vx = t?BALL_VOX:-BALL_VOX;\
         vy = BALL_VOY;\
           
 #define isOver(x1, y1, w1, h1, x2, y2, w2, h2) \
@@ -100,6 +108,10 @@ typedef uint8_t bool;
         y1 + h1 >= y2      && \
         y1      <= y2 + h2 )
 
+#define clamp(min, max, v) \
+          ((v) < (min)) ? (min) :\
+          ((v) > (max)) ? (max) : (v)
+            
 //************************
 //Tipos
 typedef struct {
@@ -120,6 +132,12 @@ typedef struct {
   kinematic_t ball;
   score_t score;
 } game_obj_t;
+
+typedef enum game_state{
+  PAUSE, PLAY, RESTART, EXIT
+}game_state_t;
+
+game_state_t global_state;
 
 //************************
 //IDs de Timers
@@ -151,15 +169,15 @@ void clear_scene(){
 }
 
 void beep(){
-  static uint8_t bell = 0x07;
+  static uint8_t bell = BEL;
   UARTSend(&bell, 1);
 }
 
 void draw_table(uint8_t thickness, bool draw_sides){
   if(thickness > 0){
     if(draw_sides){
-      oled_rect(TABLE_START,TABLE_UPPER, TABLE_END, SCREEN_UP, FOREGROUND);
       oled_rect(TABLE_START,TABLE_BOTTOM,  TABLE_END, SCREEN_DOWN,  FOREGROUND);
+      oled_rect(TABLE_START,TABLE_UPPER, TABLE_END, SCREEN_UP, FOREGROUND);
     }
     oled_rect(H_CENTER-thickness/2, TABLE_UPPER, H_CENTER+thickness/2+thickness%2-1, TABLE_BOTTOM, FOREGROUND);
   }
@@ -177,14 +195,6 @@ void draw_score(uint8_t score, uint8_t pos_x){
 void draw_ball(uint8_t pos_x, uint8_t pos_y, uint8_t radius, oled_color_t color){
   if(radius > 0)
     oled_rect(pos_x, pos_y, pos_x+radius-1, pos_y+radius-1, color);
-}
-
-int clamp(int min, uint8_t max, int value){
-  if(value < min)
-    return min;
-  if(value > max)
-    return max;
-  return value;
 }
 
 //************************
@@ -211,32 +221,45 @@ osMailQDef(mail_drawer,   MAIL_SIZE, game_obj_t);
 //************************
 void thread_input_receiver(void const *args){
   uint32_t time;
-  
-  while(1){
+  global_state = PAUSE;
+  while(global_state != EXIT){
     osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
       uint8_t rec = 0;
       UARTReceive(&rec, 1, 0);
-
-      int8_t p1_in = 0;
-      int8_t p2_in = 0;
-      if(rec == 'w')
-        p1_in--;
-      if(rec == 's')
-        p1_in++;
-      if(rec == 'i')
-        p2_in--;
-      if(rec == 'k')
-        p2_in++;
       
-      int8_t *p1_input = (int8_t*) osMailAlloc(id_mail_p1_input, osWaitForever);
-      int8_t *p2_input = (int8_t*) osMailAlloc(id_mail_p2_input, osWaitForever);
-      *p1_input = p1_in;
-      *p2_input = p2_in;
-      osMailPut(id_mail_p1_input, p1_input);
-      osMailPut(id_mail_p2_input, p2_input);
+      if(rec == ESC)
+        global_state = EXIT;
+      
+      if(rec == SPC){
+        if(global_state == PAUSE)
+          global_state = PLAY;  
+        else
+          global_state = PAUSE;  
+      }
+      
+      if(global_state != PAUSE){
+        int8_t p1_in = 0;
+        int8_t p2_in = 0;
+        if(rec == P1_U)
+          p1_in--;
+        if(rec == P1_D)
+          p1_in++;
+        if(rec == P2_U)
+          p2_in--;
+        if(rec == P2_D)
+          p2_in++;
+
+        int8_t *p1_input = (int8_t*) osMailAlloc(id_mail_p1_input, osWaitForever);
+        int8_t *p2_input = (int8_t*) osMailAlloc(id_mail_p2_input, osWaitForever);
+        *p1_input = p1_in;
+        *p2_input = p2_in;
+        osMailPut(id_mail_p1_input, p1_input);
+        osMailPut(id_mail_p2_input, p2_input);
+      }
     }
   }
+  osDelay(osWaitForever);
 }
 osThreadDef(thread_input_receiver, osPriorityNormal, 1, 0);
 
@@ -268,7 +291,7 @@ void thread_player(void const *args){
     osDelay(osWaitForever);
   }
    
-  while(1){
+  while(global_state != EXIT){
     osEvent evt = osMailGet(id_mail_input, osWaitForever);
     if (evt.status == osEventMail) {
       int8_t* input = (int8_t*) evt.value.p;
@@ -294,6 +317,7 @@ void thread_player(void const *args){
       osSignalSet(id_thread_manager, signal);
     }
   }
+  osDelay(osWaitForever);
 }
 osThreadDef(thread_player, osPriorityNormal, 1, 0);
 
@@ -307,7 +331,7 @@ void thread_manager(void const *args){
   float ball_x, ball_y, ball_vx, ball_vy;
   
   reset_ball(ball_x, ball_y, ball_vx, ball_vy, false);  
-  while(1){
+  while(global_state != EXIT){
     osEvent evt = osSignalWait (T_P1_WAKE & T_P2_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
       evt = osMailGet(id_mail_p1_pos, 10);
@@ -346,10 +370,11 @@ void thread_manager(void const *args){
             objs.p1.sy + BAR_HEIGHT >= ball_y){
         ball_x = (float) TABLE_START + THICK;
         ball_vx = -ball_vx;
-        ball_vy = (ball_vy + BALL_CENTER - (objs.p1.dy + BAR_CENTER))/BAR_CENTER;
-        float r = ball_vx*(1 + ACCEL_F + abs(objs.p1.dy*objs.p1.dy)*ACCEL_F);
-        if(r*r <= V_BALL_MAX*V_BALL_MAX)
-          ball_vx = r;
+        ball_vy = (ball_y + BALL_CENTER - (objs.p1.sy + BAR_CENTER))/BAR_CENTER;
+        ball_vx = ball_vx*(1 + ACCEL_F + abs(objs.p1.dy*objs.p1.dy)*ACCEL_F);
+        ball_vx = clamp(-V_BALL_MAX, V_BALL_MAX, ball_vx);
+        ball_vy = clamp(-1, 1, ball_vy);
+        ball_vy = ball_vx*ball_vy;
        }
       //if(has_p2_collided_ball)
       if(ball_x + BALL_DIAMETER > TABLE_END - THICK + 1&&
@@ -358,9 +383,9 @@ void thread_manager(void const *args){
         ball_x = (float) TABLE_END - (BALL_DIAMETER + THICK - 1);
         ball_vx = -ball_vx;
         ball_vy = (ball_y + BALL_CENTER - (objs.p2.sy + BAR_CENTER))/BAR_CENTER;
-        float r = ball_vx*(1 + ACCEL_F + abs(objs.p2.dy*objs.p2.dy)*ACCEL_F);
-        if(r*r <= V_BALL_MAX*V_BALL_MAX)
-          ball_vx = r;
+        ball_vx = clamp(-V_BALL_MAX, V_BALL_MAX, ball_vx);
+        ball_vy = clamp(-1, 1, ball_vy);
+        ball_vy = -ball_vx*ball_vy;
       }
       //if(is_p2_goal)
       if(ball_x < P1_GOAL_BORDER){
@@ -380,7 +405,7 @@ void thread_manager(void const *args){
         objs.score.p1_changed = true;
         if(objs.score.p1> MAX_SCORE){
           objs.score.p2_changed = true;
-          objs.score.p1= 0;
+          objs.score.p1 = 0;
           objs.score.p2 = 0;
         }
       }
@@ -401,6 +426,7 @@ void thread_manager(void const *args){
       }
     }
   }
+  osDelay(osWaitForever);
 }
 osThreadDef(thread_manager, osPriorityNormal, 1, 0);
 
@@ -411,13 +437,19 @@ osThreadDef(thread_score, osPriorityNormal, 1, 0);
 
 void thread_drawer(void const *args){
   game_obj_t objs;
-  draw_table(THICK, true);
-   while(1){
+  bool table_drawn = false;
+  while(global_state != EXIT){
     osEvent evt = osMailGet(id_mail_drawer, osWaitForever);
     if (evt.status == osEventMail) {
       game_obj_t* msg = (game_obj_t*) evt.value.p;
       objs = *msg;
       osMailFree(id_mail_drawer, msg);
+      
+      //Print table
+      if(!table_drawn){
+        draw_table(THICK, true);
+        table_drawn = true;
+      }
       
       //Print ball
       draw_ball(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BACKGROUND);
@@ -450,6 +482,8 @@ void thread_drawer(void const *args){
         draw_table(THICK, false);
     }
   }
+  clear_scene();
+  osDelay(osWaitForever);
 }
 osThreadDef(thread_drawer, osPriorityNormal, 1, 0);
 
@@ -477,7 +511,6 @@ int main(char** args, int n_args){
   SSPInit();
   UARTInit(115200);
   oled_init();
-//  init_timer32(1, 10);
  
   clear_scene();
   
@@ -529,167 +562,5 @@ int main(char** args, int n_args){
   osThreadTerminate(id_thread_drawer);
   
   osDelay(osWaitForever); 
-  return 0;
-  
-
-
-
-  
-  int8_t p1_y = V_CENTER-BAR_CENTER;
-  int8_t p2_y = V_CENTER-BAR_CENTER;
-  uint8_t p1_last_y = p1_y;
-  uint8_t p2_last_y = p2_y;
-  
-  int8_t p1_vy = 0;
-  int8_t p2_vy = 0;
-        
-  float ball_x = H_CENTER-BALL_CENTER;
-  float ball_y = V_CENTER-BALL_CENTER;
-  
-  float ball_vx = BALL_VOX;
-  float ball_vy = BALL_VOY;
-  
-  uint8_t ball_last_x = (uint8_t) ball_x;
-  uint8_t ball_last_y = (uint8_t) ball_y;
-
-  uint8_t p1_score = 0;
-  uint8_t p2_score = 0;
-  bool p1_score_changed = true;
-  bool p2_score_changed = true;
-  
-  draw_table(THICK, true);
-  
-  while(1){
-    //User input
-    uint8_t rec = 0;
-    UARTReceive(&rec, 1, 0);
-//    if(rec != 0)
-//      UARTSend(&rec, 1);
-    
-    if(rec == 'w')
-      p1_vy--;
-    if(rec == 's')
-      p1_vy++;
-    if(rec == 'i')
-      p2_vy--;
-    if(rec == 'k')
-      p2_vy++;
-    
-    //Players controll
-    p1_vy = (int8_t) clamp(-V_BAR_MAX, V_BAR_MAX, p1_vy);
-    p2_vy = (int8_t) clamp(-V_BAR_MAX, V_BAR_MAX, p2_vy);
-
-    p1_last_y = p1_y;
-    p2_last_y = p2_y;
-    
-    p1_y += p1_vy;
-    p2_y += p2_vy;
-      
-    p1_y = (uint8_t) clamp(TABLE_UPPER+1, TABLE_BOTTOM-BAR_HEIGHT, p1_y);
-    p2_y = (uint8_t) clamp(TABLE_UPPER+1, TABLE_BOTTOM-BAR_HEIGHT, p2_y);
-
-    if(p1_last_y == p1_y) p1_vy = 0;
-    if(p2_last_y == p2_y) p2_vy = 0;
-       
-    //Ball controll
-    ball_last_x = (uint8_t) ball_x;
-    ball_last_y = (uint8_t) ball_y;
-
-    //apply_velocity()
-    ball_x += ball_vx;
-    ball_y += ball_vy;
-    
-    //if(has_ball_collided_uppper_border)
-    if(ball_y < TABLE_UPPER+1){
-      ball_y = (float) TABLE_UPPER + 1;
-      ball_vy = -ball_vy;
-    }
-    //if(has_ball_collided_bottom_border)
-    if(ball_y + BALL_DIAMETER > TABLE_BOTTOM){
-      ball_y = (float) TABLE_BOTTOM - (BALL_DIAMETER);
-      ball_vy = -ball_vy;
-    }
-    
-    //if(has_p1_collided_ball)
-    if(ball_x < TABLE_START + THICK && 
-          p1_y <= ball_y + BALL_DIAMETER &&
-          p1_y + BAR_HEIGHT >= ball_y){
-      ball_x = (float) TABLE_START + THICK;
-      ball_vx = -ball_vx;
-      ball_vy = (ball_y + BALL_CENTER - (p1_y + BAR_CENTER))/BAR_CENTER;
-      float r = ball_vx*(1 + ACCEL_F + abs(p1_vy*p1_vy)*ACCEL_F);
-      if(abs(r) <= V_BALL_MAX )
-        ball_vx = r;
-     }
-    //if(has_p2_collided_ball)
-    if(ball_x + BALL_DIAMETER > TABLE_END - THICK + 1&&
-          p2_y <= ball_y + BALL_DIAMETER &&
-          p2_y + BAR_HEIGHT >= ball_y){
-      ball_x = (float) TABLE_END - (BALL_DIAMETER + THICK - 1);
-      ball_vx = -ball_vx;
-      ball_vy = (ball_y + BALL_CENTER - (p2_y + BAR_CENTER))/BAR_CENTER;
-      float r = ball_vx*(1 + ACCEL_F + abs(p2_vy*p2_vy)*ACCEL_F);
-      if(abs(r) <= V_BALL_MAX )
-        ball_vx = r;
-    }
-    //if(is_p2_goal)
-    if(ball_x < P1_GOAL_BORDER){
-      reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);
-      p2_score++;
-      p2_score_changed = true;
-      if(p2_score > MAX_SCORE){
-        p1_score_changed = true;
-        p1_score = 0;
-        p2_score = 0;
-      }
-      beep();
-    }
-    //if(is_p1_goal)
-    if(ball_x+BALL_DIAMETER > P2_GOAL_BORDER){
-      reset_ball(ball_x, ball_y, ball_vx, ball_vy, false);
-      p1_score++;
-      p1_score_changed = true;
-      if(p1_score > MAX_SCORE){
-        p2_score_changed = true;
-        p1_score = 0;
-        p2_score = 0;
-      }
-      beep();
-    }
-    
-    //Print ball
-    draw_ball(ball_last_x, ball_last_y, BALL_DIAMETER, BACKGROUND);
-    draw_ball((uint8_t) ball_x, (uint8_t) ball_y, BALL_DIAMETER, FOREGROUND);
- 
-    //Print players
-    uint8_t delta_y_p1 = p1_y-p1_last_y;
-    draw_player(p1_y > p1_last_y ? p1_last_y : p1_last_y + BAR_HEIGHT-1, 
-                P1_X, delta_y_p1, BACKGROUND);
-    draw_player(p1_y, P1_X, BAR_HEIGHT, FOREGROUND);
-
-    uint8_t delta_y_p2 = p2_y-p2_last_y;
-    draw_player(p2_y > p2_last_y ? p2_last_y : p2_last_y + BAR_HEIGHT-1, 
-                P2_X, delta_y_p2, BACKGROUND);
-    draw_player(p2_y, P2_X, BAR_HEIGHT, FOREGROUND);
-     
-    //Print table and scores
-    if(p1_score_changed || 
-       isOver(ball_last_x, ball_last_y, BALL_DIAMETER, BALL_DIAMETER,
-              SCORE_P1_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
-      p1_score_changed = false;
-      draw_score(p1_score, SCORE_P1_X);
-    }
-    if(p2_score_changed || 
-       isOver(ball_last_x, ball_last_y, BALL_DIAMETER, BALL_DIAMETER,
-              SCORE_P2_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
-      p2_score_changed = false;
-      draw_score(p2_score, SCORE_P2_X);
-    }
-    if(ball_last_x <= H_CENTER+THICK/2+THICK%2-1 &&
-       ball_last_x + BALL_DIAMETER >= H_CENTER-THICK/2)
-      draw_table(THICK, false);
-    
-//    delay32Ms(1, REFRESH_RATE);
-  } 
   return 0;
 }
