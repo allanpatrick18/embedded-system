@@ -1,6 +1,8 @@
 #include "mcu_regs.h"
 #include "type.h"
 #include "ssp.h"
+#include "i2c.h"
+#include "pca9532.h"
 #include "gpio.h"
 #include "cmsis_os.h"
 #include "uart.h"
@@ -41,8 +43,9 @@ typedef enum {false = 0, true} bool;
 //Definições de comando
 #define ESC 0x1B
 #define SPC ' '
-#define BSP 0x08
-#define BEL 0x07
+#define BSP 0x7F
+//#define BEL 0x07
+//#define ENT 0x0D
 
 #define P1_U 'w'
 #define P1_D 's'
@@ -52,8 +55,8 @@ typedef enum {false = 0, true} bool;
 //Definições Físicas
 #define V_BAR_MAX       (REFRESH_RATE/10.0)
 #define V_BALL_MAX      (REFRESH_RATE/10.0)
-#define BALL_VOX        (REFRESH_RATE/80.0)
-#define BALL_VOY        (REFRESH_RATE/80.0)
+#define BALL_VOX        (REFRESH_RATE/40.0) //80
+#define BALL_VOY        (REFRESH_RATE/40.0) //80
 #define ACCEL_F         (REFRESH_RATE/2000.0)
 
 //Definições de Layout
@@ -97,8 +100,8 @@ typedef enum {false = 0, true} bool;
 
 //Inline functions
 #define reset_ball(px, py, vx, vy, t) \
-        px = H_CENTER-(BALL_CENTER+1);\
-        py = V_CENTER-(BALL_CENTER+1);\
+        px = H_CENTER+(BALL_CENTER-1);\
+        py = V_CENTER+(BALL_CENTER-1);\
         vx = t?BALL_VOX:-BALL_VOX;\
         vy = BALL_VOY;\
           
@@ -134,10 +137,10 @@ typedef struct {
 } game_obj_t;
 
 typedef enum game_state{
-  PAUSE, PLAY, RESTART, EXIT
+  START, PAUSE, PLAY, RESTART, EXIT
 }game_state_t;
 
-game_state_t global_state;
+game_state_t global_state = START;
 
 //************************
 //IDs de Timers
@@ -169,8 +172,41 @@ void clear_scene(){
 }
 
 void beep(){
-  static uint8_t bell = BEL;
-  UARTSend(&bell, 1);
+  UARTSendString((uint8_t*)"\a"); 
+}
+
+void show_menu(){
+  uint8_t clear_screan = 0x0C;
+  UARTSend(&clear_screan,1);
+  UARTSendString((uint8_t*)"Welcome The Pong game\r\n");
+  UARTSendString((uint8_t*)"SPC- Start/Pause\r\n");
+  UARTSendString((uint8_t*)"ESC- Exit\r\n");
+  UARTSendString((uint8_t*)"BSP- Restart\r\n");
+  UARTSendString((uint8_t*)"Player1 \t Player2 \r\n\n");    
+}
+void show_score(uint8_t score_p1 , uint8_t score_p2){
+  static uint8_t up[] = {0x1B, 0x5B, 0x41};
+  uint8_t s1 = score_p1+'0';
+  uint8_t s2 = score_p2+'0';
+  UARTSend(up, 3);
+  UARTSendString((uint8_t*)"\t"); 
+  UARTSend(&s1, 1);
+  UARTSendString((uint8_t*)"\t"); 
+  UARTSend(&s2, 1);
+  UARTSendString((uint8_t*)"\r\n"); 
+}
+
+void show_winner(uint8_t winner){
+  if(winner == PLAYER1)
+    UARTSendString((uint8_t*)" Player 1 "); 
+  if(winner == PLAYER2)
+    UARTSendString((uint8_t*)" Player 2 "); 
+  if(winner == PLAYER1 || winner == PLAYER2)
+    UARTSendString((uint8_t*)"is the WINNER!!\r"); 
+}
+
+void clear_winner_msg(){
+    UARTSendString((uint8_t*)"                         \r"); 
 }
 
 void draw_table(uint8_t thickness, bool draw_sides){
@@ -221,21 +257,46 @@ osMailQDef(mail_drawer,   MAIL_SIZE, game_obj_t);
 //************************
 void thread_input_receiver(void const *args){
   uint32_t time;
-  global_state = PAUSE;
+  bool r_flag = false;
+  bool x_flag = false;
   while(global_state != EXIT){
     osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
       uint8_t rec = 0;
       UARTReceive(&rec, 1, 0);
       
-      if(rec == ESC)
-        global_state = EXIT;
-      
-      if(rec == SPC){
-        if(global_state == PAUSE)
-          global_state = PLAY;  
+      if(global_state != START){
+        if(x_flag == true && !rec)
+          global_state = EXIT;
         else
-          global_state = PAUSE;  
+          x_flag = false;
+          
+        if(rec == ESC)
+          x_flag = true;
+        
+        if(rec == SPC){
+          if(global_state == PAUSE){
+            global_state = PLAY;  
+            clear_winner_msg();
+          }
+          else
+            global_state = PAUSE;  
+        }
+        
+        if(rec == BSP)
+          global_state = RESTART;
+      }
+      else {
+        show_menu();
+      }
+      
+      if(global_state == RESTART){
+        if(r_flag){
+          global_state = PAUSE;
+          r_flag = false;
+        }
+        else
+          r_flag = true;
       }
       
       if(global_state != PAUSE){
@@ -309,6 +370,14 @@ void thread_player(void const *args){
       if(knt.sy_p == knt.sy) 
         knt.dy = 0;
 
+      if(global_state == RESTART){
+        if((int) args == PLAYER1) knt.sx = P1_X;
+        if((int) args == PLAYER2) knt.sx = P2_X;
+        knt.sy = V_CENTER-BAR_CENTER;
+        knt.dx = 0;
+        knt.dy = 0;
+      }
+      
       kinematic_t *out = 
         (kinematic_t*) osMailAlloc(id_mail_output, osWaitForever);
       *out = knt;
@@ -330,7 +399,7 @@ void thread_manager(void const *args){
   
   float ball_x, ball_y, ball_vx, ball_vy;
   
-  reset_ball(ball_x, ball_y, ball_vx, ball_vy, false);  
+  reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);  
   while(global_state != EXIT){
     osEvent evt = osSignalWait (T_P1_WAKE & T_P2_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
@@ -343,6 +412,14 @@ void thread_manager(void const *args){
       if(evt.status == osEventMail){
         objs.p2 = *((kinematic_t*) evt.value.p);
         osMailFree(id_mail_p2_pos, evt.value.p);
+      }
+     
+      if(global_state == RESTART){
+        reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);  
+        objs.score.p1 = 0;
+        objs.score.p2 = 0;
+        objs.score.p1_changed = true;
+        objs.score.p2_changed = true;
       }
       
       //Ball controll
@@ -393,9 +470,9 @@ void thread_manager(void const *args){
         objs.score.p2++;
         objs.score.p2_changed = true;
         if(objs.score.p2 > MAX_SCORE){
-          objs.score.p1_changed = true;
-          objs.score.p1 = 0;
-          objs.score.p2 = 0;
+          beep();
+          show_winner(PLAYER2);
+          global_state = RESTART;
         }
       }
       //if(is_p1_goal)
@@ -404,9 +481,9 @@ void thread_manager(void const *args){
         objs.score.p1++;
         objs.score.p1_changed = true;
         if(objs.score.p1> MAX_SCORE){
-          objs.score.p2_changed = true;
-          objs.score.p1 = 0;
-          objs.score.p2 = 0;
+          beep();
+          show_winner(PLAYER1);
+          global_state = RESTART;
         }
       }
       
@@ -414,15 +491,17 @@ void thread_manager(void const *args){
       objs.ball.sy = (uint8_t) ball_y;
       objs.ball.dx = (int8_t)ball_vx;
       objs.ball.dy = (int8_t)ball_vy;
-            
+      
       game_obj_t *msg = (game_obj_t*) osMailAlloc(id_mail_drawer, osWaitForever);
       *msg = objs;
       osMailPut(id_mail_drawer, msg);
-
-      if(objs.score.p1_changed || objs.score.p2_changed){
+      
+      if(objs.score.p1_changed || objs.score.p2_changed){   
+        score_t *score_msg = (score_t*) osMailAlloc(id_mail_score, osWaitForever);
+        *score_msg = objs.score;
+        osMailPut(id_mail_score, score_msg);
         objs.score.p1_changed = false;
         objs.score.p2_changed = false;
-        //send 
       }
     }
   }
@@ -431,7 +510,48 @@ void thread_manager(void const *args){
 osThreadDef(thread_manager, osPriorityNormal, 1, 0);
 
 void thread_score(void const *args){
-  osDelay(osWaitForever);
+  uint16_t last_mask_red = 0;
+  uint16_t last_mask_green= 0;
+  uint8_t score_p1;
+  uint8_t score_p2;
+  while(1){
+    osEvent evt = osMailGet(id_mail_score, osWaitForever);
+    if (evt.status == osEventMail){
+      score_t * input = (score_t*) evt.value.p;
+      if(score_p1 < input->p1 || score_p2 < input->p2)
+        beep();
+      score_p1 =  input->p1;
+      score_p2 =  input->p2;
+      bool p1_changed = input->p1_changed;
+      bool p2_changed = input->p2_changed;
+      osMailFree(id_mail_score, input);
+      uint16_t mask_red = 0;
+      uint16_t mask_green = 0;
+      if(p1_changed || p2_changed){
+        show_score(score_p1, score_p2);
+        if(p1_changed){
+          //Calcula mascara de escrita 
+          //Os indices dos 8 ultimos bits em 1 representam os leds verdes que serao acesos, em ordem inversa
+          //LED  green
+          for(uint8_t i = 0; i < score_p1; i++) mask_green |= 0x8000 >> i;
+          //Apaga ultimos LEDs acesos e acende os atuais
+          pca9532_setLeds(mask_green, last_mask_green); 
+          //LEDs que deverao ser apagados na proxima execucao foram acesos agora
+          last_mask_green = mask_green;
+        }
+        if(p2_changed){
+          //Calcula mascara de escrita 
+          //Os indices dos 8 primeiros bits em 1 representam os leds vermelhos que serao acesos, respectivamente
+          //LED red
+          for(uint8_t i = 0; i < score_p2; i++) mask_red |= 1 << i;
+          //Apaga ultimos LEDs acesos e acende os atuais
+          pca9532_setLeds(mask_red, last_mask_red);
+          //LEDs que deverao ser apagados na proxima execucao foram acesos agora
+          last_mask_red = mask_red;      
+        }
+      }
+    }
+  }
 }
 osThreadDef(thread_score, osPriorityNormal, 1, 0);
 
@@ -446,9 +566,10 @@ void thread_drawer(void const *args){
       osMailFree(id_mail_drawer, msg);
       
       //Print table
-      if(!table_drawn){
+      if(global_state == START){
+        clear_scene();
         draw_table(THICK, true);
-        table_drawn = true;
+        global_state = PAUSE;
       }
       
       //Print ball
@@ -456,14 +577,14 @@ void thread_drawer(void const *args){
       draw_ball(objs.ball.sx,   objs.ball.sy,   BALL_DIAMETER, FOREGROUND);
    
       //Print players
-//      uint8_t delta_y_p1 = p1_y-p1_last_y;
+      int8_t delta_y_p1 = objs.p1.sy-objs.p1.sy_p;
       draw_player(objs.p1.sy > objs.p1.sy_p ? objs.p1.sy_p : objs.p1.sy_p + BAR_HEIGHT-1, 
-                  objs.p1.sx, objs.p1.dy, BACKGROUND);
+                  objs.p1.sx, delta_y_p1, BACKGROUND);
       draw_player(objs.p1.sy, objs.p1.sx, BAR_HEIGHT, FOREGROUND);
 
-//      uint8_t delta_y_p2 = p2_y-p2_last_y;
+      int8_t delta_y_p2 = objs.p2.sy-objs.p2.sy_p;
       draw_player(objs.p2.sy > objs.p2.sy_p ? objs.p2.sy_p: objs.p2.sy_p + BAR_HEIGHT-1, 
-                  objs.p2.sx, objs.p2.dy, BACKGROUND);
+                  objs.p2.sx, delta_y_p2, BACKGROUND);
       draw_player(objs.p2.sy, objs.p2.sx, BAR_HEIGHT, FOREGROUND);
 
       //Print table and scores
@@ -494,7 +615,7 @@ void thread_gantt(){
 //************************
 //Codigo Main
 //************************
-int main(char** args, int n_args){
+  int main(char** args, int n_args){
 //Inicialização de Kernel vai aqui
   osKernelInitialize();  
 
@@ -511,8 +632,8 @@ int main(char** args, int n_args){
   SSPInit();
   UARTInit(115200);
   oled_init();
- 
-  clear_scene();
+  I2CInit( (uint32_t)I2CMASTER, 0 );
+  pca9532_init();
   
   //************************
   //Inicialização de Timers
