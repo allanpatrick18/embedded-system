@@ -40,6 +40,8 @@ typedef enum {false = 0, true} bool;
 #define PLAYER1 (1)
 #define PLAYER2 (2)
 
+
+
 //Definições de comando
 #define ESC 0x1B
 #define SPC ' '
@@ -144,7 +146,13 @@ game_state_t global_state = START;
 
 //************************
 //IDs de Timers
-osTimerId id_timer_game_loop;    
+osTimerId id_timer_game_loop;
+
+//************************
+// Definiçõa MUTEX
+//************************
+osMutexId stdio_mutex;
+osMutexDef(stdio_mutex);
 
 //************************
 //IDs de correspondencias
@@ -172,7 +180,9 @@ void clear_scene(){
 }
 
 void beep(){
-  UARTSendString((uint8_t*)"\a"); 
+  osMutexWait(stdio_mutex, osWaitForever);
+  UARTSendString((uint8_t*)"\a");
+  osMutexRelease(stdio_mutex);
 }
 
 void show_menu(){
@@ -185,24 +195,30 @@ void show_menu(){
   UARTSendString((uint8_t*)"Player1 \t Player2 \r\n\n");    
 }
 void show_score(uint8_t score_p1 , uint8_t score_p2){
+  
+  
   static uint8_t up[] = {0x1B, 0x5B, 0x41};
   uint8_t s1 = score_p1+'0';
   uint8_t s2 = score_p2+'0';
+  osMutexWait(stdio_mutex, osWaitForever);
   UARTSend(up, 3);
   UARTSendString((uint8_t*)"\t"); 
   UARTSend(&s1, 1);
   UARTSendString((uint8_t*)"\t"); 
   UARTSend(&s2, 1);
-  UARTSendString((uint8_t*)"\r\n"); 
+  UARTSendString((uint8_t*)"\r\n");
+  osMutexRelease(stdio_mutex);
 }
 
 void show_winner(uint8_t winner){
+  osMutexWait(stdio_mutex, osWaitForever);
   if(winner == PLAYER1)
     UARTSendString((uint8_t*)" Player 1 "); 
   if(winner == PLAYER2)
     UARTSendString((uint8_t*)" Player 2 "); 
   if(winner == PLAYER1 || winner == PLAYER2)
-    UARTSendString((uint8_t*)"is the WINNER!!\r"); 
+    UARTSendString((uint8_t*)"is the WINNER!!\r");
+   osMutexRelease(stdio_mutex);
 }
 
 void clear_winner_msg(){
@@ -263,7 +279,9 @@ void thread_input_receiver(void const *args){
     osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
       uint8_t rec = 0;
-      UARTReceive(&rec, 1, 0);
+       osMutexWait(stdio_mutex, osWaitForever);
+       UARTReceive(&rec, 1, 0);
+      osMutexRelease(stdio_mutex);
       
       if(global_state != START){
         if(x_flag == true && !rec)
@@ -634,6 +652,11 @@ void thread_gantt(){
   oled_init();
   I2CInit( (uint32_t)I2CMASTER, 0 );
   pca9532_init();
+
+  //************************
+  //Inicialização de Mutex
+  //************************  
+  stdio_mutex = osMutexCreate(osMutex(stdio_mutex));
   
   //************************
   //Inicialização de Timers
