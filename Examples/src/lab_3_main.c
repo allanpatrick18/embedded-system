@@ -13,6 +13,7 @@
 
 //Configurações diversas
 #define FPS_24
+//#define WRITE_GANTT
 
 //************************
 // Definições e tipos do sistema
@@ -30,7 +31,15 @@ typedef enum {false = 0, true} bool;
 #define T_P1_WAKE 0x01
 #define T_P2_WAKE 0x02
 
-#define MAIL_SIZE 4
+#define MAIL_SIZE 5
+#define GANTT_MAIL_SIZE 16
+
+#define gantt_ticks_factor 72
+
+//************************
+// Variaveis de sistema
+//************************
+FILE* file_gantt;
 
 //************************
 // Definições e tipos do domínio
@@ -39,8 +48,6 @@ typedef enum {false = 0, true} bool;
 #define MAX_SCORE (8)
 #define PLAYER1 (1)
 #define PLAYER2 (2)
-
-
 
 //Definições de comando
 #define ESC 0x1B
@@ -57,8 +64,9 @@ typedef enum {false = 0, true} bool;
 //Definições Físicas
 #define V_BAR_MAX       (REFRESH_RATE/10.0)
 #define V_BALL_MAX      (REFRESH_RATE/10.0)
-#define BALL_VOX        (REFRESH_RATE/40.0) //80
-#define BALL_VOY        (REFRESH_RATE/40.0) //80
+#define BALL_VOX        (REFRESH_RATE/80.0) //80
+#define BALL_VOY        (REFRESH_RATE/80.0) //80
+#define ACCEL_BAR       (REFRESH_RATE/40.0)
 #define ACCEL_F         (REFRESH_RATE/2000.0)
 
 //Definições de Layout
@@ -138,6 +146,11 @@ typedef struct {
   score_t score;
 } game_obj_t;
 
+typedef struct {
+  const char* name;
+  uint32_t init, end;
+} gantt_msg_t;
+
 typedef enum game_state{
   START, PAUSE, PLAY, RESTART, EXIT
 }game_state_t;
@@ -162,6 +175,7 @@ osMailQId id_mail_p1_pos;
 osMailQId id_mail_p2_pos;
 osMailQId id_mail_score;
 osMailQId id_mail_drawer;
+osMailQId id_mail_gantt;
 
 //************************
 //IDs de Threads
@@ -171,6 +185,14 @@ osThreadId id_thread_player2;
 osThreadId id_thread_manager;
 osThreadId id_thread_score;
 osThreadId id_thread_drawer;
+osThreadId id_thread_gantt;
+
+const char * name_thread_input_receiver = "Input Receiver";
+const char * name_thread_player1        = "Player 1      ";
+const char * name_thread_player2        = "Player 2      ";
+const char * name_thread_manager        = "Manager       ";
+const char * name_thread_score          = "Score         ";
+const char * name_thread_drawer         = "Drawer        ";
 
 //************************
 //Funções auxiliares
@@ -188,10 +210,15 @@ void beep(){
 void show_menu(){
   uint8_t clear_screan = 0x0C;
   UARTSend(&clear_screan,1);
-  UARTSendString((uint8_t*)"Welcome The Pong game\r\n");
+  UARTSendString((uint8_t*)"Welcome The Pong game\r\n\n");
+
+  UARTSendString((uint8_t*)"W/S- Controll Player 1\r\n");
+  UARTSendString((uint8_t*)"I/K- Controll Player 2\r\n\n");
+
   UARTSendString((uint8_t*)"SPC- Start/Pause\r\n");
   UARTSendString((uint8_t*)"ESC- Exit\r\n");
-  UARTSendString((uint8_t*)"BSP- Restart\r\n");
+  UARTSendString((uint8_t*)"BSP- Restart\r\n\n");
+  
   UARTSendString((uint8_t*)"Player1 \t Player2 \r\n\n");    
 }
 void show_score(uint8_t score_p1 , uint8_t score_p2){
@@ -223,6 +250,16 @@ void show_winner(uint8_t winner){
 
 void clear_winner_msg(){
     UARTSendString((uint8_t*)"                         \r"); 
+}
+
+void write_gantt(const char* name, uint32_t init, uint32_t end){
+#ifdef WRITE_GANTT
+  gantt_msg_t *gantt = (gantt_msg_t*) osMailAlloc(id_mail_gantt, osWaitForever);
+  gantt->name = name;
+  gantt->init = init;
+  gantt->end = end;
+  osMailPut(id_mail_gantt, gantt);  
+#endif
 }
 
 void draw_table(uint8_t thickness, bool draw_sides){
@@ -268,6 +305,8 @@ osMailQDef(mail_p2_pos,   MAIL_SIZE, kinematic_t);
 osMailQDef(mail_score,    MAIL_SIZE, score_t);
 osMailQDef(mail_drawer,   MAIL_SIZE, game_obj_t);
 
+osMailQDef(mail_gantt,    GANTT_MAIL_SIZE, gantt_msg_t);
+
 //************************
 //Threads
 //************************
@@ -278,13 +317,14 @@ void thread_input_receiver(void const *args){
   while(global_state != EXIT){
     osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
+      time = osKernelSysTick()/gantt_ticks_factor;
       uint8_t rec = 0;
-       osMutexWait(stdio_mutex, osWaitForever);
-       UARTReceive(&rec, 1, 0);
+      osMutexWait(stdio_mutex, osWaitForever);
+      UARTReceive(&rec, 1, 0);
       osMutexRelease(stdio_mutex);
       
       if(global_state != START){
-        if(x_flag == true && !rec)
+        if(x_flag == true && (!rec || rec == ESC))
           global_state = EXIT;
         else
           x_flag = false;
@@ -335,7 +375,8 @@ void thread_input_receiver(void const *args){
         *p2_input = p2_in;
         osMailPut(id_mail_p1_input, p1_input);
         osMailPut(id_mail_p2_input, p2_input);
-      }
+      }      
+      write_gantt(name_thread_input_receiver, time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
   osDelay(osWaitForever);
@@ -343,8 +384,10 @@ void thread_input_receiver(void const *args){
 osThreadDef(thread_input_receiver, osPriorityNormal, 1, 0);
 
 void thread_player(void const *args){
+  uint32_t time;
   osMailQId id_mail_input = NULL;
   osMailQId id_mail_output = NULL;
+  const char * name;
   int signal = 0;
   kinematic_t knt;
   knt.sy = V_CENTER-BAR_CENTER;
@@ -355,6 +398,7 @@ void thread_player(void const *args){
   case PLAYER1:
     id_mail_input  = id_mail_p1_input;
     id_mail_output = id_mail_p1_pos;
+    name = name_thread_player1;
     signal = T_P1_WAKE;
     knt.sx = P1_X;
     break;
@@ -362,6 +406,7 @@ void thread_player(void const *args){
   case PLAYER2:
     id_mail_input  = id_mail_p2_input;
     id_mail_output = id_mail_p2_pos;
+    name = name_thread_player2;
     signal = T_P2_WAKE;
     knt.sx = P2_X;
     break;
@@ -373,11 +418,12 @@ void thread_player(void const *args){
   while(global_state != EXIT){
     osEvent evt = osMailGet(id_mail_input, osWaitForever);
     if (evt.status == osEventMail) {
+      time = osKernelSysTick()/gantt_ticks_factor;
       int8_t* input = (int8_t*) evt.value.p;
       int8_t input_accel = *input;
       osMailFree(id_mail_input, input);
       
-      knt.dy   += input_accel;
+      knt.dy   += input_accel*ACCEL_BAR;
       knt.dy    = (int8_t) clamp(-V_BAR_MAX, V_BAR_MAX, knt.dy);
 
       knt.sx_p  = knt.sx;
@@ -402,6 +448,8 @@ void thread_player(void const *args){
       osMailPut(id_mail_output, out);
       
       osSignalSet(id_thread_manager, signal);
+      
+      write_gantt(name, time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
   osDelay(osWaitForever);
@@ -409,6 +457,7 @@ void thread_player(void const *args){
 osThreadDef(thread_player, osPriorityNormal, 1, 0);
 
 void thread_manager(void const *args){
+  uint32_t time;
   game_obj_t objs;
   objs.score.p1= 0;
   objs.score.p2 = 0;
@@ -431,6 +480,7 @@ void thread_manager(void const *args){
         objs.p2 = *((kinematic_t*) evt.value.p);
         osMailFree(id_mail_p2_pos, evt.value.p);
       }
+      time = osKernelSysTick()/gantt_ticks_factor;
      
       if(global_state == RESTART){
         reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);  
@@ -521,6 +571,8 @@ void thread_manager(void const *args){
         objs.score.p1_changed = false;
         objs.score.p2_changed = false;
       }
+      
+      write_gantt(name_thread_manager, time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
   osDelay(osWaitForever);
@@ -528,13 +580,15 @@ void thread_manager(void const *args){
 osThreadDef(thread_manager, osPriorityNormal, 1, 0);
 
 void thread_score(void const *args){
+  uint32_t time;
   uint16_t last_mask_red = 0;
   uint16_t last_mask_green= 0;
   uint8_t score_p1;
   uint8_t score_p2;
-  while(1){
+  while(global_state != EXIT){
     osEvent evt = osMailGet(id_mail_score, osWaitForever);
     if (evt.status == osEventMail){
+      time = osKernelSysTick()/gantt_ticks_factor;
       score_t * input = (score_t*) evt.value.p;
       if(score_p1 < input->p1 || score_p2 < input->p2)
         beep();
@@ -568,33 +622,37 @@ void thread_score(void const *args){
           last_mask_red = mask_red;      
         }
       }
+      write_gantt(name_thread_score, time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
 }
 osThreadDef(thread_score, osPriorityNormal, 1, 0);
 
 void thread_drawer(void const *args){
+  uint32_t time;
   game_obj_t objs;
-  bool table_drawn = false;
+  osEvent evt = osMailGet(id_mail_drawer, osWaitForever);
   while(global_state != EXIT){
-    osEvent evt = osMailGet(id_mail_drawer, osWaitForever);
-    if (evt.status == osEventMail) {
+    time = osKernelSysTick()/gantt_ticks_factor;
+    while(evt.status == osEventMail){
       game_obj_t* msg = (game_obj_t*) evt.value.p;
       objs = *msg;
       osMailFree(id_mail_drawer, msg);
-      
-      //Print table
+      evt = osMailGet(id_mail_drawer, 1);
+    }
+    if (evt.status == osEventTimeout) {
+      //Draw table
       if(global_state == START){
         clear_scene();
         draw_table(THICK, true);
         global_state = PAUSE;
       }
       
-      //Print ball
+      //Draw ball
       draw_ball(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BACKGROUND);
       draw_ball(objs.ball.sx,   objs.ball.sy,   BALL_DIAMETER, FOREGROUND);
    
-      //Print players
+      //Draw players
       int8_t delta_y_p1 = objs.p1.sy-objs.p1.sy_p;
       draw_player(objs.p1.sy > objs.p1.sy_p ? objs.p1.sy_p : objs.p1.sy_p + BAR_HEIGHT-1, 
                   objs.p1.sx, delta_y_p1, BACKGROUND);
@@ -605,7 +663,7 @@ void thread_drawer(void const *args){
                   objs.p2.sx, delta_y_p2, BACKGROUND);
       draw_player(objs.p2.sy, objs.p2.sx, BAR_HEIGHT, FOREGROUND);
 
-      //Print table and scores
+      //Draw borders and scores
       if(objs.score.p1_changed || 
          isOver(objs.ball.sx_p, objs.ball.sy_p, BALL_DIAMETER, BALL_DIAMETER,
                 SCORE_P1_X, SCORE_Y, SCORE_WIDTH, SCORE_HEIGHT)){
@@ -619,6 +677,10 @@ void thread_drawer(void const *args){
       if(objs.ball.sx_p <= H_CENTER+THICK/2+THICK%2-1 &&
          objs.ball.sx_p + BALL_DIAMETER >= H_CENTER-THICK/2)
         draw_table(THICK, false);
+
+      evt = osMailGet(id_mail_drawer, osWaitForever);
+
+      write_gantt(name_thread_drawer, time, osKernelSysTick()/gantt_ticks_factor);
     }
   }
   clear_scene();
@@ -627,7 +689,30 @@ void thread_drawer(void const *args){
 osThreadDef(thread_drawer, osPriorityNormal, 1, 0);
 
 void thread_gantt(){
-  osDelay(osWaitForever);
+  //************************
+  //Init Gantt Diagram
+  //*********************** 
+  file_gantt = fopen("gantt.txt","w");
+  fprintf(file_gantt,"gantt\n");
+  fprintf(file_gantt,"    title A Gantt Diagram\n");
+  fprintf(file_gantt,"    dateFormat x\n");
+
+  gantt_msg_t gantt;
+  osEvent evt ;
+
+  do{
+    evt = osMailGet(id_mail_gantt, 500);
+    if (evt.status == osEventMail) {
+      gantt_msg_t* msg = (gantt_msg_t*) evt.value.p;
+      gantt = *msg;
+      osMailFree(id_mail_gantt, msg);      
+      
+      fputs(gantt.name, file_gantt);
+      fprintf(file_gantt,": a, %lu, %lu\n", gantt.init, gantt.end);
+    }
+  }while(global_state != EXIT || evt.status != osEventTimeout);
+
+  fclose(file_gantt);
 }
 
 //************************
@@ -636,15 +721,6 @@ void thread_gantt(){
   int main(char** args, int n_args){
 //Inicialização de Kernel vai aqui
   osKernelInitialize();  
-
-  //************************
-  //Init Gantt Diagram
-  //*********************** 
-  FILE* file_gantt = fopen("gantt.txt","w");
-  fprintf(file_gantt,"gantt\n");
-  fprintf(file_gantt,"    title A Gantt Diagram\n");
-  fprintf(file_gantt,"    dateFormat x\n");
-  fclose(file_gantt);  
   
   GPIOInit();
   SSPInit();
@@ -666,16 +742,6 @@ void thread_gantt(){
   osTimerStart(id_timer_game_loop, REFRESH_RATE);  
 
   //************************
-  //Inicialização de Correspondências
-  //************************
-  id_mail_p1_input = osMailCreate(osMailQ(mail_p1_input), NULL);
-  id_mail_p2_input = osMailCreate(osMailQ(mail_p2_input), NULL);
-  id_mail_p1_pos   = osMailCreate(osMailQ(mail_p1_pos),   NULL);
-  id_mail_p2_pos   = osMailCreate(osMailQ(mail_p2_pos),   NULL);
-  id_mail_score    = osMailCreate(osMailQ(mail_score),    NULL);
-  id_mail_drawer   = osMailCreate(osMailQ(mail_drawer),   NULL);
-  
-  //************************
   //Inicialização de Threads
   //************************
   id_thread_input_receiver = osThreadCreate(osThread(thread_input_receiver), NULL);
@@ -684,7 +750,21 @@ void thread_gantt(){
   id_thread_manager        = osThreadCreate(osThread(thread_manager),        NULL);
   id_thread_score          = osThreadCreate(osThread(thread_score),          NULL);
   id_thread_drawer         = osThreadCreate(osThread(thread_drawer),         NULL);
- 
+
+  id_thread_gantt          = osThreadGetId();
+
+  //************************
+  //Inicialização de Correspondências
+  //************************
+  id_mail_p1_input = osMailCreate(osMailQ(mail_p1_input), NULL);
+  id_mail_p2_input = osMailCreate(osMailQ(mail_p2_input), NULL);
+  id_mail_p1_pos   = osMailCreate(osMailQ(mail_p1_pos),   NULL);
+  id_mail_p2_pos   = osMailCreate(osMailQ(mail_p2_pos),   NULL);
+  id_mail_score    = osMailCreate(osMailQ(mail_score),    NULL);
+  id_mail_drawer   = osMailCreate(osMailQ(mail_drawer),   NULL);
+
+  id_mail_gantt   = osMailCreate(osMailQ(mail_gantt),     NULL);
+   
   //************************
   //Início do SO
   //************************
@@ -693,8 +773,9 @@ void thread_gantt(){
   //************************
   //Thread Main
   //************************
+  osThreadSetPriority(id_thread_gantt, osPriorityLow);
   thread_gantt();
-
+  
   //************************
   //Finalização de Threads
   //************************

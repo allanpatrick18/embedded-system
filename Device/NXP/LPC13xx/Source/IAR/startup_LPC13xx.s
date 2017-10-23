@@ -120,7 +120,7 @@ __vector_table_0x1c
         DCD     TIMER16_1_IRQHandler      ; 16+42: 16-bit Counter-Timer 1
         DCD     TIMER32_0_IRQHandler      ; 16+43: 32-bit Counter-Timer 0
         DCD     TIMER32_1_IRQHandler      ; 16+44: 32-bit Counter-Timer 1
-        DCD     SSP_IRQHandler            ; 16+45: SSP 0
+        DCD     SSP0_IRQHandler           ; 16+45: SSP 0
         DCD     UART_IRQHandler           ; 16+46: UART
         DCD     USB_IRQHandler            ; 16+47: USB IRQ
         DCD     USB_FIQHandler            ; 16+48: USB FIQ
@@ -232,10 +232,10 @@ TIMER32_0_IRQHandler
 TIMER32_1_IRQHandler
         B TIMER32_1_IRQHandler
 
-        PUBWEAK SSP_IRQHandler
+        PUBWEAK SSP0_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-SSP_IRQHandler
-        B SSP_IRQHandler
+SSP0_IRQHandler
+        B SSP0_IRQHandler
 
         PUBWEAK UART_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
