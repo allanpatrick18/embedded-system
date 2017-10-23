@@ -64,8 +64,8 @@ FILE* file_gantt;
 //Definições Físicas
 #define V_BAR_MAX       (REFRESH_RATE/10.0)
 #define V_BALL_MAX      (REFRESH_RATE/10.0)
-#define BALL_VOX        (REFRESH_RATE/80.0) //80
-#define BALL_VOY        (REFRESH_RATE/80.0) //80
+#define BALL_VOX        (REFRESH_RATE/4.0) //80
+#define BALL_VOY        (REFRESH_RATE/4.0) //80
 #define ACCEL_BAR       (REFRESH_RATE/40.0)
 #define ACCEL_F         (REFRESH_RATE/2000.0)
 
@@ -318,6 +318,7 @@ void thread_input_receiver(void const *args){
     osEvent evt = osSignalWait (T_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
       time = osKernelSysTick()/gantt_ticks_factor;
+      osThreadYield();
       uint8_t rec = 0;
       osMutexWait(stdio_mutex, osWaitForever);
       UARTReceive(&rec, 1, 0);
@@ -381,7 +382,7 @@ void thread_input_receiver(void const *args){
   }
   osDelay(osWaitForever);
 }
-osThreadDef(thread_input_receiver, osPriorityNormal, 1, 0);
+osThreadDef(thread_input_receiver, osPriorityAboveNormal, 1, 0);
 
 void thread_player(void const *args){
   uint32_t time;
@@ -419,6 +420,7 @@ void thread_player(void const *args){
     osEvent evt = osMailGet(id_mail_input, osWaitForever);
     if (evt.status == osEventMail) {
       time = osKernelSysTick()/gantt_ticks_factor;
+      osThreadYield();
       int8_t* input = (int8_t*) evt.value.p;
       int8_t input_accel = *input;
       osMailFree(id_mail_input, input);
@@ -470,17 +472,18 @@ void thread_manager(void const *args){
   while(global_state != EXIT){
     osEvent evt = osSignalWait (T_P1_WAKE & T_P2_WAKE, osWaitForever);     
     if(evt.status == osEventSignal){
-      evt = osMailGet(id_mail_p1_pos, 10);
+      evt = osMailGet(id_mail_p1_pos, osWaitForever);
       if(evt.status == osEventMail){
         objs.p1 = *((kinematic_t*) evt.value.p);
         osMailFree(id_mail_p1_pos, evt.value.p);
       }
-      evt = osMailGet(id_mail_p2_pos, 10);
+      evt = osMailGet(id_mail_p2_pos, osWaitForever);
       if(evt.status == osEventMail){
         objs.p2 = *((kinematic_t*) evt.value.p);
         osMailFree(id_mail_p2_pos, evt.value.p);
       }
       time = osKernelSysTick()/gantt_ticks_factor;
+      osThreadYield();
      
       if(global_state == RESTART){
         reset_ball(ball_x, ball_y, ball_vx, ball_vy, true);  
@@ -589,6 +592,7 @@ void thread_score(void const *args){
     osEvent evt = osMailGet(id_mail_score, osWaitForever);
     if (evt.status == osEventMail){
       time = osKernelSysTick()/gantt_ticks_factor;
+      osThreadYield();
       score_t * input = (score_t*) evt.value.p;
       if(score_p1 < input->p1 || score_p2 < input->p2)
         beep();
@@ -641,6 +645,7 @@ void thread_drawer(void const *args){
       evt = osMailGet(id_mail_drawer, 1);
     }
     if (evt.status == osEventTimeout) {
+      osThreadYield();
       //Draw table
       if(global_state == START){
         clear_scene();
@@ -678,9 +683,9 @@ void thread_drawer(void const *args){
          objs.ball.sx_p + BALL_DIAMETER >= H_CENTER-THICK/2)
         draw_table(THICK, false);
 
-      evt = osMailGet(id_mail_drawer, osWaitForever);
-
       write_gantt(name_thread_drawer, time, osKernelSysTick()/gantt_ticks_factor);
+
+      evt = osMailGet(id_mail_drawer, osWaitForever);
     }
   }
   clear_scene();

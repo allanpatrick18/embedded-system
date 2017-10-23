@@ -2034,6 +2034,15 @@
       </file>
     </group>
     <group>
+      <name>example_speaker</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\src\example_speaker.c</name>
+      </file>
+    </group>
+    <group>
       <name>lab_0</name>
       <excluded>
         <configuration>Debug</configuration>

@@ -2178,6 +2178,12 @@
       </file>
     </group>
     <group>
+      <name>example_speaker</name>
+      <file>
+        <name>$PROJ_DIR$\src\example_speaker.c</name>
+      </file>
+    </group>
+    <group>
       <name>lab_0</name>
       <file>
         <name>$PROJ_DIR$\src\lab_0_asm.s</name>

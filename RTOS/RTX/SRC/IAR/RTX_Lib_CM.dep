@@ -477,8 +477,10 @@
       <file>$PROJ_DIR$\..\rt_Mailbox.c</file>
       <file>$PROJ_DIR$\..\rt_CMSIS.c</file>
       <file>$PROJ_DIR$\..\HAL_CM.c</file>
+      <file>$PROJ_DIR$\HAL_CM0.s</file>
       <file>$PROJ_DIR$\HAL_CM3.s</file>
       <file>$PROJ_DIR$\SVC_Table.s</file>
+      <file>$PROJ_DIR$\HAL_CM4.s</file>
       <file>$PROJ_DIR$\CM3_LE\rt_CMSIS.o</file>
     </outputs>
     <file>
@@ -723,7 +725,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 77</file>
+          <file> 79</file>
         </tool>
         <tool>
           <name>__cstat</name>
